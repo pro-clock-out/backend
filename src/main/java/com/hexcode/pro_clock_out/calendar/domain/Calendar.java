@@ -19,6 +19,9 @@ public class Calendar extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "calendar_id")
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private Label label;
     private String title;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
