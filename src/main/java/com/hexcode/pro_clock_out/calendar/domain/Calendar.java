@@ -1,8 +1,14 @@
 package com.hexcode.pro_clock_out.calendar.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
+import com.hexcode.pro_clock_out.member.domain.Member;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter @Builder
@@ -13,4 +19,17 @@ public class Calendar extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "calendar_id")
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private Label label;
+    private String title;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private String location;
+    private String notes;
+
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member member;
+
 }
