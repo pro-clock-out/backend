@@ -16,15 +16,11 @@ public class DailyGoal extends BaseTime {
     @Column(name = "daily_goal_id")
     private Long id;
 
-    private Long daily_id;
-
-    private Long goal_id;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "daily_id")
     private Daily daily;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "goal_id")
     private Goal goal;
 }

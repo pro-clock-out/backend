@@ -17,17 +17,15 @@ public class Daily extends BaseTime {
     @Column(name = "daily_id")
     private Long id;
 
-    private Long member_id;
-
-
-    private int satisfaction;
+    @Enumerated(EnumType.ORDINAL)
+    private Satisfaction satisfaction;
 
     private String content;
 
-    private String image_url;
+    private String imageUrl;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
 }
