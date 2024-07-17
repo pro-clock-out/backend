@@ -2,6 +2,8 @@ package com.hexcode.pro_clock_out.calendar.controller;
 
 import com.hexcode.pro_clock_out.calendar.dto.FindCalendarDetailResponse;
 import com.hexcode.pro_clock_out.calendar.dto.FindWeeklyCalendarResponse;
+import com.hexcode.pro_clock_out.calendar.dto.UpdateCalendarRequest;
+import com.hexcode.pro_clock_out.calendar.dto.UpdateCalendarResponse;
 import com.hexcode.pro_clock_out.calendar.service.CalendarService;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import com.hexcode.pro_clock_out.wolibal.dto.FindTotalWolibalResponse;
@@ -10,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -37,7 +36,22 @@ public class CalendarController {
         FindCalendarDetailResponse response = calendarService.findCalendarDetail(calendarId);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
+    }
 
+    @PostMapping("calendars/{calendarId}")
+    public ResponseEntity<ResponseDto> addCalendarEvent(Authentication authentication, @RequestBody UpdateCalendarRequest request){
+        log.info("Request to add Event");
+        Long calendarId = (Long) authentication.getPrincipal();
+        UpdateCalendarResponse response = calendarService.addCalendar(calendarId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/calendars/{calendarId}")
+    public ResponseEntity<ResponseDto> updateCalendarEvent(Authentication authentication, @RequestBody UpdateCalendarRequest request){
+        log.info("Request to add Event");
+        Long calendarId = (Long) authentication.getPrincipal();
+        UpdateCalendarResponse response = calendarService.updateCalendar(calendarId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
