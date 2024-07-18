@@ -1,13 +1,13 @@
 package com.hexcode.pro_clock_out.calendar.service;
 
 import com.hexcode.pro_clock_out.calendar.domain.Calendar;
-import com.hexcode.pro_clock_out.calendar.dto.FindCalendarDetailResponse;
-import com.hexcode.pro_clock_out.calendar.dto.FindWeeklyCalendarResponse;
+import com.hexcode.pro_clock_out.calendar.dto.*;
 import com.hexcode.pro_clock_out.calendar.repository.CalendarRepository;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +34,22 @@ public class CalendarService {
         return FindCalendarDetailResponse.createWith(calendar);
     }
 
+    public UpdateCalendarResponse addCalendar(Long calendarId, UpdateCalendarRequest request) {
+        Calendar calendar = findCalendarById(calendarId);
+        UpdateCalendarData updateCalendarData = UpdateCalendarData.createWith(request);
+        calendar.updateCalendar(updateCalendarData);
+        calendarRepository.save(calendar);
+        return UpdateCalendarResponse.createWith(calendar);
+    }
+
+    public UpdateCalendarResponse updateCalendar(Long calendarId, UpdateCalendarRequest request) {
+        Calendar calendar = findCalendarById(calendarId);
+        UpdateCalendarData updateCalendarData = UpdateCalendarData.createWith(request);
+        calendar.updateCalendar(updateCalendarData);
+        calendarRepository.save(calendar);
+        return UpdateCalendarResponse.createWith(calendar);
+
+    }
 
 
 }
