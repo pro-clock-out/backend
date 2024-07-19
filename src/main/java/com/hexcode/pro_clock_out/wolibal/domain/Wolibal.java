@@ -12,7 +12,7 @@ import lombok.*;
 public class Wolibal extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
+    @Column(name = "wolibal_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)

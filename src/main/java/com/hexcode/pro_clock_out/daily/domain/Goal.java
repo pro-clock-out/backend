@@ -14,7 +14,7 @@ public class Goal extends BaseTime {
     @Column(name = "daily_id")
     private Long id;
 
-    private String todo;
+    private String name;
 
 }
 

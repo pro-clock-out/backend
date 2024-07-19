@@ -18,7 +18,7 @@ public class MemberController {
     private final MemberService memberService;
 
 
-    @GetMapping("members/me/dday")
+    @GetMapping("/members/me/dday")
     public ResponseEntity<ResponseDto> getDDay(Authentication authentication) {
         log.info("Request to get my d-day");
         Long memberId = (Long) authentication.getPrincipal();

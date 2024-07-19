@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -31,6 +32,11 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
 
     @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public JwtTokenFilter jwtTokenFilter() {
         return new JwtTokenFilter(jwtTokenProvider, memberRepository);
     }
@@ -46,34 +52,41 @@ public class SecurityConfig {
                 //.headers(c -> c.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable).disable()) // h2
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         // authentication 관련 설정
-        http.authorizeHttpRequests((request) -> {
-            // ALL 인증
-            request.requestMatchers("/api/v1/auth/**").authenticated();
-            request.requestMatchers("/api/v1/members/**").authenticated();
-            // GET 인증
-            request.requestMatchers(HttpMethod.GET,
-                    "/api/v1/**"
-            ).authenticated();
-            // POST 인증
-            request.requestMatchers(HttpMethod.POST,
-                    "/api/v1/**"
-            ).authenticated();
-            // PUT 인증
-            request.requestMatchers(HttpMethod.PUT,
-                    "/api/v1/**"
-            ).authenticated();
-            // PATCH 인증
-            request.requestMatchers(HttpMethod.PATCH,
-                    "/api/v1/**"
-            ).authenticated();
-            // DELETE 인증
-            request.requestMatchers(HttpMethod.DELETE,
-                    "/api/v1/**"
-            ).authenticated();
-            request.anyRequest().permitAll();
-        });
-        http.addFilterBefore(jwtAuthenticationFilter(), LogoutFilter.class);
-        http.addFilterBefore(jwtAuthenticationExceptionHandlerFilter(), JwtTokenFilter.class);
+        http.authorizeHttpRequests((request) -> request
+                        .requestMatchers("/", "/auth/login", "/loginProc", "/api/v1/auth/join", "/api/v1/joinProc").permitAll()
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
+                        .anyRequest().authenticated()
+
+//        {
+//            // ALL 인증
+//            request.requestMatchers("/api/v1/auth/**").authenticated();
+//            request.requestMatchers("/api/v1/members/**").authenticated();
+//            // GET 인증
+//            request.requestMatchers(HttpMethod.GET,
+//                    "/api/v1/**"
+//            ).authenticated();
+//            // POST 인증
+//            request.requestMatchers(HttpMethod.POST,
+//                    "/api/v1/**"
+//            ).authenticated();
+//            // PUT 인증
+//            request.requestMatchers(HttpMethod.PUT,
+//                    "/api/v1/**"
+//            ).authenticated();
+//            // PATCH 인증
+//            request.requestMatchers(HttpMethod.PATCH,
+//                    "/api/v1/**"
+//            ).authenticated();
+//            // DELETE 인증
+//            request.requestMatchers(HttpMethod.DELETE,
+//                    "/api/v1/**"
+//            ).authenticated();
+//            request.anyRequest().permitAll();
+//        });
+        );
+//        http.addFilterBefore(jwtAuthenticationFilter(), LogoutFilter.class);
+//        http.addFilterBefore(jwtAuthenticationExceptionHandlerFilter(), JwtTokenFilter.class);
         return http.build();
     }
 
@@ -93,19 +106,19 @@ public class SecurityConfig {
         return source;
     }
 
-    @Bean
-    public JwtTokenFilter jwtAuthenticationFilter(){
-        return new JwtTokenFilter(jwtTokenProvider, memberRepository);
-    }
-
-    @Bean
-    public JwtAuthenticationExceptionHandler jwtAuthenticationExceptionHandlerFilter(){
-        return new JwtAuthenticationExceptionHandler(objectMapper);
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() throws Exception{
-        return (web) -> web.ignoring()
-                .requestMatchers("/error");
-    }
+//    @Bean
+//    public JwtTokenFilter jwtAuthenticationFilter(){
+//        return new JwtTokenFilter(jwtTokenProvider, memberRepository);
+//    }
+//
+//    @Bean
+//    public JwtAuthenticationExceptionHandler jwtAuthenticationExceptionHandlerFilter(){
+//        return new JwtAuthenticationExceptionHandler(objectMapper);
+//    }
+//
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() throws Exception{
+//        return (web) -> web.ignoring()
+//                .requestMatchers("/error");
+//    }
 }

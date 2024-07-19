@@ -31,5 +31,4 @@ public class Calendar extends BaseTime {
     @ManyToOne
     @JoinColumn(name="member_id")
     private Member member;
-
 }
