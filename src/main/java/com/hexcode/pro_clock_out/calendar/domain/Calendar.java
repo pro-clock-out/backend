@@ -1,6 +1,7 @@
 package com.hexcode.pro_clock_out.calendar.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hexcode.pro_clock_out.calendar.dto.UpdateCalendarData;
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,4 +32,13 @@ public class Calendar extends BaseTime {
     @ManyToOne
     @JoinColumn(name="member_id")
     private Member member;
+
+    public void updateCalendar(UpdateCalendarData data) {
+        this.label = data.getLabel();
+        this.title = data.getTitle();
+        this.startTime = data.getStartTime();
+        this.endTime =  data.getEndTime();
+        this.location = data.getLocation();
+        this.notes = data.getNotes();
+    }
 }
