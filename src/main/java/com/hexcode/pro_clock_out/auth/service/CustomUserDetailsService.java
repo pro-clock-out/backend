@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(MemberNotFoundException::new);
 
         if (userData != null) {
-
+            //UserDetails에 담아서 return하면 AutneticationManager가 검증 함
             return new CustomUserDetails(userData);
         }
 

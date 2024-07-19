@@ -18,15 +18,15 @@ public class Member extends BaseTime {
     @Column(name = "member_id")
     private Long id;
 
+    @NotEmpty
     @Column(unique = true, nullable = false)
     private String email;
 
     private String password;
 
+    @NotEmpty
     private String role;
 
-    @NotEmpty
-    @Column(unique = true, nullable = false)
     private String nickname;
 
     private String photoUrl;

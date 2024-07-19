@@ -16,8 +16,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class AuthController {
-    @PostMapping("/auth/login")
-    public ResponseEntity<ResponseDto> login(@PathVariable LoginRequest request) {
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }
