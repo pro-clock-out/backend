@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -16,21 +18,29 @@ public class Member extends BaseTime {
     @Column(name = "member_id")
     private Long id;
 
+    @NotEmpty
     @Column(unique = true, nullable = false)
     private String email;
 
     private String password;
 
     @NotEmpty
-    @Column(unique = true, nullable = false)
+    private String role;
+
     private String nickname;
 
     private String photoUrl;
 
-    @Column(length = 20)
-    private String life;
+    @ElementCollection(targetClass = LifeStyle.class)
+    @CollectionTable(name = "member_life_styles", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "life_style")
+    @Enumerated(EnumType.STRING)
+    private List<LifeStyle> life;
 
     public void updateProfile(UpdateProfileData data) {
+        if (data.getLife().size() > 5) {
+            throw new IllegalArgumentException("최대 5개의 라이프스타일만 설정할 수 있습니다.");
+        }
         this.nickname = data.getNickname();
         this.photoUrl = data.getPhotoUrl();
         this.life = data.getLife();

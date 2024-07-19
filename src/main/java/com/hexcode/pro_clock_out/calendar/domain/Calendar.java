@@ -41,5 +41,4 @@ public class Calendar extends BaseTime {
         this.location = data.getLocation();
         this.notes = data.getNotes();
     }
-
 }

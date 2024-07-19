@@ -19,7 +19,6 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final WolibalRepository wolibalRepository;
 
     public Member findMemberById(final Long memberId) {
         return memberRepository.findById(memberId)
