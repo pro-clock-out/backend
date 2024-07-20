@@ -1,5 +1,6 @@
 package com.hexcode.pro_clock_out.global.config;
 
+import com.hexcode.pro_clock_out.auth.jwt.JwtFilter;
 import com.hexcode.pro_clock_out.auth.jwt.JwtUtil;
 import com.hexcode.pro_clock_out.auth.jwt.LoginFilter;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
@@ -39,11 +40,6 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-//    @Bean
-//    public JwtTokenFilter jwtTokenFilter() {
-//        return new JwtTokenFilter(jwtTokenProvider, memberRepository);
-//    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // security 기본 설정
@@ -53,23 +49,23 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer ->
                         httpSecurityCorsConfigurer.configurationSource(corsFilter()));
-                //.headers(c -> c.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable).disable()) // h2
         // authentication 관련 설정
         http.authorizeHttpRequests((request) -> request
-                        .requestMatchers("/", "/api/v1/join", "/login").permitAll()
-//                        .requestMatchers("/admin").hasRole("ADMIN")
-//                        .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/api/v1/members/me/dday").authenticated()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/v1/join", "/login").permitAll()
+                        .requestMatchers(
+                                "/api/v1/members/me/**",
+                                "/api/v1/calendars/**",
+                                "/api/v1/daily/**"
+                        ).authenticated()
+                        .anyRequest().permitAll()
         );
         http
+                .addFilterBefore(new JwtFilter(jwtUtil, memberRepository), LoginFilter.class);
+        http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//        http.addFilterBefore(jwtAuthenticationFilter(), LogoutFilter.class);
-//        http.addFilterBefore(jwtAuthenticationExceptionHandlerFilter(), JwtTokenFilter.class);
         return http.build();
     }
 
@@ -88,20 +84,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
-//    @Bean
-//    public JwtTokenFilter jwtAuthenticationFilter(){
-//        return new JwtTokenFilter(jwtTokenProvider, memberRepository);
-//    }
-//
-//    @Bean
-//    public JwtAuthenticationExceptionHandler jwtAuthenticationExceptionHandlerFilter(){
-//        return new JwtAuthenticationExceptionHandler(objectMapper);
-//    }
-//
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() throws Exception{
-//        return (web) -> web.ignoring()
-//                .requestMatchers("/error");
-//    }
 }

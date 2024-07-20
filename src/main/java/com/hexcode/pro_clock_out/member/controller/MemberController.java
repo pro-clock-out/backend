@@ -1,5 +1,6 @@
 package com.hexcode.pro_clock_out.member.controller;
 
+import com.hexcode.pro_clock_out.auth.dto.CustomUserDetails;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import com.hexcode.pro_clock_out.member.dto.*;
 import com.hexcode.pro_clock_out.member.service.MemberService;
@@ -21,7 +22,7 @@ public class MemberController {
     @GetMapping("/members/me/dday")
     public ResponseEntity<ResponseDto> getDDay(Authentication authentication) {
         log.info("Request to get my d-day");
-        Long memberId = (Long) authentication.getPrincipal();
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         FindMyDDayResponse response = memberService.findMyDDay(memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -36,9 +37,8 @@ public class MemberController {
     @PutMapping("/members/me/profile")
     public ResponseEntity<ResponseDto> putProfile(Authentication authentication, @RequestBody UpdateProfileRequest request) {
         log.info("Request to put profile");
-        Long memberId = (Long) authentication.getPrincipal();
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         UpdateProfileResponse response = memberService.updateProfile(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 }

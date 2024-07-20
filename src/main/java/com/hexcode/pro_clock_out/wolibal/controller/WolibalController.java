@@ -1,5 +1,6 @@
 package com.hexcode.pro_clock_out.wolibal.controller;
 
+import com.hexcode.pro_clock_out.auth.dto.CustomUserDetails;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import com.hexcode.pro_clock_out.wolibal.dto.FindLabelsWolibalResponse;
 import com.hexcode.pro_clock_out.wolibal.dto.FindTotalWolibalResponse;
@@ -24,7 +25,7 @@ public class WolibalController {
     @GetMapping("members/me/wolibals/total")
     public ResponseEntity<ResponseDto> getTotalWolibal(Authentication authentication, @RequestParam("option") String option) {
         log.info("Request to get total wolibal");
-        Long memberId = (Long) authentication.getPrincipal();
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         FindTotalWolibalResponse response = wolibalService.findTotalWolibal(memberId, option);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -32,7 +33,7 @@ public class WolibalController {
     @GetMapping("/members/me/wolibals/label")
     public ResponseEntity<ResponseDto> getLabelsWolibal(Authentication authentication, @RequestParam("option") String option) {
         log.info("Request to get labels wolibal");
-        Long memberId = (Long) authentication.getPrincipal();
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         FindLabelsWolibalResponse response = wolibalService.findLabelsWolibal(memberId, option);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

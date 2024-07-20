@@ -2,6 +2,7 @@ package com.hexcode.pro_clock_out.auth.jwt;
 
 import com.hexcode.pro_clock_out.auth.dto.CustomUserDetails;
 import com.hexcode.pro_clock_out.member.domain.Member;
+import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,9 +20,14 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.equals("/login") || path.equals("/") || path.equals("/join");
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -49,13 +55,16 @@ public class JwtFilter extends OncePerRequestFilter {
         String email = jwtUtil.getEmail(token);
         String role = jwtUtil.getRole(token);
 
+//        //member를 생성하여 값 set
+//        Member member = Member.builder()
+//                .email(email)
+////                .password("temppassword")
+//                .role(role)
+//                .build();
+//        memberRepository.save(member);
         //member를 생성하여 값 set
-        Member member = Member.builder()
-                .email(email)
-//                .password("temppassword")
-                .role(role)
-                .build();
-        memberRepository.save(member);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
 
         //UserDetails에 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
