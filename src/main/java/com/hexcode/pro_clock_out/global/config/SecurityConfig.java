@@ -52,7 +52,7 @@ public class SecurityConfig {
                         httpSecurityCorsConfigurer.configurationSource(corsFilter()));
         // authentication 관련 설정
         http.authorizeHttpRequests((request) -> request
-                        .requestMatchers("/api/v1/", "/api/v1/join", "/login", "/api/v1/signup").permitAll()
+                        .requestMatchers("/api/v1/", "/api/v1/signup", "/login").permitAll()
                         .requestMatchers(
                                 "/api/v1/members/me/**",
                                 "/api/v1/calendars/**",
