@@ -1,5 +1,6 @@
 package com.hexcode.pro_clock_out.calendar.controller;
 
+import com.hexcode.pro_clock_out.auth.dto.CustomUserDetails;
 import com.hexcode.pro_clock_out.calendar.dto.FindCalendarDetailResponse;
 import com.hexcode.pro_clock_out.calendar.dto.FindWeeklyCalendarResponse;
 import com.hexcode.pro_clock_out.calendar.dto.UpdateCalendarRequest;
@@ -35,7 +36,6 @@ public class CalendarController {
         log.info("Request to get Calendar Event Details");
         FindCalendarDetailResponse response = calendarService.findCalendarDetail(calendarId);
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 
     @PostMapping("calendars/{calendarId}")
