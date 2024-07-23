@@ -29,6 +29,7 @@ public class Member extends BaseTime {
 
     private String nickname;
 
+    @Column(length = 1000)
     private String photoUrl;
 
     @ElementCollection(targetClass = LifeStyle.class)

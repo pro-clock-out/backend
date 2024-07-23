@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -51,7 +52,7 @@ public class SecurityConfig {
                         httpSecurityCorsConfigurer.configurationSource(corsFilter()));
         // authentication 관련 설정
         http.authorizeHttpRequests((request) -> request
-                        .requestMatchers("/api/v1/join", "/login").permitAll()
+                        .requestMatchers("/api/v1/", "/api/v1/join", "/login", "/api/v1/signup").permitAll()
                         .requestMatchers(
                                 "/api/v1/members/me/**",
                                 "/api/v1/calendars/**",
@@ -78,8 +79,10 @@ public class SecurityConfig {
         config.setAllowedOriginPatterns(List.of("http://127.0.0.1:3000", "http://localhost:3000"));
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
-        config.addExposedHeader("Set-Cookie");
+//        config.addExposedHeader("Set-Cookie");
         config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
+        config.setExposedHeaders(Collections.singletonList("Authorization"));
         // source -> config 적용
         source.registerCorsConfiguration("/**", config);
         return source;

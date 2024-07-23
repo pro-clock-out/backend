@@ -1,5 +1,7 @@
 package com.hexcode.pro_clock_out.member.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.hexcode.pro_clock_out.member.domain.LifeStyle;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import java.util.List;
 @Getter
 @ToString
 @NoArgsConstructor
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UpdateProfileRequest {
     private String nickname;
 
