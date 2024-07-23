@@ -51,21 +51,10 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        //토큰에서 email role 획득
+        //토큰에서 email 획득
         String email = jwtUtil.getEmail(token);
-        String role = jwtUtil.getRole(token);
-
-//        //member를 생성하여 값 set
-//        Member member = Member.builder()
-//                .email(email)
-////                .password("temppassword")
-//                .role(role)
-//                .build();
-//        memberRepository.save(member);
-        //member를 생성하여 값 set
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
-
         //UserDetails에 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
 
