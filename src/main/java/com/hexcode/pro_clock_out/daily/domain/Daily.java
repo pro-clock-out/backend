@@ -17,7 +17,7 @@ public class Daily extends BaseTime {
     @Column(name = "daily_id")
     private Long id;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Satisfaction satisfaction;
 
     private String content;
