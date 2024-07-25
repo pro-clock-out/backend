@@ -1,6 +1,8 @@
 package com.hexcode.pro_clock_out.daily.domain;
 
+import com.hexcode.pro_clock_out.calendar.domain.Label;
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
+import com.hexcode.pro_clock_out.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +19,12 @@ public class Goal extends BaseTime {
 
     private String name;
 
-    private Color color;
+    @Enumerated(EnumType.STRING)
+    private Label color;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
 }
 

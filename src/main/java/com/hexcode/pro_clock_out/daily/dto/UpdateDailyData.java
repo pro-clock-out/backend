@@ -14,14 +14,14 @@ public class UpdateDailyData {
     private Satisfaction satisfaction;
     private String content;
     private String imageUrl;
-    private List<DailyGoal> completedGoals;
+    private List<Goal> completedGoal;
 
     public static UpdateDailyData createWith(UpdateDailyRequest request) {
         return UpdateDailyData.builder()
                 .satisfaction(request.getSatisfaction())
                 .content(request.getContent())
                 .imageUrl(request.getImageUrl())
-                .completedGoals(request.getCompletedGoals())
+                .completedGoal(request.getCompletedGoal())
                 .build();
     }
 

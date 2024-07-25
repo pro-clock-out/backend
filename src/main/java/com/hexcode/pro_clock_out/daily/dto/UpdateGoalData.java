@@ -1,18 +1,15 @@
 package com.hexcode.pro_clock_out.daily.dto;
 
-import com.hexcode.pro_clock_out.daily.domain.Color;
-import com.hexcode.pro_clock_out.daily.domain.Goal;
+import com.hexcode.pro_clock_out.calendar.domain.Label;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @Builder
 public class UpdateGoalData {
     private Long goalId;
     private String name;
-    private Color color;
+    private Label color;
 
     public static UpdateGoalData createWith(UpdateGoalRequest request) {
         return UpdateGoalData.builder()

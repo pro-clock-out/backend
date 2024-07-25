@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -16,13 +17,13 @@ import java.util.List;
 @JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class FindTotalDailyResponse implements ResponseDto {
     private Long daily_id;
-    private LocalDate date;
+    private Date date;
     private Satisfaction satisfaction;
 
-    public static FindTotalDailyResponse createWith(Daily daily, LocalDate date) {
+    public static FindTotalDailyResponse createWith(Daily daily) {
         return FindTotalDailyResponse.builder()
                 .daily_id(daily.getId())
-                .date(date)
+                .date(daily.getDate())
                 .satisfaction(daily.getSatisfaction())
                 .build();
     }

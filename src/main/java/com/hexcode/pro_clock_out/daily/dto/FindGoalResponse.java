@@ -2,13 +2,11 @@ package com.hexcode.pro_clock_out.daily.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.hexcode.pro_clock_out.daily.domain.Color;
+import com.hexcode.pro_clock_out.calendar.domain.Label;
 import com.hexcode.pro_clock_out.daily.domain.Goal;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @Builder
@@ -16,12 +14,12 @@ import java.util.List;
 public class FindGoalResponse implements ResponseDto {
     private Long goalId;
     private String name;
-    private Color color;
+    private Label color;
 
     public static FindGoalResponse createWith(Goal goal) {
         return FindGoalResponse.builder()
                 .goalId(goal.getId())
-                .name(goal.getTodo())
+                .name(goal.getName())
                 .color(goal.getColor())
                 .build();
     }

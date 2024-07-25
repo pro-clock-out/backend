@@ -15,6 +15,5 @@ import java.util.Optional;
 
 public interface DailyRepository extends JpaRepository<Daily, Long> {
     Optional<Daily> findDailyByMember(Member member);
-    Optional<Goal> findGoalByMember(Member member);
 
 }
