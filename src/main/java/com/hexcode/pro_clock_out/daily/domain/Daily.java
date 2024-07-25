@@ -4,8 +4,6 @@ import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter @Builder
