@@ -8,16 +8,16 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Satisfaction {
-    VERY_BAD(1),
-    BAD(2),
-    NORMAL (3),
-    GOOD(4),
-    VERY_GOOD(5);
+    VERY_BAD("매우 불만족"),
+    BAD("불만족"),
+    NORMAL ("보통"),
+    GOOD("만족"),
+    VERY_GOOD("매우 만족");
 
-    private final int value;
+    private final String value;
 
     @JsonCreator
-    public static Satisfaction deserializer(int value) {
+    public static Satisfaction deserializer(String value) {
         for (Satisfaction satisfaction : Satisfaction.values()) {
             if (satisfaction.getValue().equals(value)) {
                 return satisfaction;
@@ -27,7 +27,7 @@ public enum Satisfaction {
     }
 
     @JsonValue
-    public int serializer() {
+    public String serializer() {
         return value;
     }
 }

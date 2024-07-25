@@ -4,6 +4,7 @@ import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 @Entity
 @Getter @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -11,10 +12,12 @@ import lombok.*;
 public class Goal extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "daily_id")
+    @Column(name = "goal_id")
     private Long id;
 
     private String todo;
+
+    private Color color;
 
 }
 
