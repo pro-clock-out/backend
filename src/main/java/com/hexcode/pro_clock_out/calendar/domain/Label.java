@@ -8,13 +8,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Label {
-    WORK("작업"),
-    REST("휴식"),
-    SLEEP("수면"),
-    PERSONAL("개인생활"),
-    HEALTH("건강");
+    WORK("작업","#7AA2E3"),
+    REST("휴식","#7A7EE3"),
+    SLEEP("수면","#6AD4DD"),
+    PERSONAL("개인생활","#97E7E1"),
+    HEALTH("건강","#F8F6E3");
 
     private final String value;
+    private final String color;
 
     @JsonCreator
     public static Label deserializer(String value){
