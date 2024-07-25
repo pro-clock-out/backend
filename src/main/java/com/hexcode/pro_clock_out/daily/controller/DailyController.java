@@ -29,8 +29,8 @@ public class DailyController {
     }
     // 연간 발자국 조회
     @GetMapping("/daily")
-    public ResponseEntity<ResponseDto> getTotalDailyFootprints(Authentication authentication) {
-        log.info("Request to get Total Daily Footprints");
+    public ResponseEntity<ResponseDto> getTotalDailyFootprints(Authentication authentication, @RequestParam("year") int year) {
+        log.info("Request to get Total Daily Footprints for year {}", year);
         Long memberId = (Long) authentication.getPrincipal();
         FindTotalDailyResponse response = dailyService.findTotalDaily(memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
