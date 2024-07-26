@@ -4,7 +4,6 @@ import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
 
 @Entity
 @Getter @Builder
