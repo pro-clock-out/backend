@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum LifeStyle {
+public enum Lifestyle {
     RICH("부유한 삶"),
     COMFORT("편안한 삶"),
     HARMONIOUS("화목한 삶"),
@@ -22,8 +22,8 @@ public enum LifeStyle {
     private final String value;
 
     @JsonCreator
-    public static LifeStyle deserializer(String value) {
-        for(LifeStyle lifeStyle : LifeStyle.values()){
+    public static Lifestyle deserializer(String value) {
+        for(Lifestyle lifeStyle : Lifestyle.values()){
             if(lifeStyle.getValue().equals(value)) {
                 return lifeStyle;
             }

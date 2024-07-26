@@ -3,7 +3,7 @@ package com.hexcode.pro_clock_out.member.dto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
-import com.hexcode.pro_clock_out.member.domain.LifeStyle;
+import com.hexcode.pro_clock_out.member.domain.Lifestyle;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +18,7 @@ public class FindProfileResponse implements ResponseDto {
     private String email;
     private String nickname;
     private String photoUrl;
-    private List<LifeStyle> life;
+    private List<Lifestyle> life;
 
     public static FindProfileResponse createWith(Member member) {
         return FindProfileResponse.builder()
