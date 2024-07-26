@@ -10,16 +10,12 @@ import com.hexcode.pro_clock_out.daily.repository.DailyGoalRepository;
 import com.hexcode.pro_clock_out.daily.repository.DailyRepository;
 import com.hexcode.pro_clock_out.daily.repository.GoalRepository;
 import com.hexcode.pro_clock_out.member.domain.Member;
-import com.hexcode.pro_clock_out.member.dto.UpdateProfileData;
-import com.hexcode.pro_clock_out.member.dto.UpdateProfileRequest;
-import com.hexcode.pro_clock_out.member.dto.UpdateProfileResponse;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
