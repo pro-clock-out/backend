@@ -1,13 +1,11 @@
 package com.hexcode.pro_clock_out.daily.domain;
 
-import com.hexcode.pro_clock_out.calendar.dto.UpdateCalendarData;
 import com.hexcode.pro_clock_out.daily.dto.UpdateDailyData;
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 @Entity

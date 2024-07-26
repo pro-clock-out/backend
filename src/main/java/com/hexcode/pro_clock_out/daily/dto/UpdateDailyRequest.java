@@ -7,8 +7,6 @@ import com.hexcode.pro_clock_out.daily.domain.Goal;
 import com.hexcode.pro_clock_out.daily.domain.Satisfaction;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.Date;
 import java.util.List;
 
 @Getter
