@@ -2,6 +2,8 @@ package com.hexcode.pro_clock_out.wolibal.domain;
 
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Entity
@@ -15,7 +17,17 @@ public class Personal extends BaseTime {
     @Column(name = "personal_id")
     private Long id;
 
+    @Min(0) @Max(100)
     private int score;
+
+    @Min(1) @Max(9)
+    private int satisfaction;
+
+    @Min(1) @Max(9)
+    private int togetherTime;
+
+    @Min(1) @Max(9)
+    private int hobbyTime;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wolibal_id", nullable = false)
