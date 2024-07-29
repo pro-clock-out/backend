@@ -22,16 +22,6 @@ public class CalendarController {
 
     private final CalendarService calendarService;
 
-    @GetMapping("/calendars/{memberId}")
-    public ResponseEntity<?> getAllCalendarEvents(Authentication authentication, @RequestParam("memberId") Long memberId) {
-        try {
-            List<CalendarEventResponse> calendars = calendarService.getAllCalendarEvents(memberId);
-            return ResponseEntity.ok(calendars);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
     @GetMapping("/calendars/{calendarId}")
     public ResponseEntity<ResponseDto> getCalendarEventDetails(Authentication authentication, @PathVariable("calendarId") Long calendarId) {
         log.info("Request to get Calendar Event Details");
@@ -68,6 +58,14 @@ public class CalendarController {
         }
     }
 
-
+    @GetMapping("/calendars/{memberId}")
+    public ResponseEntity<?> getAllCalendarEvents(Authentication authentication, @RequestParam("memberId") Long memberId) {
+        try {
+            List<CalendarEventResponse> calendars = calendarService.getAllCalendarEvents(memberId);
+            return ResponseEntity.ok(calendars);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 
 }
