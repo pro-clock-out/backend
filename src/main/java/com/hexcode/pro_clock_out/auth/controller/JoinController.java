@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class JoinController {
     private final JoinService joinService;
 
-    @GetMapping("/")
+    @GetMapping("/hello")
     public String hello() {
         log.info("Hello World~~~!!!");
         return "Hello";
