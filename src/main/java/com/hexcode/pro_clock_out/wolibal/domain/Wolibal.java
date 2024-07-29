@@ -5,6 +5,8 @@ import com.hexcode.pro_clock_out.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Entity
 @Getter @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -15,17 +17,15 @@ public class Wolibal extends BaseTime {
     @Column(name = "wolibal_id")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private Prefix prefix;
+    private int totalScore;
 
-    private int total;
-    private int work;
-    private int rest;
-    private int sleep;
-    private int personal;
-    private int health;
+    private Date date;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    private void updateScore(int score) {
+        this.totalScore = score;
+    }
 }

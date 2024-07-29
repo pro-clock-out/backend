@@ -20,21 +20,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class WolibalController {
-    private final WolibalService wolibalService;
+//    private final WolibalService wolibalService;
 
-    @GetMapping("members/me/wolibals/total")
-    public ResponseEntity<ResponseDto> getTotalWolibal(Authentication authentication, @RequestParam("option") String option) {
-        log.info("Request to get total wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindTotalWolibalResponse response = wolibalService.findTotalWolibal(memberId, option);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/members/me/wolibals/label")
-    public ResponseEntity<ResponseDto> getLabelsWolibal(Authentication authentication, @RequestParam("option") String option) {
-        log.info("Request to get labels wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindLabelsWolibalResponse response = wolibalService.findLabelsWolibal(memberId, option);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+//    @GetMapping("members/me/wolibals/total")
+//    public ResponseEntity<ResponseDto> getTotalWolibal(Authentication authentication, @RequestParam("option") String option) {
+//        log.info("Request to get total wolibal");
+//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+//        FindTotalWolibalResponse response = wolibalService.findTotalWolibal(memberId, option);
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+//
+//    @GetMapping("/members/me/wolibals/label")
+//    public ResponseEntity<ResponseDto> getLabelsWolibal(Authentication authentication, @RequestParam("option") String option) {
+//        log.info("Request to get labels wolibal");
+//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+//        FindLabelsWolibalResponse response = wolibalService.findLabelsWolibal(memberId, option);
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 }

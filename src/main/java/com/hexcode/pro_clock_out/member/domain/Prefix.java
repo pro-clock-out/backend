@@ -1,4 +1,4 @@
-package com.hexcode.pro_clock_out.wolibal.domain;
+package com.hexcode.pro_clock_out.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -8,11 +8,15 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Prefix {
-    VERY_GOOD("최고의 워라밸을 가진"),
-    GOOD("균형이 좋은"),
-    NORMAL("보통인"),
-    BAD("개선이 필요한"),
-    VERY_BAD("균형이 심각한");
+    NORMAL("일반인"),
+    BEST("최고의 워라밸을 가진"),
+    VALANCED("균형 잡힌 삶을 사는"),
+    AVERAGE("대한민국 평균"),
+    SLEEPER("잠꾸러기 미녀"),
+    OVER_REST("과다 휴식"),
+    IMPOVERISHED("피폐한 삶을 사는"),
+    DILIGENT("부지런한 개미"),
+    HEALTHY("튼튼한");
 
     private final String value;
 

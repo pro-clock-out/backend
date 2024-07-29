@@ -32,10 +32,18 @@ public class Member extends BaseTime {
     private String photoUrl;
 
     @ElementCollection(targetClass = Lifestyle.class)
-    @CollectionTable(name = "member_life_styles", joinColumns = @JoinColumn(name = "member_id"))
-    @Column(name = "life_style")
+    @CollectionTable(name = "member_lifestyles", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "lifestyle")
     @Enumerated(EnumType.STRING)
     private List<Lifestyle> life;
+
+    @Enumerated(EnumType.STRING)
+    private Prefix prefix;
+
+    @PrePersist
+    protected void onCreate() {
+        this.prefix = Prefix.NORMAL;
+    }
 
     public void updatePhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
@@ -47,5 +55,9 @@ public class Member extends BaseTime {
 
     public void updateLife(List<Lifestyle> life) {
         this.life = life;
+    }
+
+    public void updatePrefix(Prefix prefix) {
+        this.prefix = prefix;
     }
 }
