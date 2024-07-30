@@ -38,3 +38,6 @@ out/
 
 ### Project ###
 **/application.yaml
+
+# macOS system files
+*.DS_Store
