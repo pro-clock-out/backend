@@ -1,5 +1,6 @@
 package com.hexcode.pro_clock_out.wolibal.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -24,15 +25,26 @@ public class Health extends BaseTime {
     private int satisfaction;
 
     @Min(0) @Max(7)
-    private int weekExerciseDays;
+    private int cardioFrequency;
 
     @Min(0) @Max(24)
-    private double dayExerciseHours;
+    private double cardioTime;
+
+    @Min(0) @Max(7)
+    private int strengthFrequency;
+
+    @Min(0) @Max(24)
+    private double strengthTime;
 
     @Min(1) @Max(9)
-    private int diet;
+    private int dietQuality;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wolibal_id", nullable = false)
+    @JsonBackReference
+    @JoinColumn(name = "wolibal_id")
     private Wolibal wolibal;
+
+    public void updateScore(int score) {
+        this.score = score;
+    }
 }

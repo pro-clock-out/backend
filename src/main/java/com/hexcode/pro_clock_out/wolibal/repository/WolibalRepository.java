@@ -7,10 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
+import java.util.Date;
 import java.util.Optional;
 
 public interface WolibalRepository extends JpaRepository<Wolibal, Long> {
-//    Optional<Wolibal> findByMember(Member member);
+    Optional<Wolibal> findByMember(Member member);
+
+    Optional<Wolibal> findByDateAndMember(Date date, Member member);
+
 //
 //    @Query("SELECT COUNT(w) FROM Wolibal w WHERE w.total > :total")
 //    long countByTotalHigherThan(@Param("total") int total);

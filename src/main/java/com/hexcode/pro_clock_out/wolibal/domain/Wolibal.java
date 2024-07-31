@@ -1,5 +1,6 @@
 package com.hexcode.pro_clock_out.wolibal.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import jakarta.persistence.*;
@@ -28,7 +29,27 @@ public class Wolibal extends BaseTime {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    private void updateScore(int score) {
+    @OneToOne(mappedBy = "wolibal", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonManagedReference
+    private Work work;
+
+    @OneToOne(mappedBy = "wolibal", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonManagedReference
+    private Rest rest;
+
+    @OneToOne(mappedBy = "wolibal", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonManagedReference
+    private Sleep sleep;
+
+    @OneToOne(mappedBy = "wolibal", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonManagedReference
+    private Personal personal;
+
+    @OneToOne(mappedBy = "wolibal", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonManagedReference
+    private Health health;
+
+    public void updateScore(int score) {
         this.score = score;
     }
 }

@@ -1,5 +1,6 @@
 package com.hexcode.pro_clock_out.wolibal.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -33,6 +34,11 @@ public class Work extends BaseTime {
     private int workStress;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wolibal_id", nullable = false)
+    @JsonBackReference
+    @JoinColumn(name = "wolibal_id")
     private Wolibal wolibal;
+
+    public void updateScore(int score) {
+        this.score = score;
+    }
 }
