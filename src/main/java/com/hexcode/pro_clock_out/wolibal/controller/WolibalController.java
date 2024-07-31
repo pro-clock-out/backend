@@ -2,10 +2,7 @@ package com.hexcode.pro_clock_out.wolibal.controller;
 
 import com.hexcode.pro_clock_out.auth.dto.CustomUserDetails;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
-import com.hexcode.pro_clock_out.wolibal.dto.CreateWolibalResponse;
-import com.hexcode.pro_clock_out.wolibal.dto.CreateWorkRequest;
-import com.hexcode.pro_clock_out.wolibal.dto.FindLabelsWolibalResponse;
-import com.hexcode.pro_clock_out.wolibal.dto.FindTotalWolibalResponse;
+import com.hexcode.pro_clock_out.wolibal.dto.*;
 import com.hexcode.pro_clock_out.wolibal.service.WolibalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +39,38 @@ public class WolibalController {
         log.info("Request to post work wolibal");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         CreateWolibalResponse response = wolibalService.createWork(memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/members/me/wolibals/rest")
+    public ResponseEntity<ResponseDto> postRest(Authentication authentication, @RequestBody CreateRestRequest request) {
+        log.info("Request to post rest wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        CreateWolibalResponse response = wolibalService.createRest(memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/members/me/wolibals/sleep")
+    public ResponseEntity<ResponseDto> postSleep(Authentication authentication, @RequestBody CreateSleepRequest request) {
+        log.info("Request to post sleep wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        CreateWolibalResponse response = wolibalService.createSleep(memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/members/me/wolibals/personal")
+    public ResponseEntity<ResponseDto> postPersonal(Authentication authentication, @RequestBody CreatePersonalRequest request) {
+        log.info("Request to post personal wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        CreateWolibalResponse response = wolibalService.createPersonal(memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/members/me/wolibals/heath")
+    public ResponseEntity<ResponseDto> postHealth(Authentication authentication, @RequestBody CreateHealthRequest request) {
+        log.info("Request to post heath wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        CreateWolibalResponse response = wolibalService.createHealth(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

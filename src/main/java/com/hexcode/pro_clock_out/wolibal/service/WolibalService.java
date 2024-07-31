@@ -6,11 +6,13 @@ import com.hexcode.pro_clock_out.wolibal.domain.*;
 import com.hexcode.pro_clock_out.wolibal.dto.*;
 import com.hexcode.pro_clock_out.wolibal.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -173,7 +175,10 @@ public class WolibalService {
         double score2 = calculateWorkScore2(work.getWeekWorkingDays());
         double score3 = calculateWorkScore3(work.getWorkStress());
         double basicScore = score1 * (0.35) + score2 * (0.2) + score3 * (0.45);
-        return applySatisfaction(basicScore, work.getSatisfaction());
+        log.info("work basic score: {}", basicScore);
+        int result = applySatisfaction(basicScore, work.getSatisfaction());
+        log.info("work result score: {}", result);
+        return result;
     }
 
     private static double calculateWorkScore1(double hours) {
@@ -385,12 +390,13 @@ public class WolibalService {
         return (double) (dietQuality - 1) / 8 * 100;
     }
 
-
     /**
      * 만족도 점수 적용 ///////////////////////////////////////////////////
      */
     private static int applySatisfaction(double basicScore, int satisfaction) {
-        int score = (int) basicScore * (1 + (satisfaction - 5) / 20);
+        log.info("percent: {}", ((satisfaction - 5) / 100.0) * basicScore);
+        int score = (int) (basicScore * (1 + ((satisfaction - 5) / 100.0)));
+        log.info("apply satisfaction: {} to {}", basicScore, score);
         return Math.max(0, Math.min(100, score));
     }
 }
