@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import com.hexcode.pro_clock_out.member.domain.Lifestyle;
 import com.hexcode.pro_clock_out.member.domain.Member;
-import com.hexcode.pro_clock_out.member.domain.Prefix;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,7 +19,6 @@ public class FindProfileResponse implements ResponseDto {
     private String nickname;
     private String photoUrl;
     private List<Lifestyle> life;
-    private Prefix prefix;
 
     public static FindProfileResponse createWith(Member member) {
         return FindProfileResponse.builder()
@@ -29,7 +27,6 @@ public class FindProfileResponse implements ResponseDto {
                 .nickname(member.getNickname())
                 .photoUrl(member.getPhotoUrl())
                 .life(member.getLife())
-                .prefix(member.getPrefix())
                 .build();
     }
 }
