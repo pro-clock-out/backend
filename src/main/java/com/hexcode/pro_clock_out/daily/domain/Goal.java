@@ -26,4 +26,3 @@ public class Goal extends BaseTime {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 }
-

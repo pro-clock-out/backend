@@ -34,11 +34,27 @@ public class MemberController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/members/me/profile")
-    public ResponseEntity<ResponseDto> putProfile(Authentication authentication, @RequestBody UpdateProfileRequest request) {
-        log.info("Request to put profile");
+    @PutMapping("/members/me/profile/image")
+    public ResponseEntity<ResponseDto> putProfileImage(Authentication authentication, @RequestBody UpdateProfileImageRequest request) {
+        log.info("Request to put profile imgae");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        UpdateProfileResponse response = memberService.updateProfile(memberId, request);
+        UpdateProfileResponse response = memberService.updateProfileImage(memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/members/me/profile/nickname")
+    public ResponseEntity<ResponseDto> putProfileNickname(Authentication authentication, @RequestBody UpdateNicknameRequest request) {
+        log.info("Request to put profile image");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateProfileResponse response = memberService.updateNickname(memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/members/me/profile/lifestyle")
+    public ResponseEntity<ResponseDto> putProfileLifestyle(Authentication authentication, @RequestBody UpdateLifestyleRequest request) {
+        log.info("Request to put profile lifestyle");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateProfileResponse response = memberService.updateLifestyle(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

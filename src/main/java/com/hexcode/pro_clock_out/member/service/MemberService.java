@@ -3,10 +3,7 @@ package com.hexcode.pro_clock_out.member.service;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.dto.*;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
-import com.hexcode.pro_clock_out.member.exception.WolibalNotFoundException;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
-import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
-import com.hexcode.pro_clock_out.wolibal.repository.WolibalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,10 +37,23 @@ public class MemberService {
         return FindProfileResponse.createWith(member);
     }
 
-    public UpdateProfileResponse updateProfile(Long memberId, UpdateProfileRequest request) {
+    public UpdateProfileResponse updateProfileImage(Long memberId, UpdateProfileImageRequest request) {
         Member member = findMemberById(memberId);
-        UpdateProfileData updateProfileData = UpdateProfileData.createWith(request);
-        member.updateProfile(updateProfileData);
+        member.updatePhotoUrl(request.getPhotoUrl());
+        memberRepository.save(member);
+        return UpdateProfileResponse.createWith(member);
+    }
+
+    public UpdateProfileResponse updateNickname(Long memberId, UpdateNicknameRequest request) {
+        Member member = findMemberById(memberId);
+        member.updateNickname(request.getNickname());
+        memberRepository.save(member);
+        return UpdateProfileResponse.createWith(member);
+    }
+
+    public UpdateProfileResponse updateLifestyle(Long memberId, UpdateLifestyleRequest request) {
+        Member member = findMemberById(memberId);
+        member.updateLife(request.getLife());
         memberRepository.save(member);
         return UpdateProfileResponse.createWith(member);
     }

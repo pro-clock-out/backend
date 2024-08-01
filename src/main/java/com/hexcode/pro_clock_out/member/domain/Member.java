@@ -1,7 +1,6 @@
 package com.hexcode.pro_clock_out.member.domain;
 
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
-import com.hexcode.pro_clock_out.member.dto.UpdateProfileData;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
@@ -32,18 +31,33 @@ public class Member extends BaseTime {
     @Column(length = 1000)
     private String photoUrl;
 
-    @ElementCollection(targetClass = LifeStyle.class)
-    @CollectionTable(name = "member_life_styles", joinColumns = @JoinColumn(name = "member_id"))
-    @Column(name = "life_style")
+    @ElementCollection(targetClass = Lifestyle.class)
+    @CollectionTable(name = "member_lifestyles", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "lifestyle")
     @Enumerated(EnumType.STRING)
-    private List<LifeStyle> life;
+    private List<Lifestyle> life;
 
-    public void updateProfile(UpdateProfileData data) {
-        if (data.getLife().size() > 5) {
-            throw new IllegalArgumentException("최대 5개의 라이프스타일만 설정할 수 있습니다.");
-        }
-        this.nickname = data.getNickname();
-        this.photoUrl = data.getPhotoUrl();
-        this.life = data.getLife();
+    @Enumerated(EnumType.STRING)
+    private Prefix prefix;
+
+    @PrePersist
+    protected void onCreate() {
+        this.prefix = Prefix.NORMAL;
+    }
+
+    public void updatePhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateLife(List<Lifestyle> life) {
+        this.life = life;
+    }
+
+    public void updatePrefix(Prefix prefix) {
+        this.prefix = prefix;
     }
 }
