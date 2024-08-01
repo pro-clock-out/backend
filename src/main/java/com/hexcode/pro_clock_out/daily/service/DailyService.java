@@ -5,6 +5,8 @@ import com.hexcode.pro_clock_out.daily.domain.DailyGoal;
 import com.hexcode.pro_clock_out.daily.domain.Goal;
 import com.hexcode.pro_clock_out.daily.dto.*;
 import com.hexcode.pro_clock_out.daily.exception.DailyNotFoundException;
+import com.hexcode.pro_clock_out.daily.exception.GoalAlreadyExistsException;
+import com.hexcode.pro_clock_out.daily.exception.GoalLimitExceededException;
 import com.hexcode.pro_clock_out.daily.exception.GoalNotFoundException;
 import com.hexcode.pro_clock_out.daily.repository.DailyGoalRepository;
 import com.hexcode.pro_clock_out.daily.repository.DailyRepository;
@@ -13,12 +15,15 @@ import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -39,40 +44,56 @@ public class DailyService {
                .orElseThrow(()-> new GoalNotFoundException(goalId));
     }
 
-    public Daily findDailyByMember(final Member member) {
-        return dailyRepository.findDailyByMember(member)
-                .orElseThrow(()-> new MemberNotFoundException(member.getId()));
+    public List<Daily> findDailyByMember(final Member member) {
+        List<Daily> totalDaily = dailyRepository.findDailyByMember(member);
+        if (totalDaily.isEmpty()) {
+            throw new MemberNotFoundException(member.getId());
+        }
+        return totalDaily;
     }
 
-    public Goal findGoalByMember(final Member member) {
-        return goalRepository.findGoalByMember(member)
-                .orElseThrow(()-> new GoalNotFoundException(member.getId()));
+    public List<Goal> findGoalsByMember(final Member member) {
+        List<Goal> totalGoal = goalRepository.findGoalsByMember(member);
+        if (totalGoal.isEmpty()) {
+            throw new GoalNotFoundException(member.getId());
+        }
+        return totalGoal;
     }
 
-    public List<Goal> findGoalsByDailyId(Long dailyId) {
+    public List<String> findGoalNamesByDailyId(Long dailyId) {
         List<DailyGoal> dailyGoals = dailyGoalRepository.findByDailyId(dailyId);
         return dailyGoals.stream()
-                .map(DailyGoal::getGoal)
+                .map(dailyGoal -> dailyGoal.getGoal().getName())
                 .collect(Collectors.toList());
+    }
+
+
+    // 연간 발자국 조회
+    public FindTotalDailyResponse findTotalDaily(Long memberId, int year) {
+        Member member = memberService.findMemberById(memberId);
+        List<Daily> dailyList = dailyRepository.findDailyByMember(member);
+        List<Daily> filteredDailyYear = dailyList.stream()
+                .filter(daily -> {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(daily.getDate());
+                    int dailyYear = calendar.get(Calendar.YEAR);
+                    return  dailyYear == year;
+                })
+                .collect(Collectors.toList());
+        return FindTotalDailyResponse.createWith(filteredDailyYear);
     }
 
     // 발자국 상세 조회
     public FindDailyDetailResponse findDailyDetail(Long dailyId, Long memberId) {
         Daily daily = findDailyById(dailyId);
-        List<Goal> completedGoal = findGoalsByDailyId(dailyId);
-        return FindDailyDetailResponse.createWith(daily, completedGoal);
-    }
-
-    // 연간 발자국 조회
-    public FindTotalDailyResponse findTotalDaily(Long memberId) {
-        Member member = memberService.findMemberById(memberId);
-        Daily daily = findDailyByMember(member);
-        return FindTotalDailyResponse.createWith(daily);
+        List<String> completedGoals = findGoalNamesByDailyId(dailyId);
+        return FindDailyDetailResponse.createWith(daily, completedGoals);
     }
 
     // 발자국 추가
     public CreateDailyResponse addDaily(Long memberId, CreateDailyRequest request) {
         Member member = memberService.findMemberById(memberId);
+
         Daily daily = Daily.builder()
                 .date(request.getDate())
                 .satisfaction(request.getSatisfaction())
@@ -81,26 +102,43 @@ public class DailyService {
                 .member(member)
                 .build();
         dailyRepository.save(daily);
+
+        if (request.getCompletedGoals() != null) {
+            for (String goalName : request.getCompletedGoals()) {
+                Goal goal = goalRepository.findByName(goalName)
+                        .orElseThrow(GoalNotFoundException::new);
+                DailyGoal dailyGoal = DailyGoal.builder()
+                        .daily(daily)
+                        .goal(goal)
+                        .build();
+                dailyGoalRepository.save(dailyGoal);
+            }
+        }
+
         return CreateDailyResponse.createWith(daily);
     }
 
     // 발자국 수정
     public UpdateDailyResponse updateDaily(Long dailyId, Long memberId, UpdateDailyRequest request) {
         Member member = memberService.findMemberById(memberId);
+
         Daily daily = findDailyById(dailyId);
         UpdateDailyData updateDailyData = UpdateDailyData.createWith(request);
         daily.updateDaily(updateDailyData);
         dailyRepository.save(daily);
-        List<DailyGoal> dailyGoals = dailyGoalRepository.findByDailyId(dailyId);
-        dailyGoalRepository.deleteAll(dailyGoals);
-        for (Goal newGoal : request.getCompletedGoal()) {
-            Goal goal = goalRepository.findById(newGoal.getId())
-                    .orElseThrow(() -> new GoalNotFoundException());
-            DailyGoal dailyGoal = DailyGoal.builder()
-                    .daily(daily)
-                    .goal(goal)
-                    .build();
-            dailyGoalRepository.save(dailyGoal);
+
+        if (request.getCompletedGoals() != null) {
+            List<DailyGoal> dailyGoals = dailyGoalRepository.findByDailyId(dailyId);
+            dailyGoalRepository.deleteAll(dailyGoals);
+            for (String newGoalName : request.getCompletedGoals()) {
+                Goal goal = goalRepository.findByName(newGoalName)
+                        .orElseThrow(GoalNotFoundException::new);
+                DailyGoal dailyGoal = DailyGoal.builder()
+                        .daily(daily)
+                        .goal(goal)
+                        .build();
+                dailyGoalRepository.save(dailyGoal);
+            }
         }
         return UpdateDailyResponse.createWith(daily);
     }
@@ -109,13 +147,23 @@ public class DailyService {
     // 목표 활동 조회
     public FindGoalResponse findGoals(Long memberId) {
         Member member = memberService.findMemberById(memberId);
-        Goal goal = findGoalByMember(member);
-        return FindGoalResponse.createWith(goal);
-
+        List<Goal> goals = goalRepository.findGoalsByMember(member);
+        return FindGoalResponse.createWith(goals);
     }
+
     // 목표 활동 추가
     public UpdateGoalResponse addGoals(Long memberId, UpdateGoalRequest request) {
         Member member = memberService.findMemberById(memberId);
+        List<Goal> existingGoals = goalRepository.findGoalsByMember(member);
+        if (existingGoals.size() >= 10) {
+            throw new GoalLimitExceededException();
+        }
+
+        Optional<Goal> existingGoal = goalRepository.findByName((request.getName()));
+        if (existingGoal.isPresent()) {
+            throw new GoalAlreadyExistsException(request.getName());
+        }
+
         Goal goal = Goal.builder()
                 .name(request.getName())
                 .color(request.getColor())
@@ -133,6 +181,5 @@ public class DailyService {
         goalRepository.delete(goal);
         return DeleteGoalResponse.createWith(goal);
     }
-
 
 }

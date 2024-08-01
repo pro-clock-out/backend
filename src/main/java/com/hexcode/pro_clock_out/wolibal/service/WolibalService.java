@@ -10,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -27,7 +29,7 @@ public class WolibalService {
 
     public Wolibal findTodayWolibalByMemberId(final Long memberId) {
         Member member = memberService.findMemberById(memberId);
-        Date today = new Date();
+        LocalDate today = LocalDate.now();
         return wolibalRepository.findByDateAndMember(today, member)
                 .orElseGet(() -> {
                     Wolibal newWolibal = Wolibal.builder()
@@ -40,26 +42,45 @@ public class WolibalService {
 
     public CreateWolibalResponse createWork(Long memberId, CreateWorkRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Work work = Work.builder()
-                .dayWorkingHours(dto.getDayWorkingHours())
-                .weekWorkingDays(dto.getWeekWorkingDays())
-                .workStress(dto.getWorkStress())
-                .satisfaction(dto.getWorkSatisfaction())
-                .wolibal(wolibal)
-                .build();
-        work.updateScore(generateWorkScore(work));
+        Optional<Work> existingWork = workRepository.findByWolibal(wolibal);
+        Work work;
+        if (existingWork.isPresent()) {
+            work = existingWork.get();
+            work.setDayWorkingHours(dto.getDayWorkingHours());
+            work.setWeekWorkingDays(dto.getWeekWorkingDays());
+            work.setWorkStress(dto.getWorkStress());
+            work.setSatisfaction(dto.getWorkSatisfaction());
+        } else {
+            work = Work.builder()
+                    .dayWorkingHours(dto.getDayWorkingHours())
+                    .weekWorkingDays(dto.getWeekWorkingDays())
+                    .workStress(dto.getWorkStress())
+                    .satisfaction(dto.getWorkSatisfaction())
+                    .wolibal(wolibal)
+                    .build();
+        }
+        work.setScore(generateWorkScore(work));
         workRepository.save(work);
         return CreateWolibalResponse.createWith(wolibal);
     }
 
     public CreateWolibalResponse createRest(Long memberId, CreateRestRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Rest rest = Rest.builder()
-                .workdayRest(dto.getWorkdayRest())
-                .dayoffRest(dto.getDayoffRest())
-                .satisfaction(dto.getRestSatisfaction())
-                .wolibal(wolibal)
-                .build();
+        Optional<Rest> existingRest = restRepository.findByWolibal(wolibal);
+        Rest rest;
+        if (existingRest.isPresent()) {
+            rest = existingRest.get();
+            rest.setWorkdayRest(dto.getWorkdayRest());
+            rest.setDayoffRest(dto.getDayoffRest());
+            rest.setSatisfaction(dto.getRestSatisfaction());
+        } else {
+            rest = Rest.builder()
+                    .workdayRest(dto.getWorkdayRest())
+                    .dayoffRest(dto.getDayoffRest())
+                    .satisfaction(dto.getRestSatisfaction())
+                    .wolibal(wolibal)
+                    .build();
+        }
         rest.updateScore(generateRestScore(rest));
         restRepository.save(rest);
         return CreateWolibalResponse.createWith(wolibal);
@@ -67,14 +88,25 @@ public class WolibalService {
 
     public CreateWolibalResponse createSleep(Long memberId, CreateSleepRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Sleep sleep = Sleep.builder()
-                .workdayBedtime(dto.getWorkdayBedtime())
-                .workdayWakeup(dto.getWorkdayWakeup())
-                .dayoffBedtime(dto.getDayoffBedtime())
-                .dayoffWakeup(dto.getDayoffWakeup())
-                .satisfaction(dto.getSleepSatisfaction())
-                .wolibal(wolibal)
-                .build();
+        Optional<Sleep> existingSleep = sleepRepository.findByWolibal(wolibal);
+        Sleep sleep;
+        if (existingSleep.isPresent()) {
+            sleep = existingSleep.get();
+            sleep.setWorkdayBedtime(dto.getWorkdayBedtime());
+            sleep.setWorkdayWakeup(dto.getWorkdayWakeup());
+            sleep.setDayoffBedtime(dto.getDayoffBedtime());
+            sleep.setDayoffWakeup(dto.getDayoffWakeup());
+            sleep.setSatisfaction(dto.getSleepSatisfaction());
+        } else {
+            sleep = Sleep.builder()
+                    .workdayBedtime(dto.getWorkdayBedtime())
+                    .workdayWakeup(dto.getWorkdayWakeup())
+                    .dayoffBedtime(dto.getDayoffBedtime())
+                    .dayoffWakeup(dto.getDayoffWakeup())
+                    .satisfaction(dto.getSleepSatisfaction())
+                    .wolibal(wolibal)
+                    .build();
+        }
         sleep.updateScore(generateSleepScore(sleep));
         sleepRepository.save(sleep);
         return CreateWolibalResponse.createWith(wolibal);
@@ -82,12 +114,21 @@ public class WolibalService {
 
     public CreateWolibalResponse createPersonal(Long memberId, CreatePersonalRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Personal personal = Personal.builder()
-                .togetherTime(dto.getTogetherTime())
-                .hobbyTime(dto.getHobbyTime())
-                .satisfaction(dto.getPersonalSatisfaction())
-                .wolibal(wolibal)
-                .build();
+        Optional<Personal> existingPersonal = personalRepository.findByWolibal(wolibal);
+        Personal personal;
+        if (existingPersonal.isPresent()) {
+            personal = existingPersonal.get();
+            personal.setTogetherTime(dto.getTogetherTime());
+            personal.setHobbyTime(dto.getHobbyTime());
+            personal.setSatisfaction(dto.getPersonalSatisfaction());
+        } else {
+            personal = Personal.builder()
+                    .togetherTime(dto.getTogetherTime())
+                    .hobbyTime(dto.getHobbyTime())
+                    .satisfaction(dto.getPersonalSatisfaction())
+                    .wolibal(wolibal)
+                    .build();
+        }
         personal.updateScore(generatePersonalScore(personal));
         personalRepository.save(personal);
         return CreateWolibalResponse.createWith(wolibal);
@@ -95,18 +136,32 @@ public class WolibalService {
 
     public CreateWolibalResponse createHealth(Long memberId, CreateHealthRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Health health = Health.builder()
-                .cardioFrequency(dto.getCardioFrequency())
-                .cardioTime(dto.getCardioTime())
-                .strengthFrequency(dto.getStrengthFrequency())
-                .strengthTime(dto.getStrengthTime())
-                .satisfaction(dto.getHealthSatisfaction())
-                .wolibal(wolibal)
-                .build();
+        Optional<Health> existingHealth = healthRepository.findByWolibal(wolibal);
+        Health health;
+        if (existingHealth.isPresent()) {
+            health = existingHealth.get();
+            health.setCardioFrequency(dto.getCardioFrequency());
+            health.setCardioTime(dto.getCardioTime());
+            health.setStrengthFrequency(dto.getStrengthFrequency());
+            health.setStrengthTime(dto.getStrengthTime());
+            health.setDietQuality(dto.getDietQuality());
+            health.setSatisfaction(dto.getHealthSatisfaction());
+        } else {
+            health = Health.builder()
+                    .cardioFrequency(dto.getCardioFrequency())
+                    .cardioTime(dto.getCardioTime())
+                    .strengthFrequency(dto.getStrengthFrequency())
+                    .strengthTime(dto.getStrengthTime())
+                    .dietQuality(dto.getDietQuality())
+                    .satisfaction(dto.getHealthSatisfaction())
+                    .wolibal(wolibal)
+                    .build();
+        }
         health.updateScore(generateHealthScore(health));
         healthRepository.save(health);
         return CreateWolibalResponse.createWith(wolibal);
     }
+
 
 //
 //    public FindTotalWolibalResponse findTotalWolibal(Long memberId, String option) {
@@ -339,7 +394,7 @@ public class WolibalService {
     private static int generateHealthScore(Health health) {
         double score1 = calculateHealthScore1(health.getCardioFrequency(), health.getCardioTime());
         double score2 = calculateHealthScore2(health.getStrengthFrequency(), health.getStrengthTime());
-        double score3 = calculateWorkScore3(health.getDietQuality());
+        double score3 = calculateHealthScore3(health.getDietQuality());
         double basicScore = (score1 + score2 + score3) / 3;
         return applySatisfaction(basicScore, health.getSatisfaction());
     }
@@ -360,6 +415,7 @@ public class WolibalService {
 
     // 운동 횟수 점수 계산
     private static double calculateFrequencyScore(double frequency, double minFrequency, double maxFrequency, double limit) {
+        log.info("frequency: {}", frequency);
         if (frequency < minFrequency) {
             return 100 / minFrequency * frequency;
         } else if (frequency <= maxFrequency) {
@@ -372,6 +428,7 @@ public class WolibalService {
 
     // 운동 시간 점수 계산
     private static double calculateTimeScore(double time, double minTime, double maxTime, double limit) {
+        log.info("time: {}", time);
         if (time < minTime) {
             return 100 / minTime * time;
         } else if (time <= maxTime) {
@@ -383,8 +440,9 @@ public class WolibalService {
     }
 
     // 균형 잡힌 식사 점수
-    private static double calculateHeathScore3(int dietQuality) {
+    private static double calculateHealthScore3(int dietQuality) {
         if (dietQuality < 1 || dietQuality > 9) {
+            log.info("dietQuality: {}", dietQuality);
             throw new IllegalArgumentException("dietQuality 는 1 이상 9 이하의 정수여야 합니다.");
         }
         return (double) (dietQuality - 1) / 8 * 100;
@@ -394,9 +452,7 @@ public class WolibalService {
      * 만족도 점수 적용 ///////////////////////////////////////////////////
      */
     private static int applySatisfaction(double basicScore, int satisfaction) {
-        log.info("percent: {}", ((satisfaction - 5) / 100.0) * basicScore);
-        int score = (int) (basicScore * (1 + ((satisfaction - 5) / 100.0)));
-        log.info("apply satisfaction: {} to {}", basicScore, score);
+        int score = (int) (basicScore * (1 + ((satisfaction - 5) / 200.0)));
         return Math.max(0, Math.min(100, score));
     }
 }
