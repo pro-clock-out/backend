@@ -58,9 +58,10 @@ public class CalendarController {
         }
     }
 
-    @GetMapping("/calendars/{memberId}")
-    public ResponseEntity<?> getAllCalendarEvents(Authentication authentication, @RequestParam("memberId") Long memberId) {
+    @GetMapping("/calendars")
+    public ResponseEntity<?> getAllCalendarEvents(Authentication authentication) {
         try {
+            Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
             List<CalendarEventResponse> calendars = calendarService.getAllCalendarEvents(memberId);
             return ResponseEntity.ok(calendars);
         } catch (Exception e) {
