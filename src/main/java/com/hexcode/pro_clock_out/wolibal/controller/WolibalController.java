@@ -66,7 +66,7 @@ public class WolibalController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/members/me/wolibals/heath")
+    @PostMapping("/members/me/wolibals/health")
     public ResponseEntity<ResponseDto> postHealth(Authentication authentication, @RequestBody CreateHealthRequest request) {
         log.info("Request to post heath wolibal");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
