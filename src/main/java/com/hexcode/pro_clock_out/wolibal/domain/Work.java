@@ -8,8 +8,7 @@ import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Entity
-@Getter
-@Builder
+@Getter @Setter @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Work extends BaseTime {
@@ -37,8 +36,4 @@ public class Work extends BaseTime {
     @JsonBackReference
     @JoinColumn(name = "wolibal_id")
     private Wolibal wolibal;
-
-    public void updateScore(int score) {
-        this.score = score;
-    }
 }

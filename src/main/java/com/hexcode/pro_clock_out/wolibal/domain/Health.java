@@ -8,8 +8,7 @@ import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Entity
-@Getter
-@Builder
+@Getter @Setter @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Health extends BaseTime {
