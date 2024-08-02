@@ -3,7 +3,6 @@ package com.hexcode.pro_clock_out.daily.dto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.hexcode.pro_clock_out.daily.domain.Daily;
-import com.hexcode.pro_clock_out.daily.domain.Satisfaction;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +21,11 @@ public class FindTotalDailyResponse implements ResponseDto {
     public static class DailyDetail {
         private Long dailyId;
         private Date date;
-        private Satisfaction satisfaction;
+        private int workSatisfaction;
+        private int restSatisfaction;
+        private int sleepSatisfaction;
+        private int personalSatisfaction;
+        private int healthSatisfaction;
     }
 
     public static FindTotalDailyResponse createWith(List<Daily> dailyList) {
@@ -30,7 +33,11 @@ public class FindTotalDailyResponse implements ResponseDto {
                 .map(daily -> DailyDetail.builder()
                         .dailyId(daily.getId())
                         .date(daily.getDate())
-                        .satisfaction(daily.getSatisfaction())
+                        .workSatisfaction(daily.getWorkSatisfaction())
+                        .restSatisfaction(daily.getRestSatisfaction())
+                        .sleepSatisfaction(daily.getSleepSatisfaction())
+                        .personalSatisfaction(daily.getPersonalSatisfaction())
+                        .healthSatisfaction(daily.getHealthSatisfaction())
                         .build())
                 .collect(Collectors.toList());
         return FindTotalDailyResponse.builder()

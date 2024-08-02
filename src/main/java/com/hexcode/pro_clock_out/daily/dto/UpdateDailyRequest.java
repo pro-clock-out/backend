@@ -2,7 +2,6 @@ package com.hexcode.pro_clock_out.daily.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.hexcode.pro_clock_out.daily.domain.Satisfaction;
 import lombok.Builder;
 import lombok.Getter;
 import java.util.List;
@@ -11,7 +10,11 @@ import java.util.List;
 @Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UpdateDailyRequest {
-    private Satisfaction satisfaction;
+    private int workSatisfaction;
+    private int restSatisfaction;
+    private int sleepSatisfaction;
+    private int personalSatisfaction;
+    private int healthSatisfaction;
     private String content;
     private String imageUrl;
     private List<String> completedGoals;

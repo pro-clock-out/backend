@@ -3,7 +3,6 @@ package com.hexcode.pro_clock_out.daily.dto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.hexcode.pro_clock_out.daily.domain.Daily;
-import com.hexcode.pro_clock_out.daily.domain.Satisfaction;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +16,11 @@ import java.util.List;
 public class FindDailyDetailResponse implements ResponseDto {
     private Long dailyId;
     private Date date;
-    private Satisfaction satisfaction;
+    private int workSatisfaction;
+    private int restSatisfaction;
+    private int sleepSatisfaction;
+    private int personalSatisfaction;
+    private int healthSatisfaction;
     private String content;
     private String imageUrl;
     private List<String> completedGoals;
@@ -26,7 +29,11 @@ public class FindDailyDetailResponse implements ResponseDto {
         return FindDailyDetailResponse.builder()
                 .dailyId(daily.getId())
                 .date(daily.getDate())
-                .satisfaction(daily.getSatisfaction())
+                .workSatisfaction(daily.getWorkSatisfaction())
+                .restSatisfaction(daily.getRestSatisfaction())
+                .sleepSatisfaction(daily.getSleepSatisfaction())
+                .personalSatisfaction(daily.getPersonalSatisfaction())
+                .healthSatisfaction(daily.getHealthSatisfaction())
                 .content(daily.getContent())
                 .imageUrl(daily.getImageUrl())
                 .completedGoals(completedGoals)

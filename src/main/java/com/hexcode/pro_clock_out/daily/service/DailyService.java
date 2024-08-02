@@ -96,7 +96,11 @@ public class DailyService {
 
         Daily daily = Daily.builder()
                 .date(request.getDate())
-                .satisfaction(request.getSatisfaction())
+                .workSatisfaction(request.getWorkSatisfaction())
+                .restSatisfaction(request.getRestSatisfaction())
+                .sleepSatisfaction(request.getSleepSatisfaction())
+                .personalSatisfaction(request.getPersonalSatisfaction())
+                .healthSatisfaction(request.getHealthSatisfaction())
                 .content(request.getContent())
                 .imageUrl(request.getImageUrl())
                 .member(member)
