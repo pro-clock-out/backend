@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class WolibalService {
 
     public Wolibal findTodayWolibalByMemberId(final Long memberId) {
         Member member = memberService.findMemberById(memberId);
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));LocalDate.now();
         return wolibalRepository.findByDateAndMember(today, member)
                 .orElseGet(() -> {
                     Wolibal newWolibal = Wolibal.builder()

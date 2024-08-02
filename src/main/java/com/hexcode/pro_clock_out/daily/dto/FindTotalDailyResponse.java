@@ -6,7 +6,8 @@ import com.hexcode.pro_clock_out.daily.domain.Daily;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import lombok.Builder;
 import lombok.Getter;
-import java.util.Date;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ public class FindTotalDailyResponse implements ResponseDto {
     @Builder
     public static class DailyDetail {
         private Long dailyId;
-        private Date date;
+        private LocalDate date;
         private int workSatisfaction;
         private int restSatisfaction;
         private int sleepSatisfaction;

@@ -7,7 +7,7 @@ import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -15,7 +15,7 @@ import java.util.List;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class FindDailyDetailResponse implements ResponseDto {
     private Long dailyId;
-    private Date date;
+    private LocalDate date;
     private int workSatisfaction;
     private int restSatisfaction;
     private int sleepSatisfaction;
