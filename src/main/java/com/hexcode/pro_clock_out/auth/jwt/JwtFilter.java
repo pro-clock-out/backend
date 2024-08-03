@@ -16,18 +16,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
+    private final List<String> permitAllPaths;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
         log.info("should not filter");
-        return path.equals("/api/v1/login") || path.equals("/") || path.equals("/api/v1/signup");
+        return permitAllPaths.contains(path);
     }
 
     @Override

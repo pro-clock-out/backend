@@ -43,6 +43,14 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // 허용된 경로
+        List<String> permitAllPaths = List.of(
+                "/api/v1/",
+                "/api/v1/signup",
+                "/api/v1/login",
+                "/api/v1/duplicate/email"
+        );
+
         // security 기본 설정
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -52,7 +60,7 @@ public class SecurityConfig {
                         httpSecurityCorsConfigurer.configurationSource(corsFilter()));
         // authentication 관련 설정
         http.authorizeHttpRequests((request) -> request
-                        .requestMatchers("/api/v1/", "/api/v1/signup", "/api/v1/login").permitAll()
+                        .requestMatchers(permitAllPaths.toArray(new String[0])).permitAll()
                         .requestMatchers(
                                 "/api/v1/members/me/**",
                                 "/api/v1/calendars/**",
@@ -61,7 +69,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
         );
         http
-                .addFilterBefore(new JwtFilter(jwtUtil, memberRepository), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(jwtUtil, memberRepository, permitAllPaths), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
         http
                 .sessionManagement((session) -> session
