@@ -65,10 +65,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.addHeader("Authorization", "Bearer " + token);
         response.addHeader("Nickname", customUserDetails.getNickname());
         response.setContentType("application/json");
-
-//        PrintWriter out = response.getWriter();
-//        out.print("{\"message\": \"Login successful\"}");
-//        out.flush();
         log.info("login success");
     }
 
