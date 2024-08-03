@@ -64,10 +64,12 @@ public class MemberService {
         return UpdateProfileResponse.createWith(member);
     }
 
-    public void hasEmail(String email) {
-        Optional<Member> member = memberRepository.findByEmail(email);
+    public DuplicateEmailResponse hasEmail(DuplicateEmailRequest request) {
+        Optional<Member> member = memberRepository.findByEmail(request.getEmail());
         if(member.isPresent()) {
-            throw new RuntimeException("이메일이 이미 존재합니다.");
+            return DuplicateEmailResponse.createWith(true);
+        } else {
+            return DuplicateEmailResponse.createWith(false);
         }
     }
 }
