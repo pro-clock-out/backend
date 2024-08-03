@@ -1,6 +1,8 @@
 package com.hexcode.pro_clock_out.auth.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexcode.pro_clock_out.auth.dto.CustomUserDetails;
+import com.hexcode.pro_clock_out.auth.dto.LoginRequest;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,42 +15,60 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Iterator;
 
 @Slf4j
-@RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+    public LoginFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+        super();
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+        setFilterProcessesUrl("/api/v1/login"); // 커스텀 로그인 엔드포인트 설정
+    }
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            LoginRequest loginRequest = objectMapper.readValue(request.getInputStream(), LoginRequest.class);
 
-        //클라이언트 요청에서 email, password 추출
-        String email = obtainUsername(request);
-        String password = obtainPassword(request);
+            String email = loginRequest.getEmail();
+            String password = loginRequest.getPassword();
 
-        log.info("email: {}, password: {}", email, password);
+            log.info("email: {}, password: {}", email, password);
 
-        //스프링 시큐리티에서 email과 password를 검증하기 위해서는 token에 담아야 함
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
-
-        //token에 담은 검증을 위한 AuthenticationManager로 전달
-        return authenticationManager.authenticate(authToken);
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
+            return authenticationManager.authenticate(authToken);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
+        log.info("successfulAuthentication called");
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String email = customUserDetails.getUsername();
+        String email = customUserDetails.getEmail();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
         String token = jwtUtil.createJwt(email, role);
+
         response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader("Nickname", customUserDetails.getNickname());
+        response.setContentType("application/json");
+
+//        PrintWriter out = response.getWriter();
+//        out.print("{\"message\": \"Login successful\"}");
+//        out.flush();
         log.info("login success");
     }
 
