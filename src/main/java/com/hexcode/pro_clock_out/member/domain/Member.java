@@ -42,6 +42,7 @@ public class Member extends BaseTime {
 
     @PrePersist
     protected void onCreate() {
+        this.nickname = "hexcode";
         this.prefix = Prefix.NORMAL;
     }
 
