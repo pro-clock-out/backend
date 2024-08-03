@@ -22,7 +22,7 @@ public class MemberController {
 
     @GetMapping("/members/me/dday")
     public ResponseEntity<ResponseDto> getDDay(Authentication authentication) {
-        log.info("Request to get my d-day");
+        log.info("Request to GET my d-day");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         FindMyDDayResponse response = memberService.findMyDDay(memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -30,14 +30,14 @@ public class MemberController {
 
     @GetMapping("/members/{memberId}/profile")
     public ResponseEntity<ResponseDto> getProfile(@PathVariable("memberId") Long memberId) {
-        log.info("Request to get profile");
+        log.info("Request to GET profile");
         FindProfileResponse response = memberService.findProfile(memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/members/me/profile/image")
     public ResponseEntity<ResponseDto> putProfileImage(Authentication authentication, @RequestBody UpdateProfileImageRequest request) {
-        log.info("Request to put profile imgae");
+        log.info("Request to PUT profile imgae");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         UpdateProfileResponse response = memberService.updateProfileImage(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -45,7 +45,7 @@ public class MemberController {
 
     @PutMapping("/members/me/profile/nickname")
     public ResponseEntity<ResponseDto> putProfileNickname(Authentication authentication, @RequestBody UpdateNicknameRequest request) {
-        log.info("Request to put profile image");
+        log.info("Request to PUT nickname");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         UpdateProfileResponse response = memberService.updateNickname(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -53,21 +53,17 @@ public class MemberController {
 
     @PutMapping("/members/me/profile/lifestyle")
     public ResponseEntity<ResponseDto> putProfileLifestyle(Authentication authentication, @RequestBody UpdateLifestyleRequest request) {
-        log.info("Request to put profile lifestyle");
+        log.info("Request to PUT lifestyle");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         UpdateProfileResponse response = memberService.updateLifestyle(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/duplicate_email")
-    public ResponseEntity<?> duplicateEmail(Authentication authentication, @RequestBody DuplicateEmailRequest request) {
-        try {
-            String email = request.getEmail();
-            memberService.hasEmail(email);
-            return ResponseEntity.ok(new DuplicateEmailResponse("사용가능한 이메일입니다."));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new DuplicateEmailResponse(e.getMessage()));
-        }
+    @PostMapping("/duplicate/email")
+    public ResponseEntity<ResponseDto> duplicateEmail(@RequestBody DuplicateEmailRequest request) {
+        log.info("Request to CHECK duplicate email");
+        DuplicateEmailResponse response = memberService.hasEmail(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
