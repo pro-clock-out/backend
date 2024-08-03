@@ -5,11 +5,12 @@ import com.hexcode.pro_clock_out.member.dto.*;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.List;
 
 @Service
@@ -61,5 +62,12 @@ public class MemberService {
         member.updateLife(request.getLife());
         memberRepository.save(member);
         return UpdateProfileResponse.createWith(member);
+    }
+
+    public void hasEmail(String email) {
+        Optional<Member> member = memberRepository.findByEmail(email);
+        if(member.isPresent()) {
+            throw new RuntimeException("이메일이 이미 존재합니다.");
+        }
     }
 }
