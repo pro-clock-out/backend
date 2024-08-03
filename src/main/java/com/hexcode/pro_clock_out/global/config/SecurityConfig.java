@@ -52,7 +52,7 @@ public class SecurityConfig {
                         httpSecurityCorsConfigurer.configurationSource(corsFilter()));
         // authentication 관련 설정
         http.authorizeHttpRequests((request) -> request
-                        .requestMatchers("/api/v1/", "/api/v1/signup", "/login").permitAll()
+                        .requestMatchers("/api/v1/", "/api/v1/signup", "/api/v1/login").permitAll()
                         .requestMatchers(
                                 "/api/v1/members/me/**",
                                 "/api/v1/calendars/**",
@@ -61,9 +61,8 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
         );
         http
-                .addFilterBefore(new JwtFilter(jwtUtil, memberRepository), LoginFilter.class);
-        http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil, memberRepository), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -79,10 +78,9 @@ public class SecurityConfig {
         config.setAllowedOriginPatterns(List.of("http://127.0.0.1:3000", "http://localhost:3000"));
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
-//        config.addExposedHeader("Set-Cookie");
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
-        config.setExposedHeaders(Collections.singletonList("Authorization"));
+        config.setExposedHeaders(List.of("Authorization", "Nickname"));
         // source -> config 적용
         source.registerCorsConfiguration("/**", config);
         return source;

@@ -1,6 +1,7 @@
 package com.hexcode.pro_clock_out.auth.controller;
 
 import com.hexcode.pro_clock_out.auth.dto.JoinDto;
+import com.hexcode.pro_clock_out.auth.dto.LoginRequest;
 import com.hexcode.pro_clock_out.auth.dto.TokenDto;
 import com.hexcode.pro_clock_out.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -30,31 +31,37 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String joinProcess(@RequestBody JoinDto joinDto) {
-        log.info(joinDto.getEmail());
+    public ResponseEntity<String> joinProcess(@RequestBody JoinDto joinDto) {
+        log.info("signup email: {}", joinDto.getEmail());
         authService.joinProcess(joinDto);
-        return joinDto.getEmail();
+        return ResponseEntity.ok(joinDto.getEmail());
     }
 
-    @GetMapping("/auth/kakao/login")
-    public ResponseEntity<String> kakaoLogin() {
-        String kakaoAuthUrl = authService.getKakaoAuthUrl();
-        return ResponseEntity.ok(kakaoAuthUrl);
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        log.info("login email: {}", loginRequest.getEmail());
+        return ResponseEntity.ok(loginRequest.getEmail());
     }
 
-    @GetMapping("/auth/kakao/callback")
-    public ResponseEntity<String> kakaoCallback(@RequestParam String code) {
-        TokenDto accessToken = authService.getAccessToken(code);
-        ResponseEntity<Map<String, Object>> userResponse = authService.getUserInfo(String.valueOf(accessToken));
-
-        // 사용자 정보를 이용해 로그인 처리
-        authService.processUserInfo(Objects.requireNonNull(userResponse.getBody()));
-
-        return ResponseEntity.ok("로그인 성공");
-    }
-
-    @GetMapping("/auth/kakao/token")
-    public TokenDto kakaoAccess(@RequestParam String code){
-        return authService.getAccessToken(code);
-    }
+//    @GetMapping("/auth/kakao/login")
+//    public ResponseEntity<String> kakaoLogin() {
+//        String kakaoAuthUrl = authService.getKakaoAuthUrl();
+//        return ResponseEntity.ok(kakaoAuthUrl);
+//    }
+//
+//    @GetMapping("/auth/kakao/callback")
+//    public ResponseEntity<String> kakaoCallback(@RequestParam String code) {
+//        TokenDto accessToken = authService.getAccessToken(code);
+//        ResponseEntity<Map<String, Object>> userResponse = authService.getUserInfo(String.valueOf(accessToken));
+//
+//        // 사용자 정보를 이용해 로그인 처리
+//        authService.processUserInfo(Objects.requireNonNull(userResponse.getBody()));
+//
+//        return ResponseEntity.ok("로그인 성공");
+//    }
+//
+//    @GetMapping("/auth/kakao/token")
+//    public TokenDto kakaoAccess(@RequestParam String code){
+//        return authService.getAccessToken(code);
+//    }
 }

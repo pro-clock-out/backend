@@ -3,6 +3,7 @@ package com.hexcode.pro_clock_out.member.controller;
 import com.hexcode.pro_clock_out.auth.dto.CustomUserDetails;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import com.hexcode.pro_clock_out.member.dto.*;
+import com.hexcode.pro_clock_out.member.repository.MemberRepository;
 import com.hexcode.pro_clock_out.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -57,4 +58,17 @@ public class MemberController {
         UpdateProfileResponse response = memberService.updateLifestyle(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/duplicate_email")
+    public ResponseEntity<?> duplicateEmail(Authentication authentication, @RequestBody DuplicateEmailRequest request) {
+        try {
+            String email = request.getEmail();
+            memberService.hasEmail(email);
+            return ResponseEntity.ok(new DuplicateEmailResponse("사용가능한 이메일입니다."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new DuplicateEmailResponse(e.getMessage()));
+        }
+    }
+
+
 }
