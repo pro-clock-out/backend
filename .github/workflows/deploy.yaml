@@ -1,6 +1,8 @@
 name: Deploy to EC2
 
 on:
+#  schedule:
+#    - cron: '0 0 * * *'
   pull_request_target:
     types: [closed]
     branches:

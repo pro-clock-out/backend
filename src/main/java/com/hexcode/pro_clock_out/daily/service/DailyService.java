@@ -13,12 +13,17 @@ import com.hexcode.pro_clock_out.daily.repository.DailyRepository;
 import com.hexcode.pro_clock_out.daily.repository.GoalRepository;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
+import com.hexcode.pro_clock_out.member.exception.WolibalNotFoundException;
 import com.hexcode.pro_clock_out.member.service.MemberService;
+import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
+import com.hexcode.pro_clock_out.wolibal.domain.Work;
+import com.hexcode.pro_clock_out.wolibal.repository.WolibalRepository;
+import com.hexcode.pro_clock_out.wolibal.service.WolibalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Calendar;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,10 +33,13 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class DailyService {
+    private final WolibalRepository wolibalRepository;
     private final DailyRepository dailyRepository;
     private final GoalRepository goalRepository;
     private final DailyGoalRepository dailyGoalRepository;
+
     private final MemberService memberService;
+    private final WolibalService wolibalService;
 
 
     public Daily findDailyById(final Long dailyId) {
@@ -67,19 +75,21 @@ public class DailyService {
                 .collect(Collectors.toList());
     }
 
-
     // 연간 발자국 조회
     public FindTotalDailyResponse findTotalDaily(Long memberId, int year) {
         Member member = memberService.findMemberById(memberId);
-        List<Daily> dailyList = dailyRepository.findDailyByMember(member);
-        List<Daily> filteredDailyYear = dailyList.stream()
-                .filter(daily -> {
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(daily.getDate());
-                    int dailyYear = calendar.get(Calendar.YEAR);
-                    return  dailyYear == year;
+        List<Daily> dailyList = dailyRepository.findDailyByMember(member).stream()
+                .filter(daily -> daily.getDate().getYear() == year)
+                .toList();
+
+        List<DailySimpleData> filteredDailyYear = dailyList.stream()
+                .map(daily -> {
+                    Wolibal wolibal = wolibalService.findWolibalByDateAndMember(daily.getDate(), daily.getMember());
+                    int totalScore = wolibal.getScore();
+                    return DailySimpleData.createWith(daily, totalScore);
                 })
-                .collect(Collectors.toList());
+                .toList();
+
         return FindTotalDailyResponse.createWith(filteredDailyYear);
     }
 
@@ -93,14 +103,10 @@ public class DailyService {
     // 발자국 추가
     public CreateDailyResponse addDaily(Long memberId, CreateDailyRequest request) {
         Member member = memberService.findMemberById(memberId);
+        Wolibal wolibal = wolibalService.findWolibalByDateAndMember(request.getDate(), member);
 
         Daily daily = Daily.builder()
                 .date(request.getDate())
-                .workSatisfaction(request.getWorkSatisfaction())
-                .restSatisfaction(request.getRestSatisfaction())
-                .sleepSatisfaction(request.getSleepSatisfaction())
-                .personalSatisfaction(request.getPersonalSatisfaction())
-                .healthSatisfaction(request.getHealthSatisfaction())
                 .content(request.getContent())
                 .imageUrl(request.getImageUrl())
                 .member(member)

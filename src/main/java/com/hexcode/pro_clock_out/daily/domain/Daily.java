@@ -19,7 +19,7 @@ public class Daily extends BaseTime {
     @Column(name = "daily_id")
     private Long id;
 
-    private Date date;
+    private LocalDate date;
 
     private int workSatisfaction;
     private int restSatisfaction;
