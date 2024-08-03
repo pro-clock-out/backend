@@ -1,6 +1,7 @@
 package com.hexcode.pro_clock_out.auth.controller;
 
 import com.hexcode.pro_clock_out.auth.dto.JoinDto;
+import com.hexcode.pro_clock_out.auth.dto.LoginRequest;
 import com.hexcode.pro_clock_out.auth.dto.TokenDto;
 import com.hexcode.pro_clock_out.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +31,16 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String joinProcess(@RequestBody JoinDto joinDto) {
-        log.info(joinDto.getEmail());
+    public ResponseEntity<String> joinProcess(@RequestBody JoinDto joinDto) {
+        log.info("signup email: {}", joinDto.getEmail());
         authService.joinProcess(joinDto);
-        return joinDto.getEmail();
+        return ResponseEntity.ok(joinDto.getEmail());
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        log.info("login email: {}", loginRequest.getEmail());
+        return ResponseEntity.ok(loginRequest.getEmail());
     }
 
     @GetMapping("/auth/kakao/login")
