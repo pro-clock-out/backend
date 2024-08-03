@@ -30,7 +30,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String joinProcess(JoinDto joinDto) {
+    public String joinProcess(@RequestBody JoinDto joinDto) {
         log.info(joinDto.getEmail());
         authService.joinProcess(joinDto);
         return joinDto.getEmail();
