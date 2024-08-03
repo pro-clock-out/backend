@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CreateDailyRequest {
-    private Date date;
+    private LocalDate date;
     private int workSatisfaction;
     private int restSatisfaction;
     private int sleepSatisfaction;
