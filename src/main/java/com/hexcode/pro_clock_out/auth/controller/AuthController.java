@@ -36,25 +36,25 @@ public class AuthController {
         return joinDto.getEmail();
     }
 
-    @GetMapping("/auth/kakao/login")
-    public ResponseEntity<String> kakaoLogin() {
-        String kakaoAuthUrl = authService.getKakaoAuthUrl();
-        return ResponseEntity.ok(kakaoAuthUrl);
-    }
-
-    @GetMapping("/auth/kakao/callback")
-    public ResponseEntity<String> kakaoCallback(@RequestParam String code) {
-        TokenDto accessToken = authService.getAccessToken(code);
-        ResponseEntity<Map<String, Object>> userResponse = authService.getUserInfo(String.valueOf(accessToken));
-
-        // 사용자 정보를 이용해 로그인 처리
-        authService.processUserInfo(Objects.requireNonNull(userResponse.getBody()));
-
-        return ResponseEntity.ok("로그인 성공");
-    }
-
-    @GetMapping("/auth/kakao/token")
-    public TokenDto kakaoAccess(@RequestParam String code){
-        return authService.getAccessToken(code);
-    }
+//    @GetMapping("/auth/kakao/login")
+//    public ResponseEntity<String> kakaoLogin() {
+//        String kakaoAuthUrl = authService.getKakaoAuthUrl();
+//        return ResponseEntity.ok(kakaoAuthUrl);
+//    }
+//
+//    @GetMapping("/auth/kakao/callback")
+//    public ResponseEntity<String> kakaoCallback(@RequestParam String code) {
+//        TokenDto accessToken = authService.getAccessToken(code);
+//        ResponseEntity<Map<String, Object>> userResponse = authService.getUserInfo(String.valueOf(accessToken));
+//
+//        // 사용자 정보를 이용해 로그인 처리
+//        authService.processUserInfo(Objects.requireNonNull(userResponse.getBody()));
+//
+//        return ResponseEntity.ok("로그인 성공");
+//    }
+//
+//    @GetMapping("/auth/kakao/token")
+//    public TokenDto kakaoAccess(@RequestParam String code){
+//        return authService.getAccessToken(code);
+//    }
 }
