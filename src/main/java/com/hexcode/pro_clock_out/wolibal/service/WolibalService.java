@@ -1,6 +1,7 @@
 package com.hexcode.pro_clock_out.wolibal.service;
 
 import com.hexcode.pro_clock_out.member.domain.Member;
+import com.hexcode.pro_clock_out.member.exception.WolibalNotFoundException;
 import com.hexcode.pro_clock_out.member.service.MemberService;
 import com.hexcode.pro_clock_out.wolibal.domain.*;
 import com.hexcode.pro_clock_out.wolibal.dto.*;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -27,9 +30,114 @@ public class WolibalService {
     private final PersonalRepository personalRepository;
     private final HealthRepository healthRepository;
 
+    // 매일 정각에 워라밸 자동 생성
+    public void createAutoWolibal() {
+        List<Member> allMembers = memberService.findAllMembers();
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+
+        allMembers.forEach(member -> {
+            Optional<Wolibal> existingWolibalOpt = wolibalRepository.findByDateAndMember(yesterday, member);
+            if (existingWolibalOpt.isPresent() && existingWolibalOpt.get().getScore() != 0) {
+                Wolibal newWolibal = Wolibal.builder()
+                        .date(today)
+                        .member(member)
+                        .build();
+                wolibalRepository.save(newWolibal);
+
+                int totalScore = 0;
+                int count = 0;
+
+                Wolibal previousWolibal = existingWolibalOpt.get();
+
+                Work previousWork = workRepository.findByWolibal(previousWolibal).orElse(null);
+                if (previousWork != null) {
+                    Work newWork = Work.builder()
+                            .dayWorkingHours(previousWork.getDayWorkingHours())
+                            .weekWorkingDays(previousWork.getWeekWorkingDays())
+                            .workStress(previousWork.getWorkStress())
+                            .satisfaction(previousWork.getSatisfaction())
+                            .wolibal(newWolibal)
+                            .build();
+                    newWork.setScore(previousWork.getScore());
+                    workRepository.save(newWork);
+                    totalScore += previousWork.getScore();
+                    count++;
+                }
+
+                Rest previousRest = restRepository.findByWolibal(previousWolibal).orElse(null);
+                if (previousRest != null) {
+                    Rest newRest = Rest.builder()
+                            .workdayRest(previousRest.getWorkdayRest())
+                            .dayoffRest(previousRest.getDayoffRest())
+                            .satisfaction(previousRest.getSatisfaction())
+                            .wolibal(newWolibal)
+                            .build();
+                    newRest.setScore(previousRest.getScore());
+                    restRepository.save(newRest);
+                    totalScore += previousRest.getScore();
+                    count++;
+                }
+
+                Sleep previousSleep = sleepRepository.findByWolibal(previousWolibal).orElse(null);
+                if (previousSleep != null) {
+                    Sleep newSleep = Sleep.builder()
+                            .workdayBedtime(previousSleep.getWorkdayBedtime())
+                            .workdayWakeup(previousSleep.getWorkdayWakeup())
+                            .dayoffBedtime(previousSleep.getDayoffBedtime())
+                            .dayoffWakeup(previousSleep.getDayoffWakeup())
+                            .satisfaction(previousSleep.getSatisfaction())
+                            .wolibal(newWolibal)
+                            .build();
+                    newSleep.setScore(previousSleep.getScore());
+                    sleepRepository.save(newSleep);
+                    totalScore += previousSleep.getScore();
+                    count++;
+                }
+
+                Personal previousPersonal = personalRepository.findByWolibal(previousWolibal).orElse(null);
+                if (previousPersonal != null) {
+                    Personal newPersonal = Personal.builder()
+                            .togetherTime(previousPersonal.getTogetherTime())
+                            .hobbyTime(previousPersonal.getHobbyTime())
+                            .satisfaction(previousPersonal.getSatisfaction())
+                            .wolibal(newWolibal)
+                            .build();
+                    newPersonal.setScore(previousPersonal.getScore());
+                    personalRepository.save(newPersonal);
+                    totalScore += previousPersonal.getScore();
+                    count++;
+                }
+
+                Health previousHealth = healthRepository.findByWolibal(previousWolibal).orElse(null);
+                if (previousHealth != null) {
+                    Health newHealth = Health.builder()
+                            .cardioFrequency(previousHealth.getCardioFrequency())
+                            .cardioTime(previousHealth.getCardioTime())
+                            .strengthFrequency(previousHealth.getStrengthFrequency())
+                            .strengthTime(previousHealth.getStrengthTime())
+                            .dietQuality(previousHealth.getDietQuality())
+                            .satisfaction(previousHealth.getSatisfaction())
+                            .wolibal(newWolibal)
+                            .build();
+                    newHealth.setScore(previousHealth.getScore());
+                    healthRepository.save(newHealth);
+                    totalScore += previousHealth.getScore();
+                    count++;
+                }
+
+                if (count > 0) {
+                    int averageScore = totalScore / count;
+                    newWolibal.updateScore(averageScore);
+                    wolibalRepository.save(newWolibal);
+                }
+            }
+        });
+    }
+
     public Wolibal findTodayWolibalByMemberId(final Long memberId) {
         Member member = memberService.findMemberById(memberId);
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));LocalDate.now();
         return wolibalRepository.findByDateAndMember(today, member)
                 .orElseGet(() -> {
                     Wolibal newWolibal = Wolibal.builder()
@@ -38,6 +146,11 @@ public class WolibalService {
                             .build();
                     return wolibalRepository.save(newWolibal);
                 });
+    }
+
+    public Wolibal findWolibalByDateAndMember(LocalDate date, Member member) {
+        return wolibalRepository.findByDateAndMember(date, member)
+                .orElseThrow(WolibalNotFoundException::new);
     }
 
     public CreateWolibalResponse createWork(Long memberId, CreateWorkRequest dto) {
@@ -81,7 +194,7 @@ public class WolibalService {
                     .wolibal(wolibal)
                     .build();
         }
-        rest.updateScore(generateRestScore(rest));
+        rest.setScore(generateRestScore(rest));
         restRepository.save(rest);
         return CreateWolibalResponse.createWith(wolibal);
     }
@@ -107,7 +220,7 @@ public class WolibalService {
                     .wolibal(wolibal)
                     .build();
         }
-        sleep.updateScore(generateSleepScore(sleep));
+        sleep.setScore(generateSleepScore(sleep));
         sleepRepository.save(sleep);
         return CreateWolibalResponse.createWith(wolibal);
     }
@@ -129,7 +242,7 @@ public class WolibalService {
                     .wolibal(wolibal)
                     .build();
         }
-        personal.updateScore(generatePersonalScore(personal));
+        personal.setScore(generatePersonalScore(personal));
         personalRepository.save(personal);
         return CreateWolibalResponse.createWith(wolibal);
     }
@@ -157,7 +270,7 @@ public class WolibalService {
                     .wolibal(wolibal)
                     .build();
         }
-        health.updateScore(generateHealthScore(health));
+        health.setScore(generateHealthScore(health));
         healthRepository.save(health);
         return CreateWolibalResponse.createWith(wolibal);
     }

@@ -42,8 +42,4 @@ public class Health extends BaseTime {
     @JsonBackReference
     @JoinColumn(name = "wolibal_id")
     private Wolibal wolibal;
-
-    public void updateScore(int score) {
-        this.score = score;
-    }
 }

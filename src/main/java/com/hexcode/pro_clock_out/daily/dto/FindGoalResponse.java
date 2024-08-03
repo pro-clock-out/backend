@@ -42,15 +42,3 @@ public class FindGoalResponse implements ResponseDto {
     }
 }
 
-//    private Long goalId;
-//    private String name;
-//    private Label color;
-//
-//    public static FindGoalResponse createWith(Goal goal) {
-//        return FindGoalResponse.builder()
-//                .goalId(goal.getId())
-//                .name(goal.getName())
-//                .color(goal.getColor())
-//                .build();
-//    }
-//}

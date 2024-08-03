@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @Transactional
@@ -20,6 +21,10 @@ public class MemberService {
     public Member findMemberById(final Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException(memberId));
+    }
+
+    public List<Member> findAllMembers() {
+        return memberRepository.findAll();
     }
 
     public FindMyDDayResponse findMyDDay(Long memberId) {

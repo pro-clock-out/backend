@@ -6,6 +6,7 @@ import com.hexcode.pro_clock_out.daily.domain.Daily;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import lombok.Builder;
 import lombok.Getter;
+
 import java.time.LocalDateTime;
 
 @Getter

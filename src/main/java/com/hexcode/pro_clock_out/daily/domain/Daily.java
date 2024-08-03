@@ -1,6 +1,5 @@
 package com.hexcode.pro_clock_out.daily.domain;
 
-import com.hexcode.pro_clock_out.calendar.dto.UpdateCalendarData;
 import com.hexcode.pro_clock_out.daily.dto.UpdateDailyData;
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import com.hexcode.pro_clock_out.member.domain.Member;
@@ -20,10 +19,13 @@ public class Daily extends BaseTime {
     @Column(name = "daily_id")
     private Long id;
 
-    private Date date;
+    private LocalDate date;
 
-    @Enumerated(EnumType.STRING)
-    private Satisfaction satisfaction;
+    private int workSatisfaction;
+    private int restSatisfaction;
+    private int sleepSatisfaction;
+    private int personalSatisfaction;
+    private int healthSatisfaction;
 
     private String content;
 
@@ -34,7 +36,11 @@ public class Daily extends BaseTime {
     private Member member;
 
     public void updateDaily(UpdateDailyData data) {
-        this.satisfaction = data.getSatisfaction();
+        this.workSatisfaction = data.getWorkSatisfaction();
+        this.restSatisfaction = data.getRestSatisfaction();
+        this.sleepSatisfaction = data.getSleepSatisfaction();
+        this.personalSatisfaction = data.getPersonalSatisfaction();
+        this.healthSatisfaction = data.getHealthSatisfaction();
         this.content = data.getContent();
         this.imageUrl =  data.getImageUrl();
     }
