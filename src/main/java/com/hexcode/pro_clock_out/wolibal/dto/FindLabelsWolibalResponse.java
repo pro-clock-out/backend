@@ -3,7 +3,6 @@ package com.hexcode.pro_clock_out.wolibal.dto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
-import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -34,11 +33,11 @@ public class FindLabelsWolibalResponse implements ResponseDto {
     private int healthAvg;
 
     public static FindLabelsWolibalResponse createWith(Long memberId,
-                                                       WolibalScoreRankAvgDto workDto,
-                                                       WolibalScoreRankAvgDto restDto,
-                                                       WolibalScoreRankAvgDto sleepDto,
-                                                       WolibalScoreRankAvgDto personalDto,
-                                                       WolibalScoreRankAvgDto healthDto) {
+                                                       FindScoreRankAvgResponse workDto,
+                                                       FindScoreRankAvgResponse restDto,
+                                                       FindScoreRankAvgResponse sleepDto,
+                                                       FindScoreRankAvgResponse personalDto,
+                                                       FindScoreRankAvgResponse healthDto) {
         return FindLabelsWolibalResponse.builder()
                 .memberId(memberId)
                 .workScore(workDto.getScore())

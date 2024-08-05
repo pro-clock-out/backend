@@ -1,9 +1,5 @@
 package com.hexcode.pro_clock_out.wolibal.service;
 
-import com.hexcode.pro_clock_out.daily.domain.Goal;
-import com.hexcode.pro_clock_out.daily.dto.UpdateGoalData;
-import com.hexcode.pro_clock_out.daily.dto.UpdateGoalRequest;
-import com.hexcode.pro_clock_out.daily.dto.UpdateGoalResponse;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.exception.WolibalNotFoundException;
 import com.hexcode.pro_clock_out.member.service.MemberService;
@@ -13,7 +9,6 @@ import com.hexcode.pro_clock_out.wolibal.exception.*;
 import com.hexcode.pro_clock_out.wolibal.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -150,6 +145,31 @@ public class WolibalService {
                 .orElseThrow(WolibalNotFoundException::new);
     }
 
+    public Work findWorkByWolibal(Wolibal wolibal) {
+        return workRepository.findByWolibal(wolibal)
+                .orElseThrow(WorkNotFoundException::new);
+    }
+
+    public Rest findRestByWolibal(Wolibal wolibal) {
+        return restRepository.findByWolibal(wolibal)
+                .orElseThrow(RestNotFoundException::new);
+    }
+
+    public Sleep findSleepByWolibal(Wolibal wolibal) {
+        return sleepRepository.findByWolibal(wolibal)
+                .orElseThrow(SleepNotFoundException::new);
+    }
+
+    public Personal findPersonalByWolibal(Wolibal wolibal) {
+        return personalRepository.findByWolibal(wolibal)
+                .orElseThrow(PersonalNotFoundException::new);
+    }
+
+    public Health findHealthByWolibal(Wolibal wolibal) {
+        return healthRepository.findByWolibal(wolibal)
+                .orElseThrow(HealthNotFoundException::new);
+    }
+
     public CreateWolibalResponse createWork(Long memberId, CreateWorkRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
         Optional<Work> existingWork = workRepository.findByWolibal(wolibal);
@@ -275,36 +295,31 @@ public class WolibalService {
 
     // 워라밸 항목별 만족도로 점수 업데이트
     public void updateWorkBySatisfaction(Wolibal wolibal, int satisfaction) {
-        Work work = workRepository.findByWolibal(wolibal)
-                .orElseThrow(WorkNotFoundException::new);
+        Work work = findWorkByWolibal(wolibal);
         work.setSatisfaction(satisfaction);
         work.setScore(applySatisfaction(work.getScore(), satisfaction));
     }
 
     public void updateRestBySatisfaction(Wolibal wolibal, int satisfaction) {
-        Rest rest = restRepository.findByWolibal(wolibal)
-                .orElseThrow(RestNotFoundException::new);
+        Rest rest = findRestByWolibal(wolibal);
         rest.setSatisfaction(satisfaction);
         rest.setScore(applySatisfaction(rest.getScore(), satisfaction));
     }
 
     public void updateSleepBySatisfaction(Wolibal wolibal, int satisfaction) {
-        Sleep sleep = sleepRepository.findByWolibal(wolibal)
-                .orElseThrow(SleepNotFoundException::new);
+        Sleep sleep = findSleepByWolibal(wolibal);
         sleep.setSatisfaction(satisfaction);
         sleep.setScore(applySatisfaction(sleep.getScore(), satisfaction));
     }
 
     public void updatePersonalBySatisfaction(Wolibal wolibal, int satisfaction) {
-        Personal personal = personalRepository.findByWolibal(wolibal)
-                .orElseThrow(PersonalNotFoundException::new);
+        Personal personal = findPersonalByWolibal(wolibal);
         personal.setSatisfaction(satisfaction);
         personal.setScore(applySatisfaction(personal.getScore(), satisfaction));
     }
 
     public void updateHealthBySatisfaction(Wolibal wolibal, int satisfaction) {
-        Health health = healthRepository.findByWolibal(wolibal)
-                .orElseThrow(HealthNotFoundException::new);
+        Health health = findHealthByWolibal(wolibal);
         health.setSatisfaction(satisfaction);
         health.setScore(applySatisfaction(health.getScore(), satisfaction));
     }
@@ -409,66 +424,96 @@ public class WolibalService {
     }
 
 
+    public FindScoreRankAvgResponse findTotalWolibal(Long memberId) {
+        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
+        return createScoreRankAvgResponse(wolibal.getId(), wolibal.getScore(), "total");
+    }
 
+    public FindScoreRankAvgResponse findWork(Long memberId, Long workId) {
+        Work work = workRepository.findById(workId)
+                .orElseThrow(WorkNotFoundException::new);
+        return createScoreRankAvgResponse(workId, work.getScore(), "work");
+    }
 
-//
-//    public FindTotalWolibalResponse findTotalWolibal(Long memberId, String option) {
-//        Member member = memberService.findMemberById(memberId);
-//        Wolibal wolibal = findWolibalByMember(member);
-//        WolibalScoreRankAvgDto totalDto = createScoreRankAvgDto(wolibal.getTotalScore(), "total");
-//        return FindTotalWolibalResponse.createWith(wolibal, totalDto);
-//    }
-//
-//    public FindLabelsWolibalResponse findLabelsWolibal(Long memberId, String option) {
-//        Member member = memberService.findMemberById(memberId);
-//        Wolibal wolibal = findWolibalByMember(member);
-//        WolibalScoreRankAvgDto workDto = createScoreRankAvgDto(wolibal.getWorkScore(), "work");
-//        WolibalScoreRankAvgDto restDto = createScoreRankAvgDto(wolibal.getRestScore(), "rest");
-//        WolibalScoreRankAvgDto sleepDto = createScoreRankAvgDto(wolibal.getSleepScore(), "sleep");
-//        WolibalScoreRankAvgDto personalDto = createScoreRankAvgDto(wolibal.getPersonalScore(), "personal");
-//        WolibalScoreRankAvgDto healthDto = createScoreRankAvgDto(wolibal.getHealthScore(), "health");
-//        return FindLabelsWolibalResponse.createWith(member.getId(), workDto, restDto, sleepDto, personalDto, healthDto);
-//    }
-//
-//    private WolibalScoreRankAvgDto createScoreRankAvgDto(int score, String label) {
-//        long higherCount = calculateHigherCount(label, score);
-//        int rank = calculateRank(higherCount);
-//        int avg = getAverage(label);
-//        return WolibalScoreRankAvgDto.builder()
-//                .score(score)
-//                .rank(rank)
-//                .avg(avg)
-//                .build();
-//    }
-//
-//    private int calculateRank(long higherCount) {
-//        long allCount = wolibalRepository.count();
-//        return (int) ((higherCount * 100) / allCount);
-//    }
-//
-//    private long calculateHigherCount(String label, int score) {
-//        return switch (label) {
-//            case "total" -> wolibalRepository.countByTotalHigherThan(score);
-//            case "work" -> wolibalRepository.countByWorkHigherThan(score);
-//            case "rest" -> wolibalRepository.countByRestHigherThan(score);
-//            case "sleep" -> wolibalRepository.countBySleepHigherThan(score);
-//            case "personal" -> wolibalRepository.countByPersonalHigherThan(score);
-//            case "health" -> wolibalRepository.countByHealthHigherThan(score);
-//            default -> throw new IllegalArgumentException("Invalid label name: " + label);
-//        };
-//    }
-//
-//    private int getAverage(String label) {
-//        return switch (label) {
-//            case "total" -> wolibalRepository.getAverageTotal();
-//            case "work" -> wolibalRepository.getAverageWork();
-//            case "rest" -> wolibalRepository.getAverageRest();
-//            case "sleep" -> wolibalRepository.getAverageSleep();
-//            case "personal" -> wolibalRepository.getAveragePersonal();
-//            case "health" -> wolibalRepository.getAverageHealth();
-//            default -> throw new IllegalArgumentException("Invalid label name: " + label);
-//        };
-//    }
+    public FindScoreRankAvgResponse findRest(Long memberId, Long restId) {
+        Rest rest = restRepository.findById(restId)
+                .orElseThrow(RestNotFoundException::new);
+        return createScoreRankAvgResponse(restId, rest.getScore(), "rest");
+    }
+
+    public FindScoreRankAvgResponse findSleep(Long memberId, Long sleepId) {
+        Sleep sleep = sleepRepository.findById(sleepId)
+                .orElseThrow(SleepNotFoundException::new);
+        return createScoreRankAvgResponse(sleepId, sleep.getScore(), "sleep");
+    }
+
+    public FindScoreRankAvgResponse findPersonal(Long memberId, Long personalId) {
+        Personal personal = personalRepository.findById(personalId)
+                .orElseThrow(PersonalNotFoundException::new);
+        return createScoreRankAvgResponse(personalId, personal.getScore(), "personal");
+    }
+
+    public FindScoreRankAvgResponse findHealth(Long memberId, Long healthId) {
+        Health health = healthRepository.findById(healthId)
+                .orElseThrow(HealthNotFoundException::new);
+        return createScoreRankAvgResponse(healthId, health.getScore(), "health");
+    }
+
+    public FindLabelsWolibalResponse findLabelsWolibal(Long memberId, String option) {
+        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
+        Work work = findWorkByWolibal(wolibal);
+        Rest rest = findRestByWolibal(wolibal);
+        Sleep sleep = findSleepByWolibal(wolibal);
+        Personal personal = findPersonalByWolibal(wolibal);
+        Health health = findHealthByWolibal(wolibal);
+        FindScoreRankAvgResponse workDto = createScoreRankAvgResponse(work.getId(), work.getScore(), "work");
+        FindScoreRankAvgResponse restDto = createScoreRankAvgResponse(rest.getId(), rest.getScore(), "rest");
+        FindScoreRankAvgResponse sleepDto = createScoreRankAvgResponse(sleep.getId(), sleep.getScore(), "sleep");
+        FindScoreRankAvgResponse personalDto = createScoreRankAvgResponse(personal.getId(), personal.getScore(), "personal");
+        FindScoreRankAvgResponse healthDto = createScoreRankAvgResponse(health.getId(), health.getScore(), "health");
+        return FindLabelsWolibalResponse.createWith(memberId, workDto, restDto, sleepDto, personalDto, healthDto);
+    }
+
+    private FindScoreRankAvgResponse createScoreRankAvgResponse(Long id, int score, String label) {
+        long higherCount = calculateHigherCount(label, score);
+        int rank = calculateRank(higherCount);
+        int avg = getAverage(label);
+        return FindScoreRankAvgResponse.builder()
+                .id(id)
+                .score(score)
+                .rank(rank)
+                .avg(avg)
+                .build();
+    }
+
+    private int calculateRank(long higherCount) {
+        long allCount = wolibalRepository.count();
+        return (int) ((higherCount * 100) / allCount);
+    }
+
+    private long calculateHigherCount(String label, int score) {
+        return switch (label) {
+            case "total" -> wolibalRepository.countByTotalHigherThan(score);
+            case "work" -> workRepository.countByWorkHigherThan(score);
+            case "rest" -> restRepository.countByRestHigherThan(score);
+            case "sleep" -> sleepRepository.countBySleepHigherThan(score);
+            case "personal" -> personalRepository.countByPersonalHigherThan(score);
+            case "health" -> healthRepository.countByHealthHigherThan(score);
+            default -> throw new IllegalArgumentException("Invalid label name: " + label);
+        };
+    }
+
+    private int getAverage(String label) {
+        return switch (label) {
+            case "total" -> wolibalRepository.getAverageTotal();
+            case "work" -> workRepository.getAverageWork();
+            case "rest" -> restRepository.getAverageRest();
+            case "sleep" -> sleepRepository.getAverageSleep();
+            case "personal" -> personalRepository.getAveragePersonal();
+            case "health" -> healthRepository.getAverageHealth();
+            default -> throw new IllegalArgumentException("Invalid label name: " + label);
+        };
+    }
 
     /**
      * 작업 점수 계산 ///////////////////////////////////////////////////
