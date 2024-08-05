@@ -124,15 +124,13 @@ public class WolibalService {
                     healthRepository.save(newHealth);
                     totalScore += previousHealth.getScore();
 
-                int averageScore = totalScore / 5;
-                newWolibal.updateScore(averageScore);
-                wolibalRepository.save(newWolibal);
+                    int averageScore = totalScore / 5;
+                    newWolibal.updateScore(averageScore);
+                    wolibalRepository.save(newWolibal);
+                }
             }
         });
     }
-
-
-
 
     public Wolibal findTodayWolibalByMemberId(final Long memberId) {
         Member member = memberService.findMemberById(memberId);
