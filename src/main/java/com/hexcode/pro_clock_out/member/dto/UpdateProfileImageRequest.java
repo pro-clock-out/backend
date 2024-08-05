@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @ToString
 @NoArgsConstructor
-@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UpdateProfileImageRequest {
-    private String photoUrl;
+    private MultipartFile file;
 }

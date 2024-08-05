@@ -19,6 +19,5 @@ public class CreateDailyRequest {
     private int personalSatisfaction;
     private int healthSatisfaction;
     private String content;
-    private String imageUrl;
     private List<String> completedGoals;
 }

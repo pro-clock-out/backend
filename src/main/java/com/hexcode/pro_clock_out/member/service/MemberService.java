@@ -43,9 +43,9 @@ public class MemberService {
         return FindProfileResponse.createWith(member);
     }
 
-    public UpdateProfileResponse updateProfileImage(Long memberId, UpdateProfileImageRequest request) {
+    public UpdateProfileResponse updateProfileImage(Long memberId, String imageUrl) {
         Member member = findMemberById(memberId);
-        member.updatePhotoUrl(request.getPhotoUrl());
+        member.updatePhotoUrl(imageUrl);
         memberRepository.save(member);
         return UpdateProfileResponse.createWith(member);
     }
