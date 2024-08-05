@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.*;
 public class WolibalController {
     private final WolibalService wolibalService;
 
-//    @GetMapping("members/me/wolibals/total")
-//    public ResponseEntity<ResponseDto> getTotalWolibal(Authentication authentication, @RequestParam("option") String option) {
-//        log.info("Request to get total wolibal");
-//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-//        FindTotalWolibalResponse response = wolibalService.findTotalWolibal(memberId, option);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
-//
+    @GetMapping("/wolibals/total")
+    public ResponseEntity<ResponseDto> getTotalWolibal(Authentication authentication, @RequestParam("option") String option) {
+        log.info("Request to get total wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        FindScoreRankAvgResponse response = wolibalService.findTotalWolibal(memberId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 //    @GetMapping("/members/me/wolibals/label")
 //    public ResponseEntity<ResponseDto> getLabelsWolibal(Authentication authentication, @RequestParam("option") String option) {
 //        log.info("Request to get labels wolibal");
@@ -33,6 +33,46 @@ public class WolibalController {
 //        FindLabelsWolibalResponse response = wolibalService.findLabelsWolibal(memberId, option);
 //        return new ResponseEntity<>(response, HttpStatus.OK);
 //    }
+
+    @GetMapping("/wolibals/work/{workId}")
+    public ResponseEntity<ResponseDto> getWorkWolibal(Authentication authentication, @PathVariable("workId") Long workId) {
+        log.info("Request to get work wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        FindScoreRankAvgResponse response = wolibalService.findWork(memberId, workId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/wolibals/rest/{restId}")
+    public ResponseEntity<ResponseDto> getRestWolibal(Authentication authentication, @PathVariable("restId") Long restId) {
+        log.info("Request to get rest wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        FindScoreRankAvgResponse response = wolibalService.findRest(memberId, restId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/wolibals/sleep/{sleepId}")
+    public ResponseEntity<ResponseDto> getSleepWolibal(Authentication authentication, @PathVariable("sleepId") Long sleepId) {
+        log.info("Request to get sleep wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        FindScoreRankAvgResponse response = wolibalService.findSleep(memberId, sleepId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/wolibals/personal/{personalId}")
+    public ResponseEntity<ResponseDto> getPersonalWolibal(Authentication authentication, @PathVariable("personalId") Long personalId) {
+        log.info("Request to get personal wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        FindScoreRankAvgResponse response = wolibalService.findPersonal(memberId, personalId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/wolibals/health/{healthId}")
+    public ResponseEntity<ResponseDto> getHealthWolibal(Authentication authentication, @PathVariable("healthId") Long healthId) {
+        log.info("Request to get health wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        FindScoreRankAvgResponse response = wolibalService.findHealth(memberId, healthId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PostMapping("/members/me/wolibals/work")
     public ResponseEntity<ResponseDto> postWork(Authentication authentication, @RequestBody CreateWorkRequest request) {
