@@ -23,16 +23,16 @@ public class Sleep extends BaseTime {
     @Min(1) @Max(9)
     private int satisfaction;
 
-    @Min(0) @Max(24)
+    @Min(12) @Max(48)
     private double workdayBedtime;
 
-    @Min(0) @Max(24)
+    @Min(12) @Max(48)
     private double workdayWakeup;
 
-    @Min(0) @Max(24)
+    @Min(12) @Max(48)
     private double dayoffBedtime;
 
-    @Min(0) @Max(24)
+    @Min(12) @Max(48)
     private double dayoffWakeup;
 
     @OneToOne(fetch = FetchType.LAZY)

@@ -13,10 +13,8 @@ import com.hexcode.pro_clock_out.daily.repository.DailyRepository;
 import com.hexcode.pro_clock_out.daily.repository.GoalRepository;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
-import com.hexcode.pro_clock_out.member.exception.WolibalNotFoundException;
 import com.hexcode.pro_clock_out.member.service.MemberService;
 import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
-import com.hexcode.pro_clock_out.wolibal.domain.Work;
 import com.hexcode.pro_clock_out.wolibal.repository.WolibalRepository;
 import com.hexcode.pro_clock_out.wolibal.service.WolibalService;
 import lombok.RequiredArgsConstructor;
@@ -101,14 +99,19 @@ public class DailyService {
     }
 
     // 발자국 추가
-    public CreateDailyResponse addDaily(Long memberId, CreateDailyRequest request) {
+    public CreateDailyResponse addDaily(Long memberId, CreateDailyRequest request, String imageUrl) {
         Member member = memberService.findMemberById(memberId);
-        Wolibal wolibal = wolibalService.findWolibalByDateAndMember(request.getDate(), member);
+//        Wolibal wolibal = wolibalService.findWolibalByDateAndMember(request.getDate(), member);
 
         Daily daily = Daily.builder()
                 .date(request.getDate())
                 .content(request.getContent())
-                .imageUrl(request.getImageUrl())
+                .workSatisfaction(request.getWorkSatisfaction())
+                .restSatisfaction(request.getRestSatisfaction())
+                .sleepSatisfaction(request.getSleepSatisfaction())
+                .personalSatisfaction(request.getPersonalSatisfaction())
+                .healthSatisfaction(request.getHealthSatisfaction())
+                .imageUrl(imageUrl)
                 .member(member)
                 .build();
         dailyRepository.save(daily);
@@ -125,12 +128,20 @@ public class DailyService {
             }
         }
 
+        // 데일리 항목별 만족도에 따라 워라밸 점수 업데이트
+        wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
+        wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
+        wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
+        wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
+        wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
+
         return CreateDailyResponse.createWith(daily);
     }
 
     // 발자국 수정
     public UpdateDailyResponse updateDaily(Long dailyId, Long memberId, UpdateDailyRequest request) {
         Member member = memberService.findMemberById(memberId);
+        Wolibal wolibal = wolibalService.findWolibalByDateAndMember(request.getDate(), member);
 
         Daily daily = findDailyById(dailyId);
         UpdateDailyData updateDailyData = UpdateDailyData.createWith(request);
@@ -150,6 +161,14 @@ public class DailyService {
                 dailyGoalRepository.save(dailyGoal);
             }
         }
+
+        // 데일리 항목별 만족도에 따라 워라밸 점수 업데이트
+        wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
+        wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
+        wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
+        wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
+        wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
+
         return UpdateDailyResponse.createWith(daily);
     }
 
@@ -162,7 +181,7 @@ public class DailyService {
     }
 
     // 목표 활동 추가
-    public UpdateGoalResponse addGoals(Long memberId, UpdateGoalRequest request) {
+    public CreateGoalResponse addGoals(Long memberId, CreateGoalRequest request) {
         Member member = memberService.findMemberById(memberId);
         List<Goal> existingGoals = goalRepository.findGoalsByMember(member);
         if (existingGoals.size() >= 10) {
@@ -180,9 +199,19 @@ public class DailyService {
                 .member(member)
                 .build();
         goalRepository.save(goal);
-        return UpdateGoalResponse.createWith(goal);
+        return CreateGoalResponse.createWith(goal);
     }
 
+    // 목표 활동 수정
+    public UpdateGoalResponse updateGoals(Long goalId, Long memberId, UpdateGoalRequest request) {
+        Member member = memberService.findMemberById(memberId);
+        Goal goal = findGoalById(goalId);
+        UpdateGoalData updateGoalData = UpdateGoalData.createWith(request);
+        goal.updateGoals(updateGoalData);
+        goalRepository.save(goal);
+        return UpdateGoalResponse.createWith(goal);
+
+    }
 
     // 목표 활동 삭제
     public DeleteGoalResponse deleteGoals(Long goalId, Long memberId) {

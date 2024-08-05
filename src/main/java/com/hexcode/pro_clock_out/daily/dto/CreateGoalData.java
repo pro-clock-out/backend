@@ -6,12 +6,14 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class UpdateGoalData {
+public class CreateGoalData {
+    private Long goalId;
     private String name;
     private Label color;
 
-    public static UpdateGoalData createWith(UpdateGoalRequest request) {
-        return UpdateGoalData.builder()
+    public static CreateGoalData createWith(CreateGoalRequest request) {
+        return CreateGoalData.builder()
+                .goalId(request.getGoalId())
                 .name(request.getName())
                 .color(request.getColor())
                 .build();

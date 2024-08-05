@@ -12,15 +12,16 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CreateSleepRequest {
-    @Min(12) @Max(48)
+public class UpdateSleepRequest {
+    @Min(0) @Max(24)
     private double workdayBedtime;
-    @Min(12) @Max(48)
+    @Min(0) @Max(24)
     private double workdayWakeup;
-    @Min(12) @Max(48)
+    @Min(0) @Max(24)
     private double dayoffBedtime;
-    @Min(12) @Max(48)
+    @Min(0) @Max(24)
     private double dayoffWakeup;
     @Min(1) @Max(9)
     private int sleepSatisfaction;
 }
+
