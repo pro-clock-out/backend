@@ -123,12 +123,10 @@ public class WolibalService {
                     newHealth.setScore(previousHealth.getScore());
                     healthRepository.save(newHealth);
                     totalScore += previousHealth.getScore();
-                }
 
                 int averageScore = totalScore / 5;
                 newWolibal.updateScore(averageScore);
                 wolibalRepository.save(newWolibal);
-
             }
         });
     }

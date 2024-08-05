@@ -99,9 +99,9 @@ public class DailyService {
     }
 
     // 발자국 추가
-    public CreateDailyResponse addDaily(Long memberId, CreateDailyRequest request) {
+    public CreateDailyResponse addDaily(Long memberId, CreateDailyRequest request, String imageUrl) {
         Member member = memberService.findMemberById(memberId);
-        Wolibal wolibal = wolibalService.findWolibalByDateAndMember(request.getDate(), member);
+//        Wolibal wolibal = wolibalService.findWolibalByDateAndMember(request.getDate(), member);
 
         Daily daily = Daily.builder()
                 .date(request.getDate())
@@ -111,7 +111,7 @@ public class DailyService {
                 .sleepSatisfaction(request.getSleepSatisfaction())
                 .personalSatisfaction(request.getPersonalSatisfaction())
                 .healthSatisfaction(request.getHealthSatisfaction())
-                .imageUrl(request.getImageUrl())
+                .imageUrl(imageUrl)
                 .member(member)
                 .build();
         dailyRepository.save(daily);
