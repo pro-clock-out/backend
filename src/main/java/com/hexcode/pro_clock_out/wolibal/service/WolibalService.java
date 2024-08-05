@@ -428,19 +428,19 @@ public class WolibalService {
         double sleepHours = calculateSleepHours(bedtime, wakeupTime);
         double sleepScore = calculateSleepHoursScore(sleepHours, 8.0, 9.5);
         double bedtimeScore = calculateBedtimeScore(bedtime, 23.0, 24.5);
-        double wakeupScore = calculateWakeupScore(wakeupTime, 7.0, 9.5);
+        double wakeupScore = calculateWakeupScore(wakeupTime, 31.0, 33.5);
         return sleepScore * (0.6) + bedtimeScore * (0.2) + wakeupScore * (0.2);
     }
 
     // 수면 시간 계산
     private static double calculateSleepHours(double bedtime, double wakeup) {
-        return wakeup < bedtime ? (24 - bedtime) + wakeup : wakeup - bedtime;
+        return wakeup - bedtime;
     }
 
     // 수면 시간 점수
     private static double calculateSleepHoursScore(double hours, double minHours, double maxHours) {
         if (hours <= minHours) {
-            return (100 / minHours) * hours;
+            return (hours / minHours) * 100;
         } else if (hours <= maxHours) {
             return 100;
         } else {
