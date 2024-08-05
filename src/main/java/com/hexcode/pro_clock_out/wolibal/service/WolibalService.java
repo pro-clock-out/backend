@@ -1,19 +1,24 @@
 package com.hexcode.pro_clock_out.wolibal.service;
 
+import com.hexcode.pro_clock_out.daily.domain.Goal;
+import com.hexcode.pro_clock_out.daily.dto.UpdateGoalData;
+import com.hexcode.pro_clock_out.daily.dto.UpdateGoalRequest;
+import com.hexcode.pro_clock_out.daily.dto.UpdateGoalResponse;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.exception.WolibalNotFoundException;
 import com.hexcode.pro_clock_out.member.service.MemberService;
 import com.hexcode.pro_clock_out.wolibal.domain.*;
 import com.hexcode.pro_clock_out.wolibal.dto.*;
+import com.hexcode.pro_clock_out.wolibal.exception.*;
 import com.hexcode.pro_clock_out.wolibal.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +66,6 @@ public class WolibalService {
                     newWork.setScore(previousWork.getScore());
                     workRepository.save(newWork);
                     totalScore += previousWork.getScore();
-
                 }
 
                 Rest previousRest = restRepository.findByWolibal(previousWolibal).orElse(null);
@@ -103,7 +107,6 @@ public class WolibalService {
                     newPersonal.setScore(previousPersonal.getScore());
                     personalRepository.save(newPersonal);
                     totalScore += previousPersonal.getScore();
-
                 }
 
                 Health previousHealth = healthRepository.findByWolibal(previousWolibal).orElse(null);
@@ -121,14 +124,15 @@ public class WolibalService {
                     healthRepository.save(newHealth);
                     totalScore += previousHealth.getScore();
 
-                }
-
                 int averageScore = totalScore / 5;
                 newWolibal.updateScore(averageScore);
                 wolibalRepository.save(newWolibal);
             }
         });
     }
+
+
+
 
     public Wolibal findTodayWolibalByMemberId(final Long memberId) {
         Member member = memberService.findMemberById(memberId);
@@ -269,6 +273,144 @@ public class WolibalService {
         healthRepository.save(health);
         return CreateWolibalResponse.createWith(wolibal);
     }
+
+
+    // 워라밸 항목별 만족도로 점수 업데이트
+    public void updateWorkBySatisfaction(Wolibal wolibal, int satisfaction) {
+        Work work = workRepository.findByWolibal(wolibal)
+                .orElseThrow(WorkNotFoundException::new);
+        work.setSatisfaction(satisfaction);
+        work.setScore(applySatisfaction(work.getScore(), satisfaction));
+    }
+
+    public void updateRestBySatisfaction(Wolibal wolibal, int satisfaction) {
+        Rest rest = restRepository.findByWolibal(wolibal)
+                .orElseThrow(RestNotFoundException::new);
+        rest.setSatisfaction(satisfaction);
+        rest.setScore(applySatisfaction(rest.getScore(), satisfaction));
+    }
+
+    public void updateSleepBySatisfaction(Wolibal wolibal, int satisfaction) {
+        Sleep sleep = sleepRepository.findByWolibal(wolibal)
+                .orElseThrow(SleepNotFoundException::new);
+        sleep.setSatisfaction(satisfaction);
+        sleep.setScore(applySatisfaction(sleep.getScore(), satisfaction));
+    }
+
+    public void updatePersonalBySatisfaction(Wolibal wolibal, int satisfaction) {
+        Personal personal = personalRepository.findByWolibal(wolibal)
+                .orElseThrow(PersonalNotFoundException::new);
+        personal.setSatisfaction(satisfaction);
+        personal.setScore(applySatisfaction(personal.getScore(), satisfaction));
+    }
+
+    public void updateHealthBySatisfaction(Wolibal wolibal, int satisfaction) {
+        Health health = healthRepository.findByWolibal(wolibal)
+                .orElseThrow(HealthNotFoundException::new);
+        health.setSatisfaction(satisfaction);
+        health.setScore(applySatisfaction(health.getScore(), satisfaction));
+    }
+
+    // 워라밸 항목별 데이터로 점수 업데이트
+    public UpdateWolibalResponse updateWork(Long workId, Long memberId, UpdateWorkRequest dto) {
+        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
+        Optional<Work> existingWorkOpt = workRepository.findByWolibal(wolibal);
+
+        if (existingWorkOpt.isPresent()) {
+            Work existingWork = existingWorkOpt.get();
+
+            existingWork.setDayWorkingHours(dto.getDayWorkingHours());
+            existingWork.setWeekWorkingDays(dto.getWeekWorkingDays());
+            existingWork.setWorkStress(dto.getWorkStress());
+            existingWork.setSatisfaction(dto.getWorkSatisfaction());
+
+            existingWork.setScore(generateWorkScore(existingWork));
+            workRepository.save(existingWork);
+            return UpdateWolibalResponse.createWith(wolibal);
+        } else {
+            throw new WorkNotFoundException(workId);
+        }
+    }
+
+    public UpdateWolibalResponse updateRest(Long restId, Long memberId, UpdateRestRequest dto) {
+        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
+        Optional<Rest> existingRestOpt = restRepository.findByWolibal(wolibal);
+
+        if (existingRestOpt.isPresent()) {
+            Rest existingRest = existingRestOpt.get();
+
+            existingRest.setWorkdayRest(dto.getWorkdayRest());
+            existingRest.setDayoffRest(dto.getDayoffRest());
+            existingRest.setSatisfaction(dto.getRestSatisfaction());
+
+            existingRest.setScore(generateRestScore(existingRest));
+            restRepository.save(existingRest);
+            return UpdateWolibalResponse.createWith(wolibal);
+        } else {
+            throw new RestNotFoundException(restId);
+        }
+    }
+
+    public UpdateWolibalResponse updateSleep(Long sleepId, Long memberId, UpdateSleepRequest dto) {
+        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
+        Optional<Sleep> existingSleepOpt = sleepRepository.findByWolibal(wolibal);
+
+        if (existingSleepOpt.isPresent()) {
+            Sleep existingSleep = existingSleepOpt.get();
+            existingSleep.setWorkdayBedtime(dto.getWorkdayBedtime());
+            existingSleep.setWorkdayWakeup(dto.getWorkdayWakeup());
+            existingSleep.setDayoffBedtime(dto.getDayoffBedtime());
+            existingSleep.setDayoffWakeup(dto.getDayoffWakeup());
+            existingSleep.setSatisfaction(dto.getSleepSatisfaction());
+
+            existingSleep.setScore(generateSleepScore(existingSleep));
+            sleepRepository.save(existingSleep);
+            return UpdateWolibalResponse.createWith(wolibal);
+        } else {
+            throw new SleepNotFoundException(sleepId);
+        }
+    }
+
+    public UpdateWolibalResponse updatePersonal(Long personalId, Long memberId, UpdatePersonalRequest dto) {
+        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
+        Optional<Personal> existingPersonalOpt = personalRepository.findByWolibal(wolibal);
+
+        if (existingPersonalOpt.isPresent()) {
+            Personal existingPersonal = existingPersonalOpt.get();
+            existingPersonal.setTogetherTime(dto.getTogetherTime());
+            existingPersonal.setHobbyTime(dto.getHobbyTime());
+            existingPersonal.setSatisfaction(dto.getPersonalSatisfaction());
+
+            existingPersonal.setScore(generatePersonalScore(existingPersonal));
+            personalRepository.save(existingPersonal);
+            return UpdateWolibalResponse.createWith(wolibal);
+        } else {
+            throw new PersonalNotFoundException(personalId);
+        }
+    }
+
+    public UpdateWolibalResponse updateHealth(Long healthId, Long memberId, UpdateHealthRequest dto) {
+        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
+        Optional<Health> existingHealthOpt = healthRepository.findByWolibal(wolibal);
+
+        if (existingHealthOpt.isPresent()) {
+            Health existingHealth = existingHealthOpt.get();
+
+            existingHealth.setCardioFrequency(dto.getCardioFrequency());
+            existingHealth.setCardioTime(dto.getCardioTime());
+            existingHealth.setStrengthFrequency(dto.getStrengthFrequency());
+            existingHealth.setStrengthTime(dto.getStrengthTime());
+            existingHealth.setSatisfaction(dto.getHealthSatisfaction());
+
+            existingHealth.setScore(generateHealthScore(existingHealth));
+            healthRepository.save(existingHealth);
+            return UpdateWolibalResponse.createWith(wolibal);
+        } else {
+            throw new HealthNotFoundException(healthId);
+        }
+    }
+
+
 
 
 //

@@ -73,4 +73,46 @@ public class WolibalController {
         CreateWolibalResponse response = wolibalService.createHealth(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    // 업데이트
+    @PutMapping("/members/me/wolibals/work/{workId}")
+    public ResponseEntity<ResponseDto> updateWork(Authentication authentication, @PathVariable("workId") Long workId, @RequestBody UpdateWorkRequest request) {
+        log.info("Request to update work wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateWolibalResponse response = wolibalService.updateWork(workId, memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/members/me/wolibals/rest/{restId}")
+    public ResponseEntity<ResponseDto> updateRest(Authentication authentication, @PathVariable("restId") Long workId, @RequestBody UpdateRestRequest request) {
+        log.info("Request to update rest wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateWolibalResponse response = wolibalService.updateRest(workId, memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/members/me/wolibals/sleep/{sleepId}")
+    public ResponseEntity<ResponseDto> updateSleep(Authentication authentication, @PathVariable("sleepId") Long sleepId, @RequestBody UpdateSleepRequest request) {
+        log.info("Request to update sleep wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateWolibalResponse response = wolibalService.updateSleep(sleepId, memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/members/me/wolibals/personal/{personalId}")
+    public ResponseEntity<ResponseDto> updatePersoanl(Authentication authentication, @PathVariable("personalId") Long personalId, @RequestBody UpdatePersonalRequest request) {
+        log.info("Request to update persoanl wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateWolibalResponse response = wolibalService.updatePersonal(personalId, memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/members/me/wolibals/health/{healthId}")
+    public ResponseEntity<ResponseDto> updatehealth(Authentication authentication, @PathVariable("healthId") Long healthId, @RequestBody UpdateHealthRequest request) {
+        log.info("Request to update health wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateWolibalResponse response = wolibalService.updateHealth(healthId, memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
+

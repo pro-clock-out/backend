@@ -69,13 +69,21 @@ public class DailyController {
 
     // 목표 활동 추가
     @PostMapping("/daily/goals")
-    public ResponseEntity<ResponseDto> addGoals(Authentication authentication, @RequestBody UpdateGoalRequest request) {
+    public ResponseEntity<ResponseDto> addGoals(Authentication authentication, @RequestBody CreateGoalRequest request) {
         log.info("Request to post goals");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        UpdateGoalResponse response = dailyService.addGoals(memberId, request);
+        CreateGoalResponse response = dailyService.addGoals(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 목표 활동 수정
+    @PutMapping("daily/goals/{goalId}")
+    public  ResponseEntity<ResponseDto> updateGoals(Authentication authentication, @PathVariable("goalId") Long goalId, @RequestBody UpdateGoalRequest request) {
+        log.info("Request to put goals");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateGoalResponse response = dailyService.updateGoals(goalId, memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     // 목표 활동 삭제
     @DeleteMapping("/daily/goals/{goalId}")
