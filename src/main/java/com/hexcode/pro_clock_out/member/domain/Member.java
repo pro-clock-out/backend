@@ -40,6 +40,8 @@ public class Member extends BaseTime {
     @Enumerated(EnumType.STRING)
     private Prefix prefix;
 
+    private String suggestion;
+
     @PrePersist
     protected void onCreate() {
         this.nickname = "hexcode";
