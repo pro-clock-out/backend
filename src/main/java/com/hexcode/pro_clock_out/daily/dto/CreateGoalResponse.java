@@ -9,19 +9,18 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-
 @Getter
 @Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class UpdateGoalResponse implements ResponseDto {
+public class CreateGoalResponse implements ResponseDto {
     private Long goalId;
 
-    private LocalDateTime updatedAt;
+    private LocalDateTime createdAt;
 
-    public static UpdateGoalResponse createWith(Goal goal) {
-        return UpdateGoalResponse.builder()
+    public static CreateGoalResponse createWith(Goal goal) {
+        return CreateGoalResponse.builder()
                 .goalId(goal.getId())
-                .updatedAt(goal.getUpdatedAt())
+                .createdAt(goal.getCreatedAt())
                 .build();
     }
 }

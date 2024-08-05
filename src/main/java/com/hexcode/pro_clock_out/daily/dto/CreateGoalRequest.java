@@ -7,11 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 @Getter
 @ToString
 @NoArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class UpdateGoalRequest {
+public class CreateGoalRequest {
+    private Long goalId;
     private String name;
     private Label color;
 }

@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Getter @Builder
@@ -44,5 +43,4 @@ public class Daily extends BaseTime {
         this.content = data.getContent();
         this.imageUrl =  data.getImageUrl();
     }
-
 }
