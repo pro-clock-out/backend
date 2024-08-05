@@ -46,7 +46,6 @@ public class WolibalService {
                 wolibalRepository.save(newWolibal);
 
                 int totalScore = 0;
-                int count = 0;
 
                 Wolibal previousWolibal = existingWolibalOpt.get();
 
@@ -62,7 +61,7 @@ public class WolibalService {
                     newWork.setScore(previousWork.getScore());
                     workRepository.save(newWork);
                     totalScore += previousWork.getScore();
-                    count++;
+
                 }
 
                 Rest previousRest = restRepository.findByWolibal(previousWolibal).orElse(null);
@@ -76,7 +75,6 @@ public class WolibalService {
                     newRest.setScore(previousRest.getScore());
                     restRepository.save(newRest);
                     totalScore += previousRest.getScore();
-                    count++;
                 }
 
                 Sleep previousSleep = sleepRepository.findByWolibal(previousWolibal).orElse(null);
@@ -92,7 +90,6 @@ public class WolibalService {
                     newSleep.setScore(previousSleep.getScore());
                     sleepRepository.save(newSleep);
                     totalScore += previousSleep.getScore();
-                    count++;
                 }
 
                 Personal previousPersonal = personalRepository.findByWolibal(previousWolibal).orElse(null);
@@ -106,7 +103,7 @@ public class WolibalService {
                     newPersonal.setScore(previousPersonal.getScore());
                     personalRepository.save(newPersonal);
                     totalScore += previousPersonal.getScore();
-                    count++;
+
                 }
 
                 Health previousHealth = healthRepository.findByWolibal(previousWolibal).orElse(null);
@@ -123,14 +120,12 @@ public class WolibalService {
                     newHealth.setScore(previousHealth.getScore());
                     healthRepository.save(newHealth);
                     totalScore += previousHealth.getScore();
-                    count++;
+
                 }
 
-                if (count > 0) {
-                    int averageScore = totalScore / count;
-                    newWolibal.updateScore(averageScore);
-                    wolibalRepository.save(newWolibal);
-                }
+                int averageScore = totalScore / 5;
+                newWolibal.updateScore(averageScore);
+                wolibalRepository.save(newWolibal);
             }
         });
     }
@@ -350,7 +345,7 @@ public class WolibalService {
     }
 
     private static double calculateWorkScore1(double hours) {
-        if (hours < 8) {
+        if (hours <= 8) {
             return (hours / 8) * 100;
         } else if (hours <= 9) {
             return 100;
@@ -566,6 +561,6 @@ public class WolibalService {
      */
     private static int applySatisfaction(double basicScore, int satisfaction) {
         int score = (int) (basicScore * (1 + ((satisfaction - 5) / 200.0)));
-        return Math.max(0, Math.min(100, score));
+        return Math.max(1, Math.min(100, score));
     }
 }

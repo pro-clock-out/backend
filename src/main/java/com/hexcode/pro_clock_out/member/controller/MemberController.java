@@ -2,6 +2,7 @@ package com.hexcode.pro_clock_out.member.controller;
 
 import com.hexcode.pro_clock_out.auth.dto.CustomUserDetails;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
+import com.hexcode.pro_clock_out.global.service.S3Service;
 import com.hexcode.pro_clock_out.member.dto.*;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
 import com.hexcode.pro_clock_out.member.service.MemberService;
@@ -11,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -18,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1")
 public class MemberController {
     private final MemberService memberService;
-
+    private final S3Service s3Service;
 
     @GetMapping("/members/me/dday")
     public ResponseEntity<ResponseDto> getDDay(Authentication authentication) {
@@ -36,10 +38,11 @@ public class MemberController {
     }
 
     @PutMapping("/members/me/profile/image")
-    public ResponseEntity<ResponseDto> putProfileImage(Authentication authentication, @RequestBody UpdateProfileImageRequest request) {
+    public ResponseEntity<ResponseDto> putProfileImage(Authentication authentication, @RequestParam MultipartFile file) {
         log.info("Request to PUT profile imgae");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        UpdateProfileResponse response = memberService.updateProfileImage(memberId, request);
+        String imageUrl = s3Service.uploadFile(file);
+        UpdateProfileResponse response = memberService.updateProfileImage(memberId, imageUrl);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -65,6 +68,4 @@ public class MemberController {
         DuplicateEmailResponse response = memberService.hasEmail(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-
 }
