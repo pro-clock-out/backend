@@ -472,20 +472,20 @@ public class WolibalService {
         return FindWolibalTransitionsResponse.createWith(totals10, works10, rests10, sleeps10, personals10, healths10);
     }
 
-//    public FindLabelsWolibalResponse findLabelsWolibal(Long memberId, String option) {
-//        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-//        Work work = findWorkByWolibal(wolibal);
-//        Rest rest = findRestByWolibal(wolibal);
-//        Sleep sleep = findSleepByWolibal(wolibal);
-//        Personal personal = findPersonalByWolibal(wolibal);
-//        Health health = findHealthByWolibal(wolibal);
-//        FindScoreRankAvgResponse workDto = createScoreRankAvgResponse(work.getId(), work.getScore(), "work");
-//        FindScoreRankAvgResponse restDto = createScoreRankAvgResponse(rest.getId(), rest.getScore(), "rest");
-//        FindScoreRankAvgResponse sleepDto = createScoreRankAvgResponse(sleep.getId(), sleep.getScore(), "sleep");
-//        FindScoreRankAvgResponse personalDto = createScoreRankAvgResponse(personal.getId(), personal.getScore(), "personal");
-//        FindScoreRankAvgResponse healthDto = createScoreRankAvgResponse(health.getId(), health.getScore(), "health");
-//        return FindLabelsWolibalResponse.createWith(memberId, workDto, restDto, sleepDto, personalDto, healthDto);
-//    }
+    public FindLabelsWolibalResponse findAllWolibals(Long memberId) {
+        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
+        Work work = findWorkByWolibal(wolibal);
+        Rest rest = findRestByWolibal(wolibal);
+        Sleep sleep = findSleepByWolibal(wolibal);
+        Personal personal = findPersonalByWolibal(wolibal);
+        Health health = findHealthByWolibal(wolibal);
+        FindScoreRankAvgResponse workDto = createScoreRankAvgResponse(work.getId(), work.getScore(), "work");
+        FindScoreRankAvgResponse restDto = createScoreRankAvgResponse(rest.getId(), rest.getScore(), "rest");
+        FindScoreRankAvgResponse sleepDto = createScoreRankAvgResponse(sleep.getId(), sleep.getScore(), "sleep");
+        FindScoreRankAvgResponse personalDto = createScoreRankAvgResponse(personal.getId(), personal.getScore(), "personal");
+        FindScoreRankAvgResponse healthDto = createScoreRankAvgResponse(health.getId(), health.getScore(), "health");
+        return FindLabelsWolibalResponse.createWith(memberId, workDto, restDto, sleepDto, personalDto, healthDto);
+    }
 
     private FindScoreRankAvgResponse createScoreRankAvgResponse(Long id, int score, String label) {
         long higherCount = calculateHigherCount(label, score);
