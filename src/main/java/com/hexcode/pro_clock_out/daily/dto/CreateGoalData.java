@@ -8,14 +8,14 @@ import lombok.Getter;
 @Builder
 public class CreateGoalData {
     private Long goalId;
-    private String name;
-    private Label color;
+    private String content;
+    private Label category;
 
     public static CreateGoalData createWith(CreateGoalRequest request) {
         return CreateGoalData.builder()
                 .goalId(request.getGoalId())
-                .name(request.getContent())
-                .color(request.getCategory())
+                .content(request.getContent())
+                .category(request.getCategory())
                 .build();
     }
 }
