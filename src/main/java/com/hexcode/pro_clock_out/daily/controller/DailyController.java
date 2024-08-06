@@ -48,10 +48,10 @@ public class DailyController {
 
     // 발자국 추가
     @PostMapping("/daily")
-    public ResponseEntity<ResponseDto> addDailyFootprint(Authentication authentication, @RequestPart("request") CreateDailyRequest request, String imageUrl) {
+    public ResponseEntity<ResponseDto> addDailyFootprint(Authentication authentication, @RequestBody CreateDailyRequest request) {
         log.info("Request to post Footprint");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        CreateDailyResponse response = dailyService.addDaily(memberId, request, imageUrl);
+        CreateDailyResponse response = dailyService.addDaily(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
