@@ -13,6 +13,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -43,25 +44,17 @@ public class AuthController {
         return ResponseEntity.ok(loginRequest.getEmail());
     }
 
-    @GetMapping("/auth/kakao/login")
+    @GetMapping("/oauth/kakao/login")
     public ResponseEntity<String> kakaoLogin() {
         String kakaoAuthUrl = authService.getKakaoAuthUrl();
         return ResponseEntity.ok(kakaoAuthUrl);
     }
 
-    @GetMapping("/auth/kakao/callback")
+    @GetMapping("/oauth/kakao/callback")
     public ResponseEntity<String> kakaoCallback(@RequestParam String code) {
-        TokenDto accessToken = authService.getAccessToken(code);
-        ResponseEntity<Map<String, Object>> userResponse = authService.getUserInfo(String.valueOf(accessToken));
-
-        // 사용자 정보를 이용해 로그인 처리
-        authService.processUserInfo(Objects.requireNonNull(userResponse.getBody()));
-
-        return ResponseEntity.ok("로그인 성공");
-    }
-
-    @GetMapping("/auth/kakao/token")
-    public TokenDto kakaoAccess(@RequestParam String code){
-        return authService.getAccessToken(code);
+        String accessToken = authService.getAccessToken(code);
+        HashMap<String, Object> userResponse = authService.getKakaoUserInfo(accessToken);
+        String token = authService.kakaoUserLogin(userResponse);
+        return ResponseEntity.ok(token);
     }
 }

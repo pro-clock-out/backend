@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TokenDto {
+    private String email;
     private String accessToken;
 }
