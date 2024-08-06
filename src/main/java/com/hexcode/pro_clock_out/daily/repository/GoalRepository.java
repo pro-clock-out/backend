@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface GoalRepository extends JpaRepository<Goal, Long> {
     List<Goal> findGoalsByMember(Member member);
-    Optional<Goal> findByName(String name);
+    Optional<Goal> findByContent(String content);
 
 }

@@ -19,17 +19,17 @@ public class Goal extends BaseTime {
     @Column(name = "goal_id")
     private Long id;
 
-    private String name;
+    private String content;
 
     @Enumerated(EnumType.STRING)
-    private Label color;
+    private Label category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     public void updateGoals(UpdateGoalData data) {
-        this.name = data.getName();
-        this.color = data.getColor();
+        this.content = data.getContent();
+        this.category = data.getCategory();
     }
 }

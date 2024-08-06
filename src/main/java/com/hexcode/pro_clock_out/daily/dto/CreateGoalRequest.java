@@ -14,6 +14,6 @@ import lombok.ToString;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CreateGoalRequest {
     private Long goalId;
-    private String name;
-    private Label color;
+    private String content;
+    private Label category;
 }
