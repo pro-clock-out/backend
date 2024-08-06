@@ -490,7 +490,8 @@ public class WolibalService {
 
     private FindScoreRankAvgResponse createScoreRankAvgResponse(Long id, int score, String label) {
         long higherCount = calculateHigherCount(label, score);
-        int rank = calculateRank(higherCount);
+//        int rank = calculateRank(higherCount);
+        int rank = (int) higherCount;
         int avg = getAverage(label);
         return FindScoreRankAvgResponse.builder()
                 .id(id)
