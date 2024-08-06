@@ -24,7 +24,7 @@ public class CalendarController {
 
     @GetMapping("/calendars/{calendarId}")
     public ResponseEntity<ResponseDto> getCalendarEventDetails(Authentication authentication, @PathVariable("calendarId") Long calendarId) {
-        log.info("Request to get Calendar Event Details");
+        log.info("Request to GET calendar detail");
         FindCalendarDetailResponse response = calendarService.findCalendarDetail(calendarId);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
@@ -34,7 +34,7 @@ public class CalendarController {
     public ResponseEntity<ResponseDto> addCalendarEvent(
             Authentication authentication,
             @RequestBody UpdateCalendarRequest request){
-        log.info("Request to add Event");
+        log.info("Request to POST calendar");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         AddCalendarResponse response = calendarService.addCalendar(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -42,14 +42,14 @@ public class CalendarController {
 
     @PutMapping("/calendars/{calendarId}")
     public ResponseEntity<ResponseDto> updateCalendarEvent(Authentication authentication, @PathVariable("calendarId") Long calendarId, @RequestBody UpdateCalendarRequest request){
-        log.info("Request to add Event");
+        log.info("Request to PUT calendar");
         UpdateCalendarResponse response = calendarService.updateCalendar(calendarId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/calendars/{calendarId}")
     public ResponseEntity<?> deleteCalendarEvent(Authentication authentication, @PathVariable("calendarId") Long calendarId){
-        log.info("Request to delete Calendar Event Details");
+        log.info("Request to DELETE calendar detail");
         try {
             calendarService.deleteCalendar(calendarId);
             return ResponseEntity.ok("삭제 성공");
@@ -60,6 +60,7 @@ public class CalendarController {
 
     @GetMapping("/calendars")
     public ResponseEntity<?> getAllCalendarEvents(Authentication authentication) {
+        log.info("Request to GET all calendars");
         try {
             Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
             List<CalendarEventResponse> calendars = calendarService.getAllCalendarEvents(memberId);
