@@ -11,5 +11,4 @@ public class ProClockOutApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ProClockOutApplication.class, args);
 	}
-
 }
