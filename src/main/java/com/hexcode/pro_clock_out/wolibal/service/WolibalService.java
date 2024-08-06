@@ -295,7 +295,6 @@ public class WolibalService {
         return CreateWolibalResponse.createWith(wolibal);
     }
 
-
     // 워라밸 항목별 만족도로 점수 업데이트
     public void updateWorkBySatisfaction(Wolibal wolibal, int satisfaction) {
         Work work = findWorkByWolibal(wolibal);
