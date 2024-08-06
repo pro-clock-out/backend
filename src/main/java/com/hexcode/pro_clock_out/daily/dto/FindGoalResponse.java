@@ -23,16 +23,16 @@ public class FindGoalResponse implements ResponseDto {
     @Builder
     public static class GoalDetail {
         private Long goalId;
-        private String name;
-        private Label color;
+        private String content;
+        private Label category;
     }
 
     public static FindGoalResponse createWith(List<Goal> goals) {
         List<GoalDetail> goalDetails = goals.stream()
                 .map(goal -> GoalDetail.builder()
                         .goalId(goal.getId())
-                        .name(goal.getContent())
-                        .color(goal.getCategory())
+                        .content(goal.getContent())
+                        .category(goal.getCategory())
                         .build())
                 .collect(Collectors.toList());
 
