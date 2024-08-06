@@ -26,13 +26,13 @@ public class WolibalController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @GetMapping("/wolibals/label")
-//    public ResponseEntity<ResponseDto> getLabelsWolibal(Authentication authentication, @RequestParam("option") String option) {
-//        log.info("Request to get labels wolibal");
-//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-//        FindLabelsWolibalResponse response = wolibalService.findLabelsWolibal(memberId, option);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+    @GetMapping("/wolibals/all")
+    public ResponseEntity<ResponseDto> getLabelsWolibal(Authentication authentication, @RequestParam("option") String option) {
+        log.info("Request to get labels wolibal");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        FindLabelsWolibalResponse response = wolibalService.findLabelsWolibal(memberId, option);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @GetMapping("/wolibals/work/{workId}")
     public ResponseEntity<ResponseDto> getWorkWolibal(Authentication authentication, @PathVariable("workId") Long workId) {
