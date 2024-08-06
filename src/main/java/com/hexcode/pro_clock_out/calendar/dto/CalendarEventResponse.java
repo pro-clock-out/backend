@@ -1,6 +1,7 @@
 package com.hexcode.pro_clock_out.calendar.dto;
 
 import com.hexcode.pro_clock_out.calendar.domain.Calendar;
+import com.hexcode.pro_clock_out.calendar.domain.Label;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ public class CalendarEventResponse {
     private String location;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private Label label;
 
     public CalendarEventResponse(Calendar calendar) {
         this.id = calendar.getId();
@@ -25,6 +27,7 @@ public class CalendarEventResponse {
         this.location = calendar.getLocation();
         this.startTime = calendar.getStartTime();
         this.endTime = calendar.getEndTime();
+        this.label = calendar.getLabel();
     }
 
     public CalendarEventResponse(String title, String notes, String location) {
