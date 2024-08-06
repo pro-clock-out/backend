@@ -50,7 +50,13 @@ public class Wolibal extends BaseTime {
     @JsonManagedReference
     private Health health;
 
-    public void updateScore(int score) {
-        this.score = score;
+    public void updateScore() {
+        int workScore = (work != null) ? work.getScore() : 0;
+        int restScore = (rest != null) ? rest.getScore() : 0;
+        int sleepScore = (sleep != null) ? sleep.getScore() : 0;
+        int personalScore = (personal != null) ? personal.getScore() : 0;
+        int healthScore = (health != null) ? health.getScore() : 0;
+        int totalScore = workScore + restScore + sleepScore + personalScore + healthScore;
+        this.score = totalScore / 5;
     }
 }

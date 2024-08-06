@@ -46,9 +46,6 @@ public class WolibalService {
                         .member(member)
                         .build();
                 wolibalRepository.save(newWolibal);
-
-                int totalScore = 0;
-
                 Wolibal previousWolibal = existingWolibalOpt.get();
 
                 Work previousWork = workRepository.findByWolibal(previousWolibal).orElse(null);
@@ -62,7 +59,6 @@ public class WolibalService {
                             .build();
                     newWork.setScore(previousWork.getScore());
                     workRepository.save(newWork);
-                    totalScore += previousWork.getScore();
                 }
 
                 Rest previousRest = restRepository.findByWolibal(previousWolibal).orElse(null);
@@ -75,7 +71,6 @@ public class WolibalService {
                             .build();
                     newRest.setScore(previousRest.getScore());
                     restRepository.save(newRest);
-                    totalScore += previousRest.getScore();
                 }
 
                 Sleep previousSleep = sleepRepository.findByWolibal(previousWolibal).orElse(null);
@@ -90,7 +85,6 @@ public class WolibalService {
                             .build();
                     newSleep.setScore(previousSleep.getScore());
                     sleepRepository.save(newSleep);
-                    totalScore += previousSleep.getScore();
                 }
 
                 Personal previousPersonal = personalRepository.findByWolibal(previousWolibal).orElse(null);
@@ -103,7 +97,6 @@ public class WolibalService {
                             .build();
                     newPersonal.setScore(previousPersonal.getScore());
                     personalRepository.save(newPersonal);
-                    totalScore += previousPersonal.getScore();
                 }
 
                 Health previousHealth = healthRepository.findByWolibal(previousWolibal).orElse(null);
@@ -119,10 +112,8 @@ public class WolibalService {
                             .build();
                     newHealth.setScore(previousHealth.getScore());
                     healthRepository.save(newHealth);
-                    totalScore += previousHealth.getScore();
 
-                    int averageScore = totalScore / 5;
-                    newWolibal.updateScore(averageScore);
+                    newWolibal.updateScore();
                     wolibalRepository.save(newWolibal);
                 }
             }
@@ -193,6 +184,8 @@ public class WolibalService {
         }
         work.setScore(generateWorkScore(work));
         workRepository.save(work);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
         return CreateWolibalResponse.createWith(wolibal);
     }
 
@@ -215,6 +208,8 @@ public class WolibalService {
         }
         rest.setScore(generateRestScore(rest));
         restRepository.save(rest);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
         return CreateWolibalResponse.createWith(wolibal);
     }
 
@@ -241,6 +236,8 @@ public class WolibalService {
         }
         sleep.setScore(generateSleepScore(sleep));
         sleepRepository.save(sleep);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
         return CreateWolibalResponse.createWith(wolibal);
     }
 
@@ -263,6 +260,8 @@ public class WolibalService {
         }
         personal.setScore(generatePersonalScore(personal));
         personalRepository.save(personal);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
         return CreateWolibalResponse.createWith(wolibal);
     }
 
@@ -291,6 +290,8 @@ public class WolibalService {
         }
         health.setScore(generateHealthScore(health));
         healthRepository.save(health);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
         return CreateWolibalResponse.createWith(wolibal);
     }
 
