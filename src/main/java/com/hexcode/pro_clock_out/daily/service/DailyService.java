@@ -101,7 +101,6 @@ public class DailyService {
     // 발자국 추가
     public CreateDailyResponse addDaily(Long memberId, CreateDailyRequest request) {
         Member member = memberService.findMemberById(memberId);
-        Wolibal wolibal = wolibalService.findWolibalByDateAndMember(request.getDate(), member);
 
         Daily daily = Daily.builder()
                 .date(request.getDate())
@@ -129,12 +128,15 @@ public class DailyService {
         }
 
         // 데일리 항목별 만족도에 따라 워라밸 점수 업데이트
-        wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
-        wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
-        wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
-        wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
-        wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
-
+        Optional<Wolibal> existWolibal = wolibalRepository.findByDateAndMember(request.getDate(), member);
+        if (existWolibal.isPresent()) {
+            Wolibal wolibal = existWolibal.get();
+            wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
+            wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
+            wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
+            wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
+            wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
+        }
         return CreateDailyResponse.createWith(daily);
     }
 
