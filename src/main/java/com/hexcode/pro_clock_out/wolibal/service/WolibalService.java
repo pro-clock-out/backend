@@ -9,6 +9,8 @@ import com.hexcode.pro_clock_out.wolibal.exception.*;
 import com.hexcode.pro_clock_out.wolibal.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -423,7 +425,6 @@ public class WolibalService {
         }
     }
 
-
     public FindScoreRankAvgResponse findTotalWolibal(Long memberId) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
         return createScoreRankAvgResponse(wolibal.getId(), wolibal.getScore(), "total");
@@ -459,20 +460,32 @@ public class WolibalService {
         return createScoreRankAvgResponse(healthId, health.getScore(), "health");
     }
 
-    public FindLabelsWolibalResponse findLabelsWolibal(Long memberId, String option) {
-        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Work work = findWorkByWolibal(wolibal);
-        Rest rest = findRestByWolibal(wolibal);
-        Sleep sleep = findSleepByWolibal(wolibal);
-        Personal personal = findPersonalByWolibal(wolibal);
-        Health health = findHealthByWolibal(wolibal);
-        FindScoreRankAvgResponse workDto = createScoreRankAvgResponse(work.getId(), work.getScore(), "work");
-        FindScoreRankAvgResponse restDto = createScoreRankAvgResponse(rest.getId(), rest.getScore(), "rest");
-        FindScoreRankAvgResponse sleepDto = createScoreRankAvgResponse(sleep.getId(), sleep.getScore(), "sleep");
-        FindScoreRankAvgResponse personalDto = createScoreRankAvgResponse(personal.getId(), personal.getScore(), "personal");
-        FindScoreRankAvgResponse healthDto = createScoreRankAvgResponse(health.getId(), health.getScore(), "health");
-        return FindLabelsWolibalResponse.createWith(memberId, workDto, restDto, sleepDto, personalDto, healthDto);
+    public FindWolibalTransitionsResponse findTransitions(Long memberId) {
+        Member member = memberService.findMemberById(memberId);
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Wolibal> totals10 = wolibalRepository.findRecent10(member, pageable);
+        List<Work> works10 = workRepository.findRecent10(member, pageable);
+        List<Rest> rests10 = restRepository.findRecent10(member, pageable);
+        List<Sleep> sleeps10 = sleepRepository.findRecent10(member, pageable);
+        List<Personal> personals10 = personalRepository.findRecent10(member, pageable);
+        List<Health> healths10 = healthRepository.findRecent10(member, pageable);
+        return FindWolibalTransitionsResponse.createWith(totals10, works10, rests10, sleeps10, personals10, healths10);
     }
+
+//    public FindLabelsWolibalResponse findLabelsWolibal(Long memberId, String option) {
+//        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
+//        Work work = findWorkByWolibal(wolibal);
+//        Rest rest = findRestByWolibal(wolibal);
+//        Sleep sleep = findSleepByWolibal(wolibal);
+//        Personal personal = findPersonalByWolibal(wolibal);
+//        Health health = findHealthByWolibal(wolibal);
+//        FindScoreRankAvgResponse workDto = createScoreRankAvgResponse(work.getId(), work.getScore(), "work");
+//        FindScoreRankAvgResponse restDto = createScoreRankAvgResponse(rest.getId(), rest.getScore(), "rest");
+//        FindScoreRankAvgResponse sleepDto = createScoreRankAvgResponse(sleep.getId(), sleep.getScore(), "sleep");
+//        FindScoreRankAvgResponse personalDto = createScoreRankAvgResponse(personal.getId(), personal.getScore(), "personal");
+//        FindScoreRankAvgResponse healthDto = createScoreRankAvgResponse(health.getId(), health.getScore(), "health");
+//        return FindLabelsWolibalResponse.createWith(memberId, workDto, restDto, sleepDto, personalDto, healthDto);
+//    }
 
     private FindScoreRankAvgResponse createScoreRankAvgResponse(Long id, int score, String label) {
         long higherCount = calculateHigherCount(label, score);
