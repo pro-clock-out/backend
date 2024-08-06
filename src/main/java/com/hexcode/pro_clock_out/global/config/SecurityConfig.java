@@ -83,7 +83,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         // cors 설정
-        config.setAllowedOriginPatterns(List.of("http://127.0.0.1:3000", "http://localhost:3000"));
+        config.setAllowedOriginPatterns(List.of("http://127.0.0.1:3000", "http://localhost:3000", "https://proclockout.web.app", "https://proclockout.com"));
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.setAllowCredentials(true);
