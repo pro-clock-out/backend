@@ -39,12 +39,18 @@ public class DailyController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 발자국 이미지 업로드
+    @PostMapping("/daily/image")
+    public String addDailyFootprintImage(Authentication authentication, @RequestParam MultipartFile file) {
+        log.info("Request to post Footprint image");
+        return s3Service.uploadFile(file);
+    }
+
     // 발자국 추가
     @PostMapping("/daily")
-    public ResponseEntity<ResponseDto> addDailyFootprint(Authentication authentication, @RequestPart("request") CreateDailyRequest request, @RequestPart("file") MultipartFile file) {
+    public ResponseEntity<ResponseDto> addDailyFootprint(Authentication authentication, @RequestPart("request") CreateDailyRequest request, String imageUrl) {
         log.info("Request to post Footprint");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        String imageUrl = s3Service.uploadFile(file);
         CreateDailyResponse response = dailyService.addDaily(memberId, request, imageUrl);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

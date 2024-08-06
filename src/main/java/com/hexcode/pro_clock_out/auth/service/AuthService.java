@@ -97,6 +97,15 @@ public class AuthService {
         registerOrLoginMember(email, "defaultPassword");
     }
 
+    private Map<String, Object> getMapFromObject(Object obj) {
+        if (obj instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) obj;
+            return map;
+        }
+        return null;
+    }
+
     public void joinProcess(JoinDto joinDto) {
         String email = joinDto.getEmail();
         String password = joinDto.getPassword();
@@ -116,18 +125,9 @@ public class AuthService {
                     .role("ROLE_USER") // 역할 설정
                     .build();
             memberRepository.save(newMember);
-            log.info("New member registered: {}", email);
+            log.info("새로운 사용자 회원가입: {}", email);
         } else {
-            log.info("Existing member logged in: {}", email);
+            log.info("기존 사용자 로그인: {}", email);
         }
-    }
-
-    private Map<String, Object> getMapFromObject(Object obj) {
-        if (obj instanceof Map) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> map = (Map<String, Object>) obj;
-            return map;
-        }
-        return null;
     }
 }
