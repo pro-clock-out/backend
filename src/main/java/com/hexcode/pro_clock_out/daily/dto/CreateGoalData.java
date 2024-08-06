@@ -14,8 +14,8 @@ public class CreateGoalData {
     public static CreateGoalData createWith(CreateGoalRequest request) {
         return CreateGoalData.builder()
                 .goalId(request.getGoalId())
-                .name(request.getName())
-                .color(request.getColor())
+                .name(request.getContent())
+                .color(request.getCategory())
                 .build();
     }
 }

@@ -31,8 +31,8 @@ public class FindGoalResponse implements ResponseDto {
         List<GoalDetail> goalDetails = goals.stream()
                 .map(goal -> GoalDetail.builder()
                         .goalId(goal.getId())
-                        .name(goal.getName())
-                        .color(goal.getColor())
+                        .name(goal.getContent())
+                        .color(goal.getCategory())
                         .build())
                 .collect(Collectors.toList());
 

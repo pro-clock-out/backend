@@ -69,7 +69,7 @@ public class DailyService {
     public List<String> findGoalNamesByDailyId(Long dailyId) {
         List<DailyGoal> dailyGoals = dailyGoalRepository.findByDailyId(dailyId);
         return dailyGoals.stream()
-                .map(dailyGoal -> dailyGoal.getGoal().getName())
+                .map(dailyGoal -> dailyGoal.getGoal().getContent())
                 .collect(Collectors.toList());
     }
 
@@ -118,7 +118,7 @@ public class DailyService {
 
         if (request.getCompletedGoals() != null) {
             for (String goalName : request.getCompletedGoals()) {
-                Goal goal = goalRepository.findByName(goalName)
+                Goal goal = goalRepository.findByContent(goalName)
                         .orElseThrow(GoalNotFoundException::new);
                 DailyGoal dailyGoal = DailyGoal.builder()
                         .daily(daily)
@@ -151,7 +151,7 @@ public class DailyService {
             List<DailyGoal> dailyGoals = dailyGoalRepository.findByDailyId(dailyId);
             dailyGoalRepository.deleteAll(dailyGoals);
             for (String newGoalName : request.getCompletedGoals()) {
-                Goal goal = goalRepository.findByName(newGoalName)
+                Goal goal = goalRepository.findByContent(newGoalName)
                         .orElseThrow(GoalNotFoundException::new);
                 DailyGoal dailyGoal = DailyGoal.builder()
                         .daily(daily)
@@ -191,14 +191,14 @@ public class DailyService {
             throw new GoalLimitExceededException();
         }
 
-        Optional<Goal> existingGoal = goalRepository.findByName((request.getName()));
+        Optional<Goal> existingGoal = goalRepository.findByContent((request.getContent()));
         if (existingGoal.isPresent()) {
-            throw new GoalAlreadyExistsException(request.getName());
+            throw new GoalAlreadyExistsException(request.getContent());
         }
 
         Goal goal = Goal.builder()
-                .name(request.getName())
-                .color(request.getColor())
+                .content(request.getContent())
+                .category(request.getCategory())
                 .member(member)
                 .build();
         goalRepository.save(goal);
