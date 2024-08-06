@@ -5,6 +5,7 @@ import com.hexcode.pro_clock_out.daily.dto.*;
 import com.hexcode.pro_clock_out.daily.service.DailyService;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import com.hexcode.pro_clock_out.global.service.S3Service;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,9 +35,15 @@ public class DailyController {
     @GetMapping("/daily/{dailyId}")
     public ResponseEntity<ResponseDto> getDailyFootprintDetails(Authentication authentication, @PathVariable("dailyId") Long dailyId) {
         log.info("Request to get Daily Footprint Details");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindDailyDetailResponse response = dailyService.findDailyDetail(dailyId, memberId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        try {
+            Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+            FindDailyDetailResponse response = dailyService.findDailyDetail(dailyId, memberId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (MalformedJwtException e) {
+            log.error("Invalid JWT format: ", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // 발자국 이미지 업로드
@@ -50,9 +57,15 @@ public class DailyController {
     @PostMapping("/daily")
     public ResponseEntity<ResponseDto> addDailyFootprint(Authentication authentication, @RequestBody CreateDailyRequest request) {
         log.info("Request to post Footprint");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        CreateDailyResponse response = dailyService.addDaily(memberId, request);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        try {
+            Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+            CreateDailyResponse response = dailyService.addDaily(memberId, request);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (MalformedJwtException e) {
+            log.error("Invalid JWT format: ", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // 발자국 수정
@@ -77,9 +90,15 @@ public class DailyController {
     @PostMapping("/daily/goals")
     public ResponseEntity<ResponseDto> addGoals(Authentication authentication, @RequestBody CreateGoalRequest request) {
         log.info("Request to post goals");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        CreateGoalResponse response = dailyService.addGoals(memberId, request);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        try {
+            Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+            CreateGoalResponse response = dailyService.addGoals(memberId, request);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (MalformedJwtException e) {
+            log.error("Invalid JWT format: ", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // 목표 활동 수정
