@@ -25,7 +25,7 @@ public class DailyController {
     // 연간 발자국 조회
     @GetMapping("/daily")
     public ResponseEntity<ResponseDto> getTotalDailyFootprints(Authentication authentication, @RequestParam("year") int year) {
-        log.info("Request to get Total Daily Footprints for year {}", year);
+        log.info("Request to GET total daily footprints for year {}", year);
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         FindTotalDailyResponse response = dailyService.findTotalDaily(memberId, year);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -34,7 +34,7 @@ public class DailyController {
     // 발자국 상세 조회
     @GetMapping("/daily/{dailyId}")
     public ResponseEntity<ResponseDto> getDailyFootprintDetails(Authentication authentication, @PathVariable("dailyId") Long dailyId) {
-        log.info("Request to get Daily Footprint Details");
+        log.info("Request to GET daily footprint details");
         try {
             Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
             FindDailyDetailResponse response = dailyService.findDailyDetail(dailyId, memberId);
@@ -49,14 +49,14 @@ public class DailyController {
     // 발자국 이미지 업로드
     @PostMapping("/daily/image")
     public String addDailyFootprintImage(Authentication authentication, @RequestParam MultipartFile file) {
-        log.info("Request to post Footprint image");
+        log.info("Request to POST footprint image");
         return s3Service.uploadFile(file);
     }
 
     // 발자국 추가
     @PostMapping("/daily")
     public ResponseEntity<ResponseDto> addDailyFootprint(Authentication authentication, @RequestBody CreateDailyRequest request) {
-        log.info("Request to post Footprint");
+        log.info("Request to POST footprint");
         try {
             Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
             CreateDailyResponse response = dailyService.addDaily(memberId, request);
@@ -71,7 +71,7 @@ public class DailyController {
     // 발자국 수정
     @PutMapping("/daily/{dailyId}")
     public ResponseEntity<ResponseDto> updateDailyFootprint(Authentication authentication, @PathVariable("dailyId") Long dailyId, @RequestBody UpdateDailyRequest request) {
-        log.info("Request to put Footprint");
+        log.info("Request to PUT footprint");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         UpdateDailyResponse response = dailyService.updateDaily(dailyId, memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -80,7 +80,7 @@ public class DailyController {
     // 목표 활동 조회
     @GetMapping("/daily/goals")
     public ResponseEntity<ResponseDto> getGoals(Authentication authentication) {
-        log.info("Request to get Goals");
+        log.info("Request to GET goals");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         FindGoalResponse response = dailyService.findGoals(memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -89,7 +89,7 @@ public class DailyController {
     // 목표 활동 추가
     @PostMapping("/daily/goals")
     public ResponseEntity<ResponseDto> addGoals(Authentication authentication, @RequestBody CreateGoalRequest request) {
-        log.info("Request to post goals");
+        log.info("Request to POST goals");
         try {
             Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
             CreateGoalResponse response = dailyService.addGoals(memberId, request);
@@ -104,7 +104,7 @@ public class DailyController {
     // 목표 활동 수정
     @PutMapping("daily/goals/{goalId}")
     public  ResponseEntity<ResponseDto> updateGoals(Authentication authentication, @PathVariable("goalId") Long goalId, @RequestBody UpdateGoalRequest request) {
-        log.info("Request to put goals");
+        log.info("Request to PUT goals");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         UpdateGoalResponse response = dailyService.updateGoals(goalId, memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -113,7 +113,7 @@ public class DailyController {
     // 목표 활동 삭제
     @DeleteMapping("/daily/goals/{goalId}")
     public ResponseEntity<ResponseDto> deleteGoals(Authentication authentication,  @PathVariable("goalId") Long goalId)  {
-        log.info("Request to delete goals");
+        log.info("Request to DELETE goals");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         DeleteGoalResponse response = dailyService.deleteGoals(goalId, memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
