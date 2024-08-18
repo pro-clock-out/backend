@@ -122,7 +122,7 @@ public class WolibalService {
 
     public Wolibal findTodayWolibalByMemberId(final Long memberId) {
         Member member = memberService.findMemberById(memberId);
-        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
         return wolibalRepository.findByDateAndMember(today, member)
                 .orElseGet(() -> {
                     Wolibal newWolibal = Wolibal.builder()
@@ -460,18 +460,6 @@ public class WolibalService {
         return createScoreRankAvgResponse(healthId, health.getScore(), "health");
     }
 
-    public FindWolibalTransitionsResponse findTransitions(Long memberId) {
-        Member member = memberService.findMemberById(memberId);
-        Pageable pageable = PageRequest.of(0, 10);
-        List<Wolibal> totals10 = wolibalRepository.findRecent10(member, pageable);
-        List<Work> works10 = workRepository.findRecent10(member, pageable);
-        List<Rest> rests10 = restRepository.findRecent10(member, pageable);
-        List<Sleep> sleeps10 = sleepRepository.findRecent10(member, pageable);
-        List<Personal> personals10 = personalRepository.findRecent10(member, pageable);
-        List<Health> healths10 = healthRepository.findRecent10(member, pageable);
-        return FindWolibalTransitionsResponse.createWith(totals10, works10, rests10, sleeps10, personals10, healths10);
-    }
-
     public FindLabelsWolibalResponse findAllWolibals(Long memberId) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
         Work work = findWorkByWolibal(wolibal);
@@ -485,6 +473,18 @@ public class WolibalService {
         FindScoreRankAvgResponse personalDto = createScoreRankAvgResponse(personal.getId(), personal.getScore(), "personal");
         FindScoreRankAvgResponse healthDto = createScoreRankAvgResponse(health.getId(), health.getScore(), "health");
         return FindLabelsWolibalResponse.createWith(memberId, workDto, restDto, sleepDto, personalDto, healthDto);
+    }
+
+    public FindWolibalTransitionsResponse findTransitions(Long memberId) {
+        Member member = memberService.findMemberById(memberId);
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Wolibal> totals10 = wolibalRepository.findRecent10(member, pageable);
+        List<Work> works10 = workRepository.findRecent10(member, pageable);
+        List<Rest> rests10 = restRepository.findRecent10(member, pageable);
+        List<Sleep> sleeps10 = sleepRepository.findRecent10(member, pageable);
+        List<Personal> personals10 = personalRepository.findRecent10(member, pageable);
+        List<Health> healths10 = healthRepository.findRecent10(member, pageable);
+        return FindWolibalTransitionsResponse.createWith(totals10, works10, rests10, sleeps10, personals10, healths10);
     }
 
     private FindScoreRankAvgResponse createScoreRankAvgResponse(Long id, int score, String label) {
