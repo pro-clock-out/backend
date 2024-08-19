@@ -32,17 +32,38 @@ public class WolibalService {
     private final PersonalRepository personalRepository;
     private final HealthRepository healthRepository;
 
+    public void initializeWolibal(Member member) {
+        Wolibal wolibal = Wolibal.builder()
+                .member(member)
+                .build();
+        Work.builder()
+                .wolibal(wolibal)
+                .build();
+        Rest.builder()
+                .wolibal(wolibal)
+                .build();
+        Sleep.builder()
+                .wolibal(wolibal)
+                .build();
+        Personal.builder()
+                .wolibal(wolibal)
+                .build();
+        Health.builder()
+                .wolibal(wolibal)
+                .build();
+        wolibal.updateScore();
+    }
+
     // 매일 정각에 워라밸 자동 생성
     public void createAutoWolibal() {
         List<Member> allMembers = memberService.findAllMembers();
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
         LocalDate yesterday = today.minusDays(1);
 
         allMembers.forEach(member -> {
             Optional<Wolibal> existingWolibalOpt = wolibalRepository.findByDateAndMember(yesterday, member);
             if (existingWolibalOpt.isPresent() && existingWolibalOpt.get().getScore() != 0) {
                 Wolibal newWolibal = Wolibal.builder()
-                        .date(today)
                         .member(member)
                         .build();
                 wolibalRepository.save(newWolibal);

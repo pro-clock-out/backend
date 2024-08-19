@@ -5,6 +5,7 @@ import com.hexcode.pro_clock_out.member.dto.*;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
 import com.hexcode.pro_clock_out.wolibal.domain.*;
+import com.hexcode.pro_clock_out.wolibal.service.WolibalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,8 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
 
+    private final WolibalService wolibalService;
+
     public void createMember(String email, String encodedPassword) {
         Member newMember = Member.builder()
                 .email(email)
@@ -27,28 +30,7 @@ public class MemberService {
                 .role("ROLE_USER") // 역할 설정
                 .build();
         memberRepository.save(newMember);
-    }
-
-    private void initializeWolibal(Member member) {
-        Wolibal wolibal = Wolibal.builder()
-                .member(member)
-                .build();
-        Work.builder()
-                .wolibal(wolibal)
-                .build();
-        Rest.builder()
-                .wolibal(wolibal)
-                .build();
-        Sleep.builder()
-                .wolibal(wolibal)
-                .build();
-        Personal.builder()
-                .wolibal(wolibal)
-                .build();
-        Health.builder()
-                .wolibal(wolibal)
-                .build();
-        wolibal.updateScore();
+        wolibalService.initializeWolibal(newMember);
     }
 
     public Member findMemberById(final Long memberId) {
