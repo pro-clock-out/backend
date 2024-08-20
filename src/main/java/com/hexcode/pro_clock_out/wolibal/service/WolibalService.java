@@ -32,28 +32,6 @@ public class WolibalService {
     private final PersonalRepository personalRepository;
     private final HealthRepository healthRepository;
 
-    public void initializeWolibal(Member member) {
-        Wolibal wolibal = Wolibal.builder()
-                .member(member)
-                .build();
-        Work.builder()
-                .wolibal(wolibal)
-                .build();
-        Rest.builder()
-                .wolibal(wolibal)
-                .build();
-        Sleep.builder()
-                .wolibal(wolibal)
-                .build();
-        Personal.builder()
-                .wolibal(wolibal)
-                .build();
-        Health.builder()
-                .wolibal(wolibal)
-                .build();
-        wolibal.updateScore();
-    }
-
     // 매일 정각에 워라밸 자동 생성
     public void createAutoWolibal() {
         List<Member> allMembers = memberService.findAllMembers();
@@ -481,19 +459,27 @@ public class WolibalService {
         return createScoreRankAvgResponse(healthId, health.getScore(), "health");
     }
 
-    public FindLabelsWolibalResponse findAllWolibals(Long memberId) {
+    public FindAllWolibalResponse findAllWolibals(Long memberId) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
         Work work = findWorkByWolibal(wolibal);
         Rest rest = findRestByWolibal(wolibal);
         Sleep sleep = findSleepByWolibal(wolibal);
         Personal personal = findPersonalByWolibal(wolibal);
         Health health = findHealthByWolibal(wolibal);
+        FindScoreRankAvgResponse totalDto = createScoreRankAvgResponse(wolibal.getId(), wolibal.getScore(), "total");
         FindScoreRankAvgResponse workDto = createScoreRankAvgResponse(work.getId(), work.getScore(), "work");
         FindScoreRankAvgResponse restDto = createScoreRankAvgResponse(rest.getId(), rest.getScore(), "rest");
         FindScoreRankAvgResponse sleepDto = createScoreRankAvgResponse(sleep.getId(), sleep.getScore(), "sleep");
         FindScoreRankAvgResponse personalDto = createScoreRankAvgResponse(personal.getId(), personal.getScore(), "personal");
         FindScoreRankAvgResponse healthDto = createScoreRankAvgResponse(health.getId(), health.getScore(), "health");
-        return FindLabelsWolibalResponse.createWith(memberId, workDto, restDto, sleepDto, personalDto, healthDto);
+        return FindAllWolibalResponse.builder()
+                .total(totalDto)
+                .work(workDto)
+                .rest(restDto)
+                .sleep(sleepDto)
+                .personal(personalDto)
+                .health(healthDto)
+                .build();
     }
 
     public FindWolibalTransitionsResponse findTransitions(Long memberId) {
@@ -509,9 +495,9 @@ public class WolibalService {
     }
 
     private FindScoreRankAvgResponse createScoreRankAvgResponse(Long id, int score, String label) {
-        long higherCount = calculateHigherCount(label, score);
+//        long higherCount = calculateHigherCount(label, score);
 //        int rank = calculateRank(higherCount);
-        int rank = (int) higherCount;
+        int rank = (int) calculateHigherCount(label, score);
         int avg = getAverage(label);
         return FindScoreRankAvgResponse.builder()
                 .id(id)
@@ -521,10 +507,10 @@ public class WolibalService {
                 .build();
     }
 
-    private int calculateRank(long higherCount) {
-        long allCount = wolibalRepository.count();
-        return (int) ((higherCount * 100) / allCount);
-    }
+//    private int calculateRank(long higherCount) {
+//        long allCount = wolibalRepository.count();
+//        return (int) ((higherCount * 100) / allCount);
+//    }
 
     private long calculateHigherCount(String label, int score) {
         return switch (label) {
@@ -554,9 +540,9 @@ public class WolibalService {
      * 작업 점수 계산 ///////////////////////////////////////////////////
      */
     private static int generateWorkScore(Work work) {
-        double score1 = calculateWorkScore1(work.getDayWorkingHours());
-        double score2 = calculateWorkScore2(work.getWeekWorkingDays());
-        double score3 = calculateWorkScore3(work.getWorkStress());
+        double score1 = calculateWorkScore1(work.getDayWorkingHours()); // 일 근무 시간 점수
+        double score2 = calculateWorkScore2(work.getWeekWorkingDays()); // 주 출근 횟수 점수
+        double score3 = calculateWorkScore3(work.getWorkStress()); // 업무 스트레스 점수
         double basicScore = score1 * (0.35) + score2 * (0.2) + score3 * (0.45);
         log.info("work basic score: {}", basicScore);
         int result = applySatisfaction(basicScore, work.getSatisfaction());
@@ -594,15 +580,15 @@ public class WolibalService {
      * 휴식 점수 계산 ///////////////////////////////////////////////////
      */
     private static int generateRestScore(Rest rest) {
-        double score1 = calculateRestScore1(rest.getWorkdayRest());
-        double score2 = calculateRestScore2(rest.getDayoffRest());
+        double score1 = calculateRestScore1(rest.getWorkdayRest()); // 근무일 휴식 시간 점수
+        double score2 = calculateRestScore2(rest.getDayoffRest()); // 휴무일 휴식 시간 점수
         double basicScore = score1 * (0.4) + score2 * (0.6);
         return applySatisfaction(basicScore, rest.getSatisfaction());
     }
 
     // 근무일 휴식 시간 점수
     private static double calculateRestScore1(double hours) {
-        if (hours < 2) {
+        if (hours <= 2) {
             return hours / 2 * 100;
         } else if (hours <= 3) {
             return 100;
@@ -615,7 +601,7 @@ public class WolibalService {
 
     // 휴무일 휴식 시간 점수
     private static double calculateRestScore2(double hours) {
-        if (hours < 6) {
+        if (hours <= 6) {
             return hours / 6 * 100;
         } else if (hours <= 8) {
             return 100;
@@ -628,8 +614,8 @@ public class WolibalService {
      * 수면 점수 계산 ///////////////////////////////////////////////////
      */
     private static int generateSleepScore(Sleep sleep) {
-        double score1 = calculateSleepScore1(sleep.getWorkdayBedtime(), sleep.getWorkdayWakeup());
-        double score2 = calculateSleepScore2(sleep.getDayoffBedtime(), sleep.getDayoffWakeup());
+        double score1 = calculateSleepScore1(sleep.getWorkdayBedtime(), sleep.getWorkdayWakeup()); // 근무일 수면 점수
+        double score2 = calculateSleepScore2(sleep.getDayoffBedtime(), sleep.getDayoffWakeup()); // 휴무일 수면 점수
         double basicScore = (score1 + score2) / 2;
         return applySatisfaction(basicScore, sleep.getSatisfaction());
     }
@@ -639,7 +625,7 @@ public class WolibalService {
         double sleepHours = calculateSleepHours(bedtime, wakeupTime);
         double sleepScore = calculateSleepHoursScore(sleepHours, 7.5, 8.5);
         double bedtimeScore = calculateBedtimeScore(bedtime, 22.0, 23.0);
-        double wakeupScore = calculateWakeupScore(wakeupTime, 6.0, 7.0);
+        double wakeupScore = calculateWakeupScore(wakeupTime, 30.0, 31.0);
         return sleepScore * (0.6) + bedtimeScore * (0.2) + wakeupScore * (0.2);
     }
 
@@ -694,8 +680,8 @@ public class WolibalService {
      * 개인 생활 점수 계산 ///////////////////////////////////////////////////
      */
     private static int generatePersonalScore(Personal personal) {
-        double score1 = calculatePersonalScore1(personal.getTogetherTime());
-        double score2 = calculatePersonalScore2(personal.getHobbyTime());
+        double score1 = calculatePersonalScore1(personal.getTogetherTime()); // 함께하는 시간 점수
+        double score2 = calculatePersonalScore2(personal.getHobbyTime()); // 취미 활동 시간 점수
         double basicScore = (score1 + score2) / 2;
         return applySatisfaction(basicScore, personal.getSatisfaction());
     }
@@ -720,8 +706,8 @@ public class WolibalService {
      * 건강 점수 계산 ///////////////////////////////////////////////////
      */
     private static int generateHealthScore(Health health) {
-        double score1 = calculateHealthScore1(health.getCardioFrequency(), health.getCardioTime());
-        double score2 = calculateHealthScore2(health.getStrengthFrequency(), health.getStrengthTime());
+        double score1 = calculateHealthScore1(health.getCardioFrequency(), health.getCardioTime()); // 유산소 운동 점수
+        double score2 = calculateHealthScore2(health.getStrengthFrequency(), health.getStrengthTime()); // 근력 운동 점수
         double score3 = calculateHealthScore3(health.getDietQuality());
         double basicScore = (score1 + score2 + score3) / 3;
         return applySatisfaction(basicScore, health.getSatisfaction());
@@ -744,7 +730,7 @@ public class WolibalService {
     // 운동 횟수 점수 계산
     private static double calculateFrequencyScore(double frequency, double minFrequency, double maxFrequency, double limit) {
         log.info("frequency: {}", frequency);
-        if (frequency < minFrequency) {
+        if (frequency <= minFrequency) {
             return 100 / minFrequency * frequency;
         } else if (frequency <= maxFrequency) {
             return 100;

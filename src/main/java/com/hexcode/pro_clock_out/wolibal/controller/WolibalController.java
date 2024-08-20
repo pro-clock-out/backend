@@ -30,7 +30,7 @@ public class WolibalController {
     public ResponseEntity<ResponseDto> getLabelsWolibal(Authentication authentication) {
         log.info("Request to get labels wolibal");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindLabelsWolibalResponse response = wolibalService.findAllWolibals(memberId);
+        FindAllWolibalResponse response = wolibalService.findAllWolibals(memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
