@@ -18,25 +18,32 @@ public class Health extends BaseTime {
     private Long id;
 
     @Min(0) @Max(100)
-    private int score;
+    @Builder.Default
+    private Integer score = null;
 
     @Min(1) @Max(9)
-    private int satisfaction;
+    @Builder.Default
+    private Integer satisfaction = null;
 
     @Min(0) @Max(7)
-    private int cardioFrequency;
+    @Builder.Default
+    private Integer cardioFrequency = null;
 
     @Min(0) @Max(24)
-    private double cardioTime;
+    @Builder.Default
+    private Double cardioTime = null;
 
     @Min(0) @Max(7)
-    private int strengthFrequency;
+    @Builder.Default
+    private Integer strengthFrequency = null;
 
     @Min(0) @Max(24)
-    private double strengthTime;
+    @Builder.Default
+    private Double strengthTime = null;
 
     @Min(1) @Max(9)
-    private int dietQuality;
+    @Builder.Default
+    private Integer dietQuality = null;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JsonBackReference

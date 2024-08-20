@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Entity
@@ -21,10 +22,14 @@ public class Wolibal extends BaseTime {
     @Column(name = "wolibal_id")
     private Long id;
 
+    @Builder.Default
+    private boolean isAuto = true;
+
     @Min(0) @Max(100)
     private int score;
 
-    private LocalDate date;
+    @Builder.Default
+    private LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

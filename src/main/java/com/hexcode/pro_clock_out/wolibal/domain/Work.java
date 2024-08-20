@@ -17,20 +17,28 @@ public class Work extends BaseTime {
     @Column(name = "work_id")
     private Long id;
 
+    @Builder.Default
+    private boolean isAuto = true;
+
     @Min(0) @Max(100)
-    private int score;
+    @Builder.Default
+    private Integer score = null;
 
     @Min(1) @Max(9)
-    private int satisfaction;
+    @Builder.Default
+    private Integer satisfaction = null;
 
     @Min(0) @Max(24)
-    private double dayWorkingHours;
+    @Builder.Default
+    private Double dayWorkingHours = null;
 
     @Min(0) @Max(7)
-    private int weekWorkingDays;
+    @Builder.Default
+    private Integer weekWorkingDays = null;
 
     @Min(1) @Max(9)
-    private int workStress;
+    @Builder.Default
+    private Integer workStress = null;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JsonBackReference
