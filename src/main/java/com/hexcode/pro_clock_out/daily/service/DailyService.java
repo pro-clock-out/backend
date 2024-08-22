@@ -131,11 +131,11 @@ public class DailyService {
         Optional<Wolibal> existWolibal = wolibalRepository.findByDateAndMember(request.getDate(), member);
         if (existWolibal.isPresent()) {
             Wolibal wolibal = existWolibal.get();
-            wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
-            wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
-            wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
-            wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
-            wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
+            wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction(), member);
+            wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction(), member);
+            wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction(), member);
+            wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction(), member);
+            wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction(), member);
         }
         return CreateDailyResponse.createWith(daily);
     }
@@ -167,11 +167,11 @@ public class DailyService {
         Optional<Wolibal> existWolibal = wolibalRepository.findByDateAndMember(request.getDate(), member);
         if (existWolibal.isPresent()) {
             Wolibal wolibal = existWolibal.get();
-            wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
-            wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
-            wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
-            wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
-            wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
+            wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction(), member);
+            wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction(), member);
+            wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction(), member);
+            wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction(), member);
+            wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction(), member);
         }
 
         return UpdateDailyResponse.createWith(daily);

@@ -111,4 +111,19 @@ public class MemberService {
                 .build();
         wolibal.updateScore();
     }
+
+    public void addSuggestionMember(Member member, String suggestionMessage) {
+        member.addSuggestion(suggestionMessage);
+    }
+
+    public void removeSuggestionMember(Member member, String suggestionMessage) {
+        member.removeSuggestion(suggestionMessage);
+    }
+
+    public SuggestSolutionResponse findSuggestionMessage(Long memberId) {
+        Member member = findMemberById(memberId);
+        return SuggestSolutionResponse.builder()
+                .suggestionString(member.getSuggestionString())
+                .build();
+    }
 }
