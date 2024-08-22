@@ -1,4 +1,4 @@
-package com.hexcode.pro_clock_out.calendar.domain;
+package com.hexcode.pro_clock_out.global.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

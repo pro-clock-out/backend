@@ -11,6 +11,7 @@ import com.hexcode.pro_clock_out.daily.exception.GoalNotFoundException;
 import com.hexcode.pro_clock_out.daily.repository.DailyGoalRepository;
 import com.hexcode.pro_clock_out.daily.repository.DailyRepository;
 import com.hexcode.pro_clock_out.daily.repository.GoalRepository;
+import com.hexcode.pro_clock_out.global.service.GlobalService;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.service.MemberService;
@@ -36,7 +37,7 @@ public class DailyService {
     private final GoalRepository goalRepository;
     private final DailyGoalRepository dailyGoalRepository;
 
-    private final MemberService memberService;
+    private final GlobalService globalService;
     private final WolibalService wolibalService;
 
 
@@ -75,7 +76,7 @@ public class DailyService {
 
     // 연간 발자국 조회
     public FindTotalDailyResponse findTotalDaily(Long memberId, int year) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         List<Daily> dailyList = dailyRepository.findDailyByMember(member).stream()
                 .filter(daily -> daily.getDate().getYear() == year)
                 .toList();
@@ -100,7 +101,7 @@ public class DailyService {
 
     // 발자국 추가
     public CreateDailyResponse addDaily(Long memberId, CreateDailyRequest request) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
 
         Daily daily = Daily.builder()
                 .date(request.getDate())
@@ -142,7 +143,7 @@ public class DailyService {
 
     // 발자국 수정
     public UpdateDailyResponse updateDaily(Long dailyId, Long memberId, UpdateDailyRequest request) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
 
         Daily daily = findDailyById(dailyId);
         UpdateDailyData updateDailyData = UpdateDailyData.createWith(request);
@@ -180,14 +181,14 @@ public class DailyService {
 
     // 목표 활동 조회
     public FindGoalResponse findGoals(Long memberId) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         List<Goal> goals = goalRepository.findGoalsByMember(member);
         return FindGoalResponse.createWith(goals);
     }
 
     // 목표 활동 추가
     public CreateGoalResponse addGoals(Long memberId, CreateGoalRequest request) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         List<Goal> existingGoals = goalRepository.findGoalsByMember(member);
         if (existingGoals.size() >= 10) {
             throw new GoalLimitExceededException();
@@ -209,7 +210,7 @@ public class DailyService {
 
     // 목표 활동 수정
     public UpdateGoalResponse updateGoals(Long goalId, Long memberId, UpdateGoalRequest request) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Goal goal = findGoalById(goalId);
         UpdateGoalData updateGoalData = UpdateGoalData.createWith(request);
         goal.updateGoals(updateGoalData);
@@ -220,7 +221,7 @@ public class DailyService {
 
     // 목표 활동 삭제
     public DeleteGoalResponse deleteGoals(Long goalId, Long memberId) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Goal goal = findGoalById(goalId);
         goalRepository.delete(goal);
         return DeleteGoalResponse.createWith(goal);

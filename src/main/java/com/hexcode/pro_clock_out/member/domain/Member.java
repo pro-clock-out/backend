@@ -46,6 +46,7 @@ public class Member extends BaseTime {
 
     @ElementCollection
     @JsonIgnore
+    @Builder.Default
     private List<String> suggestions = new ArrayList<>();
 
     private String suggestionString;

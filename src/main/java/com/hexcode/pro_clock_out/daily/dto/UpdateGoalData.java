@@ -1,6 +1,6 @@
 package com.hexcode.pro_clock_out.daily.dto;
 
-import com.hexcode.pro_clock_out.calendar.domain.Label;
+import com.hexcode.pro_clock_out.global.domain.Label;
 import lombok.Builder;
 import lombok.Getter;
 

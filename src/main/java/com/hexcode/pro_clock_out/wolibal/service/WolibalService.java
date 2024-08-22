@@ -1,8 +1,8 @@
 package com.hexcode.pro_clock_out.wolibal.service;
 
+import com.hexcode.pro_clock_out.global.service.GlobalService;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.exception.WolibalNotFoundException;
-import com.hexcode.pro_clock_out.member.service.MemberService;
 import com.hexcode.pro_clock_out.wolibal.domain.*;
 import com.hexcode.pro_clock_out.wolibal.dto.*;
 import com.hexcode.pro_clock_out.wolibal.exception.*;
@@ -24,7 +24,8 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class WolibalService {
-    private final MemberService memberService;
+    private final GlobalService globalService;
+
     private final WolibalRepository wolibalRepository;
     private final WorkRepository workRepository;
     private final RestRepository restRepository;
@@ -32,9 +33,30 @@ public class WolibalService {
     private final PersonalRepository personalRepository;
     private final HealthRepository healthRepository;
 
+    private final WorkService workService;
+    private final RestService restService;
+    private final SleepService sleepService;
+    private final PersonalService personalService;
+    private final HealthService healthService;
+
+    public void createAutoWolibal(Member member) {
+        Wolibal wolibal = Wolibal.builder()
+                .member(member)
+                .date(LocalDate.now(ZoneId.of("Asia/Seoul")))
+                .build();
+        workService.createAutoWork(wolibal);
+        restService.createAutoRest(wolibal);
+        sleepService.createAutoSleep(wolibal);
+        personalService.createAutoPersonal(wolibal);
+        healthService.createAutoHealth(wolibal);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
+    }
+
+
     // 매일 정각에 워라밸 자동 생성
-    public void createAutoWolibal() {
-        List<Member> allMembers = memberService.findAllMembers();
+    public void createDailyWolibal() {
+        List<Member> allMembers = globalService.findAllMembers();
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
         LocalDate yesterday = today.minusDays(1);
 
@@ -120,7 +142,7 @@ public class WolibalService {
     }
 
     public Wolibal findTodayWolibalByMemberId(final Long memberId) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
         return wolibalRepository.findByDateAndMember(today, member)
                 .orElseGet(() -> {
@@ -164,7 +186,7 @@ public class WolibalService {
 
     public CreateWolibalResponse createWork(Long memberId, CreateWorkRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Optional<Work> existingWork = workRepository.findByWolibal(wolibal);
         Work work;
         if (existingWork.isPresent()) {
@@ -191,7 +213,7 @@ public class WolibalService {
 
     public CreateWolibalResponse createRest(Long memberId, CreateRestRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Optional<Rest> existingRest = restRepository.findByWolibal(wolibal);
         Rest rest;
         if (existingRest.isPresent()) {
@@ -216,7 +238,7 @@ public class WolibalService {
 
     public CreateWolibalResponse createSleep(Long memberId, CreateSleepRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Optional<Sleep> existingSleep = sleepRepository.findByWolibal(wolibal);
         Sleep sleep;
         if (existingSleep.isPresent()) {
@@ -245,7 +267,7 @@ public class WolibalService {
 
     public CreateWolibalResponse createPersonal(Long memberId, CreatePersonalRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Optional<Personal> existingPersonal = personalRepository.findByWolibal(wolibal);
         Personal personal;
         if (existingPersonal.isPresent()) {
@@ -270,7 +292,7 @@ public class WolibalService {
 
     public CreateWolibalResponse createHealth(Long memberId, CreateHealthRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Optional<Health> existingHealth = healthRepository.findByWolibal(wolibal);
         Health health;
         if (existingHealth.isPresent()) {
@@ -333,7 +355,7 @@ public class WolibalService {
     // 워라밸 항목별 데이터로 점수 업데이트
     public UpdateWolibalResponse updateWork(Long workId, Long memberId, UpdateWorkRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Optional<Work> existingWorkOpt = workRepository.findByWolibal(wolibal);
 
         if (existingWorkOpt.isPresent()) {
@@ -354,7 +376,7 @@ public class WolibalService {
 
     public UpdateWolibalResponse updateRest(Long restId, Long memberId, UpdateRestRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Optional<Rest> existingRestOpt = restRepository.findByWolibal(wolibal);
 
         if (existingRestOpt.isPresent()) {
@@ -374,7 +396,7 @@ public class WolibalService {
 
     public UpdateWolibalResponse updateSleep(Long sleepId, Long memberId, UpdateSleepRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Optional<Sleep> existingSleepOpt = sleepRepository.findByWolibal(wolibal);
 
         if (existingSleepOpt.isPresent()) {
@@ -395,7 +417,7 @@ public class WolibalService {
 
     public UpdateWolibalResponse updatePersonal(Long personalId, Long memberId, UpdatePersonalRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Optional<Personal> existingPersonalOpt = personalRepository.findByWolibal(wolibal);
 
         if (existingPersonalOpt.isPresent()) {
@@ -414,7 +436,7 @@ public class WolibalService {
 
     public UpdateWolibalResponse updateHealth(Long healthId, Long memberId, UpdateHealthRequest dto) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Optional<Health> existingHealthOpt = healthRepository.findByWolibal(wolibal);
 
         if (existingHealthOpt.isPresent()) {
@@ -493,7 +515,7 @@ public class WolibalService {
     }
 
     public FindWolibalTransitionsResponse findTransitions(Long memberId) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Pageable pageable = PageRequest.of(0, 10);
         List<Wolibal> totals10 = wolibalRepository.findRecent10(member, pageable);
         List<Work> works10 = workRepository.findRecent10(member, pageable);

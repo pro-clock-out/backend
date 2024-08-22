@@ -2,7 +2,7 @@ package com.hexcode.pro_clock_out.calendar.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.hexcode.pro_clock_out.calendar.domain.Label;
+import com.hexcode.pro_clock_out.global.domain.Label;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

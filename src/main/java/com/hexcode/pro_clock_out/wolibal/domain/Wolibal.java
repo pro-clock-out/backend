@@ -26,7 +26,8 @@ public class Wolibal extends BaseTime {
     private boolean isAuto = true;
 
     @Min(0) @Max(100)
-    private int score;
+    @Builder.Default
+    private Integer score = null;
 
     @Builder.Default
     private LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul"));
