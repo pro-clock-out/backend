@@ -57,12 +57,14 @@ public class Wolibal extends BaseTime {
     private Health health;
 
     public void updateScore() {
-        int workScore = (work != null) ? work.getScore() : 0;
-        int restScore = (rest != null) ? rest.getScore() : 0;
-        int sleepScore = (sleep != null) ? sleep.getScore() : 0;
-        int personalScore = (personal != null) ? personal.getScore() : 0;
-        int healthScore = (health != null) ? health.getScore() : 0;
-        int totalScore = workScore + restScore + sleepScore + personalScore + healthScore;
-        this.score = totalScore / 5;
+        Integer workScore = work.getScore();
+        Integer restScore = rest.getScore();
+        Integer sleepScore = sleep.getScore();
+        Integer personalScore = personal.getScore();
+        Integer healthScore = health.getScore();
+
+        if (workScore != null && restScore != null && sleepScore != null && personalScore != null && healthScore != null) {
+            this.score = (workScore + restScore + sleepScore + personalScore + healthScore) / 5;
+        }
     }
 }

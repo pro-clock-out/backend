@@ -5,7 +5,6 @@ import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.dto.*;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
-import com.hexcode.pro_clock_out.wolibal.domain.*;
 import com.hexcode.pro_clock_out.wolibal.service.WolibalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class MemberService {
                 .role("ROLE_USER") // 역할 설정
                 .build();
         memberRepository.save(newMember);
-        wolibalService.createAutoWolibal(newMember);
+        wolibalService.initializeWolibal(newMember);
     }
 
     public Member findMemberByEmail(final String email) {

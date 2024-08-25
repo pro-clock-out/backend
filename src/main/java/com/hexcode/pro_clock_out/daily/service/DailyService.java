@@ -132,7 +132,7 @@ public class DailyService {
         Optional<Wolibal> existWolibal = wolibalRepository.findByDateAndMember(request.getDate(), member);
         if (existWolibal.isPresent()) {
             Wolibal wolibal = existWolibal.get();
-            wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction(), member);
+            work.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction(), member);
             wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction(), member);
             wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction(), member);
             wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction(), member);

@@ -39,105 +39,39 @@ public class WolibalService {
     private final PersonalService personalService;
     private final HealthService healthService;
 
-    public void createAutoWolibal(Member member) {
+    // Wolibal 초기화
+    public Wolibal initializeWolibal(Member member) {
         Wolibal wolibal = Wolibal.builder()
                 .member(member)
                 .date(LocalDate.now(ZoneId.of("Asia/Seoul")))
                 .build();
-        workService.createAutoWork(wolibal);
-        restService.createAutoRest(wolibal);
-        sleepService.createAutoSleep(wolibal);
-        personalService.createAutoPersonal(wolibal);
-        healthService.createAutoHealth(wolibal);
+        workService.initializeWork(wolibal);
+        restService.initializeRest(wolibal);
+        sleepService.initializeSleep(wolibal);
+        personalService.initializePersonal(wolibal);
+        healthService.initializeHealth(wolibal);
         wolibal.updateScore();
         wolibalRepository.save(wolibal);
+        return wolibal;
     }
-
 
     // 매일 정각에 워라밸 자동 생성
     public void createDailyWolibal() {
         List<Member> allMembers = globalService.findAllMembers();
-        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
-        LocalDate yesterday = today.minusDays(1);
+        LocalDate yesterday = LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(1);
 
         allMembers.forEach(member -> {
-            Optional<Wolibal> existingWolibalOpt = wolibalRepository.findByDateAndMember(yesterday, member);
-            if (existingWolibalOpt.isPresent() && existingWolibalOpt.get().getScore() != 0) {
-                Wolibal newWolibal = Wolibal.builder()
-                        .member(member)
-                        .build();
-                wolibalRepository.save(newWolibal);
-                Wolibal previousWolibal = existingWolibalOpt.get();
+            Wolibal yesterdayWolibal = findWolibalByDateAndMember(yesterday, member);
+            if (yesterdayWolibal.getScore() == null) { return; }
 
-                Work previousWork = workRepository.findByWolibal(previousWolibal).orElse(null);
-                if (previousWork != null) {
-                    Work newWork = Work.builder()
-                            .dayWorkingHours(previousWork.getDayWorkingHours())
-                            .weekWorkingDays(previousWork.getWeekWorkingDays())
-                            .workStress(previousWork.getWorkStress())
-                            .satisfaction(previousWork.getSatisfaction())
-                            .wolibal(newWolibal)
-                            .build();
-                    newWork.setScore(previousWork.getScore());
-                    workRepository.save(newWork);
-                }
-
-                Rest previousRest = restRepository.findByWolibal(previousWolibal).orElse(null);
-                if (previousRest != null) {
-                    Rest newRest = Rest.builder()
-                            .workdayRest(previousRest.getWorkdayRest())
-                            .dayoffRest(previousRest.getDayoffRest())
-                            .satisfaction(previousRest.getSatisfaction())
-                            .wolibal(newWolibal)
-                            .build();
-                    newRest.setScore(previousRest.getScore());
-                    restRepository.save(newRest);
-                }
-
-                Sleep previousSleep = sleepRepository.findByWolibal(previousWolibal).orElse(null);
-                if (previousSleep != null) {
-                    Sleep newSleep = Sleep.builder()
-                            .workdayBedtime(previousSleep.getWorkdayBedtime())
-                            .workdayWakeup(previousSleep.getWorkdayWakeup())
-                            .dayoffBedtime(previousSleep.getDayoffBedtime())
-                            .dayoffWakeup(previousSleep.getDayoffWakeup())
-                            .satisfaction(previousSleep.getSatisfaction())
-                            .wolibal(newWolibal)
-                            .build();
-                    newSleep.setScore(previousSleep.getScore());
-                    sleepRepository.save(newSleep);
-                }
-
-                Personal previousPersonal = personalRepository.findByWolibal(previousWolibal).orElse(null);
-                if (previousPersonal != null) {
-                    Personal newPersonal = Personal.builder()
-                            .togetherTime(previousPersonal.getTogetherTime())
-                            .hobbyTime(previousPersonal.getHobbyTime())
-                            .satisfaction(previousPersonal.getSatisfaction())
-                            .wolibal(newWolibal)
-                            .build();
-                    newPersonal.setScore(previousPersonal.getScore());
-                    personalRepository.save(newPersonal);
-                }
-
-                Health previousHealth = healthRepository.findByWolibal(previousWolibal).orElse(null);
-                if (previousHealth != null) {
-                    Health newHealth = Health.builder()
-                            .cardioFrequency(previousHealth.getCardioFrequency())
-                            .cardioTime(previousHealth.getCardioTime())
-                            .strengthFrequency(previousHealth.getStrengthFrequency())
-                            .strengthTime(previousHealth.getStrengthTime())
-                            .dietQuality(previousHealth.getDietQuality())
-                            .satisfaction(previousHealth.getSatisfaction())
-                            .wolibal(newWolibal)
-                            .build();
-                    newHealth.setScore(previousHealth.getScore());
-                    healthRepository.save(newHealth);
-
-                    newWolibal.updateScore();
-                    wolibalRepository.save(newWolibal);
-                }
-            }
+            Wolibal todayWolibal = initializeWolibal(member);
+            workService.createAutoWork(yesterdayWolibal, todayWolibal);
+            restService.createAutoRest(yesterdayWolibal, todayWolibal);
+            sleepService.createAutoSleep(yesterdayWolibal, todayWolibal);
+            personalService.createAutoPersonal(yesterdayWolibal, todayWolibal);
+            healthService.createAutoHealth(yesterdayWolibal, todayWolibal);
+            todayWolibal.updateScore();
+            wolibalRepository.save(todayWolibal);
         });
     }
 
@@ -156,263 +90,32 @@ public class WolibalService {
 
     public Wolibal findWolibalByDateAndMember(LocalDate date, Member member) {
         return wolibalRepository.findByDateAndMember(date, member)
-                .orElseThrow(WolibalNotFoundException::new);
-    }
-
-    public Work findWorkByWolibal(Wolibal wolibal) {
-        return workRepository.findByWolibal(wolibal)
-                .orElseThrow(WorkNotFoundException::new);
-    }
-
-    public Rest findRestByWolibal(Wolibal wolibal) {
-        return restRepository.findByWolibal(wolibal)
-                .orElseThrow(RestNotFoundException::new);
-    }
-
-    public Sleep findSleepByWolibal(Wolibal wolibal) {
-        return sleepRepository.findByWolibal(wolibal)
-                .orElseThrow(SleepNotFoundException::new);
-    }
-
-    public Personal findPersonalByWolibal(Wolibal wolibal) {
-        return personalRepository.findByWolibal(wolibal)
-                .orElseThrow(PersonalNotFoundException::new);
-    }
-
-    public Health findHealthByWolibal(Wolibal wolibal) {
-        return healthRepository.findByWolibal(wolibal)
-                .orElseThrow(HealthNotFoundException::new);
-    }
-
-    public CreateWolibalResponse createWork(Long memberId, CreateWorkRequest dto) {
-        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = globalService.findMemberById(memberId);
-        Optional<Work> existingWork = workRepository.findByWolibal(wolibal);
-        Work work;
-        if (existingWork.isPresent()) {
-            work = existingWork.get();
-            work.setDayWorkingHours(dto.getDayWorkingHours());
-            work.setWeekWorkingDays(dto.getWeekWorkingDays());
-            work.setWorkStress(dto.getWorkStress());
-            work.setSatisfaction(dto.getWorkSatisfaction());
-        } else {
-            work = Work.builder()
-                    .dayWorkingHours(dto.getDayWorkingHours())
-                    .weekWorkingDays(dto.getWeekWorkingDays())
-                    .workStress(dto.getWorkStress())
-                    .satisfaction(dto.getWorkSatisfaction())
-                    .wolibal(wolibal)
-                    .build();
-        }
-        work.setScore(generateWorkScore(work, member));
-        workRepository.save(work);
-        wolibal.updateScore();
-        wolibalRepository.save(wolibal);
-        return CreateWolibalResponse.createWith(wolibal);
-    }
-
-    public CreateWolibalResponse createRest(Long memberId, CreateRestRequest dto) {
-        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = globalService.findMemberById(memberId);
-        Optional<Rest> existingRest = restRepository.findByWolibal(wolibal);
-        Rest rest;
-        if (existingRest.isPresent()) {
-            rest = existingRest.get();
-            rest.setWorkdayRest(dto.getWorkdayRest());
-            rest.setDayoffRest(dto.getDayoffRest());
-            rest.setSatisfaction(dto.getRestSatisfaction());
-        } else {
-            rest = Rest.builder()
-                    .workdayRest(dto.getWorkdayRest())
-                    .dayoffRest(dto.getDayoffRest())
-                    .satisfaction(dto.getRestSatisfaction())
-                    .wolibal(wolibal)
-                    .build();
-        }
-        rest.setScore(generateRestScore(rest, member));
-        restRepository.save(rest);
-        wolibal.updateScore();
-        wolibalRepository.save(wolibal);
-        return CreateWolibalResponse.createWith(wolibal);
-    }
-
-    public CreateWolibalResponse createSleep(Long memberId, CreateSleepRequest dto) {
-        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = globalService.findMemberById(memberId);
-        Optional<Sleep> existingSleep = sleepRepository.findByWolibal(wolibal);
-        Sleep sleep;
-        if (existingSleep.isPresent()) {
-            sleep = existingSleep.get();
-            sleep.setWorkdayBedtime(dto.getWorkdayBedtime());
-            sleep.setWorkdayWakeup(dto.getWorkdayWakeup());
-            sleep.setDayoffBedtime(dto.getDayoffBedtime());
-            sleep.setDayoffWakeup(dto.getDayoffWakeup());
-            sleep.setSatisfaction(dto.getSleepSatisfaction());
-        } else {
-            sleep = Sleep.builder()
-                    .workdayBedtime(dto.getWorkdayBedtime())
-                    .workdayWakeup(dto.getWorkdayWakeup())
-                    .dayoffBedtime(dto.getDayoffBedtime())
-                    .dayoffWakeup(dto.getDayoffWakeup())
-                    .satisfaction(dto.getSleepSatisfaction())
-                    .wolibal(wolibal)
-                    .build();
-        }
-        sleep.setScore(generateSleepScore(sleep, member));
-        sleepRepository.save(sleep);
-        wolibal.updateScore();
-        wolibalRepository.save(wolibal);
-        return CreateWolibalResponse.createWith(wolibal);
-    }
-
-    public CreateWolibalResponse createPersonal(Long memberId, CreatePersonalRequest dto) {
-        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = globalService.findMemberById(memberId);
-        Optional<Personal> existingPersonal = personalRepository.findByWolibal(wolibal);
-        Personal personal;
-        if (existingPersonal.isPresent()) {
-            personal = existingPersonal.get();
-            personal.setTogetherTime(dto.getTogetherTime());
-            personal.setHobbyTime(dto.getHobbyTime());
-            personal.setSatisfaction(dto.getPersonalSatisfaction());
-        } else {
-            personal = Personal.builder()
-                    .togetherTime(dto.getTogetherTime())
-                    .hobbyTime(dto.getHobbyTime())
-                    .satisfaction(dto.getPersonalSatisfaction())
-                    .wolibal(wolibal)
-                    .build();
-        }
-        personal.setScore(generatePersonalScore(personal, member));
-        personalRepository.save(personal);
-        wolibal.updateScore();
-        wolibalRepository.save(wolibal);
-        return CreateWolibalResponse.createWith(wolibal);
-    }
-
-    public CreateWolibalResponse createHealth(Long memberId, CreateHealthRequest dto) {
-        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = globalService.findMemberById(memberId);
-        Optional<Health> existingHealth = healthRepository.findByWolibal(wolibal);
-        Health health;
-        if (existingHealth.isPresent()) {
-            health = existingHealth.get();
-            health.setCardioFrequency(dto.getCardioFrequency());
-            health.setCardioTime(dto.getCardioTime());
-            health.setStrengthFrequency(dto.getStrengthFrequency());
-            health.setStrengthTime(dto.getStrengthTime());
-            health.setDietQuality(dto.getDietQuality());
-            health.setSatisfaction(dto.getHealthSatisfaction());
-        } else {
-            health = Health.builder()
-                    .cardioFrequency(dto.getCardioFrequency())
-                    .cardioTime(dto.getCardioTime())
-                    .strengthFrequency(dto.getStrengthFrequency())
-                    .strengthTime(dto.getStrengthTime())
-                    .dietQuality(dto.getDietQuality())
-                    .satisfaction(dto.getHealthSatisfaction())
-                    .wolibal(wolibal)
-                    .build();
-        }
-        health.setScore(generateHealthScore(health, member));
-        healthRepository.save(health);
-        wolibal.updateScore();
-        wolibalRepository.save(wolibal);
-        return CreateWolibalResponse.createWith(wolibal);
-    }
-
-    // 워라밸 항목별 만족도로 점수 업데이트
-    public void updateWorkBySatisfaction(Wolibal wolibal, int satisfaction, Member member) {
-        Work work = findWorkByWolibal(wolibal);
-        work.setSatisfaction(satisfaction);
-        work.setScore(applySatisfaction(work.getScore(), satisfaction, "작업", member));
-    }
-
-    public void updateRestBySatisfaction(Wolibal wolibal, int satisfaction, Member member) {
-        Rest rest = findRestByWolibal(wolibal);
-        rest.setSatisfaction(satisfaction);
-        rest.setScore(applySatisfaction(rest.getScore(), satisfaction, "휴식", member));
-    }
-
-    public void updateSleepBySatisfaction(Wolibal wolibal, int satisfaction, Member member) {
-        Sleep sleep = findSleepByWolibal(wolibal);
-        sleep.setSatisfaction(satisfaction);
-        sleep.setScore(applySatisfaction(sleep.getScore(), satisfaction, "수면", member));
-    }
-
-    public void updatePersonalBySatisfaction(Wolibal wolibal, int satisfaction, Member member) {
-        Personal personal = findPersonalByWolibal(wolibal);
-        personal.setSatisfaction(satisfaction);
-        personal.setScore(applySatisfaction(personal.getScore(), satisfaction, "개인 생활", member));
-    }
-
-    public void updateHealthBySatisfaction(Wolibal wolibal, int satisfaction, Member member) {
-        Health health = findHealthByWolibal(wolibal);
-        health.setSatisfaction(satisfaction);
-        health.setScore(applySatisfaction(health.getScore(), satisfaction, "건강", member));
+                .orElseThrow(() -> new WolibalNotFoundException(date, member.getId()));
     }
 
     // 워라밸 항목별 데이터로 점수 업데이트
     public UpdateWolibalResponse updateWork(Long workId, Long memberId, UpdateWorkRequest dto) {
-        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
         Member member = globalService.findMemberById(memberId);
-        Optional<Work> existingWorkOpt = workRepository.findByWolibal(wolibal);
-
-        if (existingWorkOpt.isPresent()) {
-            Work existingWork = existingWorkOpt.get();
-
-            existingWork.setDayWorkingHours(dto.getDayWorkingHours());
-            existingWork.setWeekWorkingDays(dto.getWeekWorkingDays());
-            existingWork.setWorkStress(dto.getWorkStress());
-            existingWork.setSatisfaction(dto.getWorkSatisfaction());
-
-            existingWork.setScore(generateWorkScore(existingWork, member));
-            workRepository.save(existingWork);
-            return UpdateWolibalResponse.createWith(wolibal);
-        } else {
-            throw new WorkNotFoundException(workId);
-        }
+        Wolibal wolibal = workService.updateWorkByData(workId, dto);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
+        return UpdateWolibalResponse.createWith(wolibal);
     }
 
-    public UpdateWolibalResponse updateRest(Long restId, Long memberId, UpdateRestRequest dto) {
-        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = globalService.findMemberById(memberId);
-        Optional<Rest> existingRestOpt = restRepository.findByWolibal(wolibal);
+    public UpdateWolibalResponse updateRest(Long restId, UpdateRestRequest dto) {
+        Wolibal wolibal = restService.updateRestByData(restId, dto);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
 
-        if (existingRestOpt.isPresent()) {
-            Rest existingRest = existingRestOpt.get();
-
-            existingRest.setWorkdayRest(dto.getWorkdayRest());
-            existingRest.setDayoffRest(dto.getDayoffRest());
-            existingRest.setSatisfaction(dto.getRestSatisfaction());
-
-            existingRest.setScore(generateRestScore(existingRest, member));
-            restRepository.save(existingRest);
-            return UpdateWolibalResponse.createWith(wolibal);
-        } else {
-            throw new RestNotFoundException(restId);
-        }
+        return UpdateWolibalResponse.createWith(wolibal);
     }
 
     public UpdateWolibalResponse updateSleep(Long sleepId, Long memberId, UpdateSleepRequest dto) {
-        Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Member member = globalService.findMemberById(memberId);
-        Optional<Sleep> existingSleepOpt = sleepRepository.findByWolibal(wolibal);
+        Wolibal wolibal = sleepService.updateSleepByData(sleepId, dto);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
 
-        if (existingSleepOpt.isPresent()) {
-            Sleep existingSleep = existingSleepOpt.get();
-            existingSleep.setWorkdayBedtime(dto.getWorkdayBedtime());
-            existingSleep.setWorkdayWakeup(dto.getWorkdayWakeup());
-            existingSleep.setDayoffBedtime(dto.getDayoffBedtime());
-            existingSleep.setDayoffWakeup(dto.getDayoffWakeup());
-            existingSleep.setSatisfaction(dto.getSleepSatisfaction());
-
-            existingSleep.setScore(generateSleepScore(existingSleep, member));
-            sleepRepository.save(existingSleep);
-            return UpdateWolibalResponse.createWith(wolibal);
-        } else {
-            throw new SleepNotFoundException(sleepId);
-        }
+        return UpdateWolibalResponse.createWith(wolibal);
     }
 
     public UpdateWolibalResponse updatePersonal(Long personalId, Long memberId, UpdatePersonalRequest dto) {
@@ -461,43 +164,13 @@ public class WolibalService {
         return createScoreRankAvgResponse(wolibal.getId(), wolibal.getScore(), "total");
     }
 
-    public FindScoreRankAvgResponse findWork(Long memberId, Long workId) {
-        Work work = workRepository.findById(workId)
-                .orElseThrow(WorkNotFoundException::new);
-        return createScoreRankAvgResponse(workId, work.getScore(), "work");
-    }
-
-    public FindScoreRankAvgResponse findRest(Long memberId, Long restId) {
-        Rest rest = restRepository.findById(restId)
-                .orElseThrow(RestNotFoundException::new);
-        return createScoreRankAvgResponse(restId, rest.getScore(), "rest");
-    }
-
-    public FindScoreRankAvgResponse findSleep(Long memberId, Long sleepId) {
-        Sleep sleep = sleepRepository.findById(sleepId)
-                .orElseThrow(SleepNotFoundException::new);
-        return createScoreRankAvgResponse(sleepId, sleep.getScore(), "sleep");
-    }
-
-    public FindScoreRankAvgResponse findPersonal(Long memberId, Long personalId) {
-        Personal personal = personalRepository.findById(personalId)
-                .orElseThrow(PersonalNotFoundException::new);
-        return createScoreRankAvgResponse(personalId, personal.getScore(), "personal");
-    }
-
-    public FindScoreRankAvgResponse findHealth(Long memberId, Long healthId) {
-        Health health = healthRepository.findById(healthId)
-                .orElseThrow(HealthNotFoundException::new);
-        return createScoreRankAvgResponse(healthId, health.getScore(), "health");
-    }
-
     public FindAllWolibalResponse findAllWolibals(Long memberId) {
         Wolibal wolibal = findTodayWolibalByMemberId(memberId);
-        Work work = findWorkByWolibal(wolibal);
-        Rest rest = findRestByWolibal(wolibal);
-        Sleep sleep = findSleepByWolibal(wolibal);
-        Personal personal = findPersonalByWolibal(wolibal);
-        Health health = findHealthByWolibal(wolibal);
+        Work work = workService.findWorkByWolibal(wolibal);
+        Rest rest = restService.findRestByWolibal(wolibal);
+        Sleep sleep = sleepService.findSleepByWolibal(wolibal);
+        Personal personal = personalService.findPersonalByWolibal(wolibal);
+        Health health = healthService.findHealthByWolibal(wolibal);
         FindScoreRankAvgResponse totalDto = createScoreRankAvgResponse(wolibal.getId(), wolibal.getScore(), "total");
         FindScoreRankAvgResponse workDto = createScoreRankAvgResponse(work.getId(), work.getScore(), "work");
         FindScoreRankAvgResponse restDto = createScoreRankAvgResponse(rest.getId(), rest.getScore(), "rest");
@@ -566,146 +239,6 @@ public class WolibalService {
             case "health" -> healthRepository.getAverageHealth();
             default -> throw new IllegalArgumentException("Invalid label name: " + label);
         };
-    }
-
-    /**
-     * 작업 점수 계산 ///////////////////////////////////////////////////
-     */
-    private static int generateWorkScore(Work work, Member member) {
-        double score1 = calculateWorkScore1(work.getDayWorkingHours()); // 일 근무 시간 점수
-        double score2 = calculateWorkScore2(work.getWeekWorkingDays()); // 주 출근 횟수 점수
-        double score3 = calculateWorkScore3(work.getWorkStress()); // 업무 스트레스 점수
-        double basicScore = score1 * (0.35) + score2 * (0.2) + score3 * (0.45);
-        log.info("work basic score: {}", basicScore);
-        int result = applySatisfaction(basicScore, work.getSatisfaction(), "작업", member);
-        log.info("work result score: {}", result);
-        return result;
-    }
-
-    private static double calculateWorkScore1(double hours) {
-        if (hours <= 8) {
-            return (hours / 8) * 100;
-        } else if (hours <= 9) {
-            return 100;
-        } else {
-            return 100 - ((hours - 9) / 15) * 100;
-        }
-    }
-
-    private static double calculateWorkScore2(int days) {
-        return (days < 1) ? 0 :
-                (days <= 2) ? 60 :
-                (days == 3) ? 80 :
-                (days <= 5) ? 100 :
-                (days == 6) ? 20 :
-                0;
-    }
-
-    private static double calculateWorkScore3(int stress) {
-        if (stress < 1 || stress > 9) {
-            throw new IllegalArgumentException("stress 는 1 이상 9 이하의 정수여야 합니다.");
-        }
-        return (double) (stress - 1) / 8 * 100;
-    }
-
-    /**
-     * 휴식 점수 계산 ///////////////////////////////////////////////////
-     */
-    private static int generateRestScore(Rest rest, Member member) {
-        double score1 = calculateRestScore1(rest.getWorkdayRest()); // 근무일 휴식 시간 점수
-        double score2 = calculateRestScore2(rest.getDayoffRest()); // 휴무일 휴식 시간 점수
-        double basicScore = score1 * (0.4) + score2 * (0.6);
-        return applySatisfaction(basicScore, rest.getSatisfaction(), "휴식", member);
-    }
-
-    // 근무일 휴식 시간 점수
-    private static double calculateRestScore1(double hours) {
-        if (hours <= 2) {
-            return hours / 2 * 100;
-        } else if (hours <= 3) {
-            return 100;
-        } else if (hours <= 6) {
-            return 100 - (hours - 3) / 3 * 70;
-        } else {
-            return 30 - (hours - 6) / 18 * 30;
-        }
-    }
-
-    // 휴무일 휴식 시간 점수
-    private static double calculateRestScore2(double hours) {
-        if (hours <= 6) {
-            return hours / 6 * 100;
-        } else if (hours <= 8) {
-            return 100;
-        } else {
-            return 100 - ((hours - 8) / 16) * 100;
-        }
-    }
-
-    /**
-     * 수면 점수 계산 ///////////////////////////////////////////////////
-     */
-    private static int generateSleepScore(Sleep sleep, Member member) {
-        double score1 = calculateSleepScore1(sleep.getWorkdayBedtime(), sleep.getWorkdayWakeup()); // 근무일 수면 점수
-        double score2 = calculateSleepScore2(sleep.getDayoffBedtime(), sleep.getDayoffWakeup()); // 휴무일 수면 점수
-        double basicScore = (score1 + score2) / 2;
-        return applySatisfaction(basicScore, sleep.getSatisfaction(), "수면", member);
-    }
-
-    // 근무일 수면 점수
-    private static double calculateSleepScore1(double bedtime, double wakeupTime) {
-        double sleepHours = calculateSleepHours(bedtime, wakeupTime);
-        double sleepScore = calculateSleepHoursScore(sleepHours, 7.5, 8.5);
-        double bedtimeScore = calculateBedtimeScore(bedtime, 22.0, 23.0);
-        double wakeupScore = calculateWakeupScore(wakeupTime, 30.0, 31.0);
-        return sleepScore * (0.6) + bedtimeScore * (0.2) + wakeupScore * (0.2);
-    }
-
-    // 휴무일 수면 점수
-    private static double calculateSleepScore2(double bedtime, double wakeupTime) {
-        double sleepHours = calculateSleepHours(bedtime, wakeupTime);
-        double sleepScore = calculateSleepHoursScore(sleepHours, 8.0, 9.5);
-        double bedtimeScore = calculateBedtimeScore(bedtime, 23.0, 24.5);
-        double wakeupScore = calculateWakeupScore(wakeupTime, 31.0, 33.5);
-        return sleepScore * (0.6) + bedtimeScore * (0.2) + wakeupScore * (0.2);
-    }
-
-    // 수면 시간 계산
-    private static double calculateSleepHours(double bedtime, double wakeup) {
-        return wakeup - bedtime;
-    }
-
-    // 수면 시간 점수
-    private static double calculateSleepHoursScore(double hours, double minHours, double maxHours) {
-        if (hours <= minHours) {
-            return (hours / minHours) * 100;
-        } else if (hours <= maxHours) {
-            return 100;
-        } else {
-            return 100 - (100 / (24 - maxHours)) * (hours - maxHours);
-        }
-    }
-
-    // 취침 시각 점수
-    private static double calculateBedtimeScore(double bedtime, double minBedtime, double maxBedtime) {
-        if (bedtime <= minBedtime) {
-            return (100 / (minBedtime - 12) * (bedtime - 12));
-        } else if (bedtime <= maxBedtime) {
-            return 100;
-        } else {
-            return (100 / (maxBedtime - 48) * (bedtime - 48));
-        }
-    }
-
-    // 기상 시각 점수
-    private static double calculateWakeupScore(double wakeup, double minWakeup, double maxWakeup) {
-        if (wakeup <= minWakeup) {
-            return (100 / (minWakeup - 12) * (wakeup - 12));
-        } else if (wakeup <= maxWakeup) {
-            return 100;
-        } else {
-            return (100 / (maxWakeup - 48) * (wakeup - 48));
-        }
     }
 
     /**
@@ -792,21 +325,5 @@ public class WolibalService {
             throw new IllegalArgumentException("dietQuality 는 1 이상 9 이하의 정수여야 합니다.");
         }
         return (double) (dietQuality - 1) / 8 * 100;
-    }
-
-    /**
-     * 만족도 점수 적용 ///////////////////////////////////////////////////
-     */
-    private static int applySatisfaction(double basicScore, int satisfaction, String label, Member member) {
-        int score = (int) (basicScore * (1 + ((satisfaction - 5) / 200.0)));
-        String suggestionMessage = label + "에 대한 만족도가 낮습니다.";
-
-        if (satisfaction <= 3) {
-            member.addSuggestion(suggestionMessage);
-        } else {
-            member.removeSuggestion(suggestionMessage);
-        }
-
-        return Math.max(1, Math.min(100, score));
     }
 }
