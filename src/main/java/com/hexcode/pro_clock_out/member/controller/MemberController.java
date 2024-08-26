@@ -32,9 +32,10 @@ public class MemberController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/members/{memberId}/profile")
-    public ResponseEntity<ResponseDto> getProfile(@PathVariable("memberId") Long memberId) {
+    @GetMapping("/members/me/profile")
+    public ResponseEntity<ResponseDto> getProfile(Authentication authentication) {
         log.info("Request to GET profile");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         FindProfileResponse response = memberService.findProfile(memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
