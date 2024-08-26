@@ -25,6 +25,7 @@ public class RestService {
                 .wolibal(wolibal)
                 .build();
         restRepository.save(rest);
+        wolibal.setRest(rest);
     }
 
     public Rest findRestById(Long restId) {

@@ -28,6 +28,7 @@ public class WorkService {
                 .wolibal(wolibal)
                 .build();
         workRepository.save(work);
+        wolibal.setWork(work);
     }
 
     public Work findWorkById(Long workId) {

@@ -29,6 +29,7 @@ public class HealthService {
                 .wolibal(wolibal)
                 .build();
         healthRepository.save(health);
+        wolibal.setHealth(health);
     }
 
     public Health findHealthById(Long healthId) {

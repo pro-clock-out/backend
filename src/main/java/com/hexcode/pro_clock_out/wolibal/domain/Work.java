@@ -42,6 +42,6 @@ public class Work extends BaseTime {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JsonBackReference
-    @JoinColumn(name = "wolibal_id")
+    @JoinColumn(name = "wolibal_id", nullable = false)
     private Wolibal wolibal;
 }
