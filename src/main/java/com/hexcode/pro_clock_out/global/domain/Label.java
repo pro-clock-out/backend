@@ -1,4 +1,4 @@
-package com.hexcode.pro_clock_out.calendar.domain;
+package com.hexcode.pro_clock_out.global.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Label {
+    TOTAL("종합", "#000000"),
     WORK("작업","#7AA2E3"),
     REST("휴식","#7A7EE3"),
     SLEEP("수면","#6AD4DD"),

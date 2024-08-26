@@ -11,12 +11,13 @@ import com.hexcode.pro_clock_out.daily.exception.GoalNotFoundException;
 import com.hexcode.pro_clock_out.daily.repository.DailyGoalRepository;
 import com.hexcode.pro_clock_out.daily.repository.DailyRepository;
 import com.hexcode.pro_clock_out.daily.repository.GoalRepository;
+import com.hexcode.pro_clock_out.global.service.GlobalService;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.service.MemberService;
 import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
 import com.hexcode.pro_clock_out.wolibal.repository.WolibalRepository;
-import com.hexcode.pro_clock_out.wolibal.service.WolibalService;
+import com.hexcode.pro_clock_out.wolibal.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,8 +37,13 @@ public class DailyService {
     private final GoalRepository goalRepository;
     private final DailyGoalRepository dailyGoalRepository;
 
-    private final MemberService memberService;
+    private final GlobalService globalService;
     private final WolibalService wolibalService;
+    private final WorkService workService;
+    private final RestService restService;
+    private final SleepService sleepService;
+    private final PersonalService personalService;
+    private final HealthService healthService;
 
 
     public Daily findDailyById(final Long dailyId) {
@@ -75,7 +81,7 @@ public class DailyService {
 
     // 연간 발자국 조회
     public FindTotalDailyResponse findTotalDaily(Long memberId, int year) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         List<Daily> dailyList = dailyRepository.findDailyByMember(member).stream()
                 .filter(daily -> daily.getDate().getYear() == year)
                 .toList();
@@ -100,7 +106,7 @@ public class DailyService {
 
     // 발자국 추가
     public CreateDailyResponse addDaily(Long memberId, CreateDailyRequest request) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
 
         Daily daily = Daily.builder()
                 .date(request.getDate())
@@ -131,18 +137,18 @@ public class DailyService {
         Optional<Wolibal> existWolibal = wolibalRepository.findByDateAndMember(request.getDate(), member);
         if (existWolibal.isPresent()) {
             Wolibal wolibal = existWolibal.get();
-            wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
-            wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
-            wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
-            wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
-            wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
+            workService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
+            restService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
+            sleepService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
+            personalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
+            healthService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
         }
         return CreateDailyResponse.createWith(daily);
     }
 
     // 발자국 수정
     public UpdateDailyResponse updateDaily(Long dailyId, Long memberId, UpdateDailyRequest request) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
 
         Daily daily = findDailyById(dailyId);
         UpdateDailyData updateDailyData = UpdateDailyData.createWith(request);
@@ -167,11 +173,11 @@ public class DailyService {
         Optional<Wolibal> existWolibal = wolibalRepository.findByDateAndMember(request.getDate(), member);
         if (existWolibal.isPresent()) {
             Wolibal wolibal = existWolibal.get();
-            wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
-            wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
-            wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
-            wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
-            wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
+            workService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
+            restService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
+            sleepService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
+            personalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
+            healthService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
         }
 
         return UpdateDailyResponse.createWith(daily);
@@ -180,14 +186,14 @@ public class DailyService {
 
     // 목표 활동 조회
     public FindGoalResponse findGoals(Long memberId) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         List<Goal> goals = goalRepository.findGoalsByMember(member);
         return FindGoalResponse.createWith(goals);
     }
 
     // 목표 활동 추가
     public CreateGoalResponse addGoals(Long memberId, CreateGoalRequest request) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         List<Goal> existingGoals = goalRepository.findGoalsByMember(member);
         if (existingGoals.size() >= 10) {
             throw new GoalLimitExceededException();
@@ -209,7 +215,7 @@ public class DailyService {
 
     // 목표 활동 수정
     public UpdateGoalResponse updateGoals(Long goalId, Long memberId, UpdateGoalRequest request) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Goal goal = findGoalById(goalId);
         UpdateGoalData updateGoalData = UpdateGoalData.createWith(request);
         goal.updateGoals(updateGoalData);
@@ -220,7 +226,7 @@ public class DailyService {
 
     // 목표 활동 삭제
     public DeleteGoalResponse deleteGoals(Long goalId, Long memberId) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Goal goal = findGoalById(goalId);
         goalRepository.delete(goal);
         return DeleteGoalResponse.createWith(goal);

@@ -18,22 +18,28 @@ public class Sleep extends BaseTime {
     private Long id;
 
     @Min(0) @Max(100)
-    private int score;
+    @Builder.Default
+    private Integer score = null;
 
     @Min(1) @Max(9)
-    private int satisfaction;
+    @Builder.Default
+    private Integer satisfaction = null;
 
     @Min(12) @Max(48)
-    private double workdayBedtime;
+    @Builder.Default
+    private Double workdayBedtime = null;
 
     @Min(12) @Max(48)
-    private double workdayWakeup;
+    @Builder.Default
+    private Double workdayWakeup = null;
 
     @Min(12) @Max(48)
-    private double dayoffBedtime;
+    @Builder.Default
+    private Double dayoffBedtime = null;
 
     @Min(12) @Max(48)
-    private double dayoffWakeup;
+    @Builder.Default
+    private Double dayoffWakeup = null;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JsonBackReference

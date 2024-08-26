@@ -1,7 +1,7 @@
 package com.hexcode.pro_clock_out.calendar.dto;
 
 import com.hexcode.pro_clock_out.calendar.domain.Calendar;
-import com.hexcode.pro_clock_out.calendar.domain.Label;
+import com.hexcode.pro_clock_out.global.domain.Label;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,15 +1,13 @@
 package com.hexcode.pro_clock_out.calendar.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexcode.pro_clock_out.calendar.dto.UpdateCalendarData;
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
+import com.hexcode.pro_clock_out.global.domain.Label;
 import jakarta.persistence.*;
 import lombok.*;
 import com.hexcode.pro_clock_out.member.domain.Member;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter @Builder

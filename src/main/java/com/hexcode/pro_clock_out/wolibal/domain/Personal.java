@@ -18,16 +18,20 @@ public class Personal extends BaseTime {
     private Long id;
 
     @Min(0) @Max(100)
-    private int score;
+    @Builder.Default
+    private Integer score = null;
 
     @Min(1) @Max(9)
-    private int satisfaction;
+    @Builder.Default
+    private Integer satisfaction = null;
 
     @Min(1) @Max(9)
-    private int togetherTime;
+    @Builder.Default
+    private Integer togetherTime = null;
 
     @Min(1) @Max(9)
-    private int hobbyTime;
+    @Builder.Default
+    private Integer hobbyTime = null;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JsonBackReference

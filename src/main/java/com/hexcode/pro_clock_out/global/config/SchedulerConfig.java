@@ -14,6 +14,6 @@ public class SchedulerConfig {
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void scheduleCreateAutoWolibal() {
-        wolibalService.createAutoWolibal();
+        wolibalService.createDailyWolibal();
     }
 }

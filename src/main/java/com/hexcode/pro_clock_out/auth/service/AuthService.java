@@ -10,6 +10,7 @@ import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
 import com.hexcode.pro_clock_out.member.service.MemberService;
+import com.hexcode.pro_clock_out.wolibal.domain.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -148,13 +151,7 @@ public class AuthService {
         Member existingMember = memberRepository.findByEmail(email).orElse(null);
 
         if (existingMember == null) {
-            // 회원가입 처리
-            Member newMember = Member.builder()
-                    .email(email)
-                    .password(encodedPassword)
-                    .role("ROLE_USER") // 역할 설정
-                    .build();
-            memberRepository.save(newMember);
+            memberService.createMember(email, encodedPassword);
             log.info("새로운 사용자 회원가입: {}", email);
         } else {
             log.info("기존 사용자 로그인: {}", email);

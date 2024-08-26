@@ -30,47 +30,7 @@ public class WolibalController {
     public ResponseEntity<ResponseDto> getLabelsWolibal(Authentication authentication) {
         log.info("Request to get labels wolibal");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindLabelsWolibalResponse response = wolibalService.findAllWolibals(memberId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/wolibals/work/{workId}")
-    public ResponseEntity<ResponseDto> getWorkWolibal(Authentication authentication, @PathVariable("workId") Long workId) {
-        log.info("Request to GET work wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindScoreRankAvgResponse response = wolibalService.findWork(memberId, workId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/wolibals/rest/{restId}")
-    public ResponseEntity<ResponseDto> getRestWolibal(Authentication authentication, @PathVariable("restId") Long restId) {
-        log.info("Request to GET rest wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindScoreRankAvgResponse response = wolibalService.findRest(memberId, restId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/wolibals/sleep/{sleepId}")
-    public ResponseEntity<ResponseDto> getSleepWolibal(Authentication authentication, @PathVariable("sleepId") Long sleepId) {
-        log.info("Request to GET sleep wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindScoreRankAvgResponse response = wolibalService.findSleep(memberId, sleepId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/wolibals/personal/{personalId}")
-    public ResponseEntity<ResponseDto> getPersonalWolibal(Authentication authentication, @PathVariable("personalId") Long personalId) {
-        log.info("Request to GET personal wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindScoreRankAvgResponse response = wolibalService.findPersonal(memberId, personalId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/wolibals/health/{healthId}")
-    public ResponseEntity<ResponseDto> getHealthWolibal(Authentication authentication, @PathVariable("healthId") Long healthId) {
-        log.info("Request to GET health wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindScoreRankAvgResponse response = wolibalService.findHealth(memberId, healthId);
+        FindAllWolibalResponse response = wolibalService.findAllWolibals(memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -80,46 +40,6 @@ public class WolibalController {
         log.info("Request to GET wolibal transitions");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         FindWolibalTransitionsResponse response = wolibalService.findTransitions(memberId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PostMapping("/wolibals/work")
-    public ResponseEntity<ResponseDto> postWork(Authentication authentication, @RequestBody CreateWorkRequest request) {
-        log.info("Request to POST work wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        CreateWolibalResponse response = wolibalService.createWork(memberId, request);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PostMapping("/wolibals/rest")
-    public ResponseEntity<ResponseDto> postRest(Authentication authentication, @RequestBody CreateRestRequest request) {
-        log.info("Request to POST rest wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        CreateWolibalResponse response = wolibalService.createRest(memberId, request);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PostMapping("/wolibals/sleep")
-    public ResponseEntity<ResponseDto> postSleep(Authentication authentication, @RequestBody CreateSleepRequest request) {
-        log.info("Request to POST sleep wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        CreateWolibalResponse response = wolibalService.createSleep(memberId, request);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PostMapping("/wolibals/personal")
-    public ResponseEntity<ResponseDto> postPersonal(Authentication authentication, @RequestBody CreatePersonalRequest request) {
-        log.info("Request to POST personal wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        CreateWolibalResponse response = wolibalService.createPersonal(memberId, request);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PostMapping("/wolibals/health")
-    public ResponseEntity<ResponseDto> postHealth(Authentication authentication, @RequestBody CreateHealthRequest request) {
-        log.info("Request to POST heath wolibal");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        CreateWolibalResponse response = wolibalService.createHealth(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

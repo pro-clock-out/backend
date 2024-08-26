@@ -3,6 +3,7 @@ package com.hexcode.pro_clock_out.member.controller;
 import com.hexcode.pro_clock_out.auth.dto.CustomUserDetails;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import com.hexcode.pro_clock_out.global.service.S3Service;
+import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.dto.*;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
 import com.hexcode.pro_clock_out.member.service.MemberService;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 
 @Slf4j
 @RestController
@@ -30,9 +32,10 @@ public class MemberController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/members/{memberId}/profile")
-    public ResponseEntity<ResponseDto> getProfile(@PathVariable("memberId") Long memberId) {
+    @GetMapping("/members/me/profile")
+    public ResponseEntity<ResponseDto> getProfile(Authentication authentication) {
         log.info("Request to GET profile");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         FindProfileResponse response = memberService.findProfile(memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -66,6 +69,14 @@ public class MemberController {
     public ResponseEntity<ResponseDto> duplicateEmail(@RequestBody DuplicateEmailRequest request) {
         log.info("Request to CHECK duplicate email");
         DuplicateEmailResponse response = memberService.hasEmail(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/members/me/solution")
+    public ResponseEntity<ResponseDto> suggestSolution(Authentication authentication) {
+        log.info("Request to SUGGEST solution");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        SuggestSolutionResponse response = memberService.findSuggestionMessage(memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

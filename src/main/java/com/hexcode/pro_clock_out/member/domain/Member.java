@@ -1,10 +1,12 @@
 package com.hexcode.pro_clock_out.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hexcode.pro_clock_out.global.domain.BaseTime;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -41,6 +43,31 @@ public class Member extends BaseTime {
     private Prefix prefix;
 
     private String suggestion;
+
+    @ElementCollection
+    @JsonIgnore
+    @Builder.Default
+    private List<String> suggestions = new ArrayList<>();
+
+    private String suggestionString;
+
+    public void addSuggestion(String message) {
+        if (!this.suggestions.contains(message)) {
+            this.suggestions.add(message);
+        }
+    }
+
+    public void removeSuggestion(String message) {
+        this.suggestions.remove(message);
+    }
+
+    public String getSuggestionString() {
+        return String.join("\\n", this.suggestions);
+    }
+
+    public void updateSuggestionString() {
+        getSuggestionString();
+    }
 
     @PrePersist
     protected void onCreate() {
