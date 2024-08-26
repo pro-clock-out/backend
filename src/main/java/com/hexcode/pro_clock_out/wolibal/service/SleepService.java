@@ -25,6 +25,7 @@ public class SleepService {
                 .wolibal(wolibal)
                 .build();
         sleepRepository.save(sleep);
+        wolibal.setSleep(sleep);
     }
 
     public Sleep findSleepById(Long sleepId) {

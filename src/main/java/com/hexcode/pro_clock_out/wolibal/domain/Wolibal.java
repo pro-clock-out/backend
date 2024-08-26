@@ -13,7 +13,7 @@ import java.time.ZoneId;
 import java.util.Date;
 
 @Entity
-@Getter @Builder
+@Getter @Builder @Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Wolibal extends BaseTime {
@@ -36,23 +36,23 @@ public class Wolibal extends BaseTime {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @OneToOne(mappedBy = "wolibal", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(mappedBy = "wolibal", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @JsonManagedReference
     private Work work;
 
-    @OneToOne(mappedBy = "wolibal", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(mappedBy = "wolibal", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @JsonManagedReference
     private Rest rest;
 
-    @OneToOne(mappedBy = "wolibal", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(mappedBy = "wolibal", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @JsonManagedReference
     private Sleep sleep;
 
-    @OneToOne(mappedBy = "wolibal", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(mappedBy = "wolibal", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @JsonManagedReference
     private Personal personal;
 
-    @OneToOne(mappedBy = "wolibal", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(mappedBy = "wolibal", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @JsonManagedReference
     private Health health;
 
