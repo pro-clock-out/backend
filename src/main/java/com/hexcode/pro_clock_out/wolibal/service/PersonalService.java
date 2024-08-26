@@ -25,6 +25,7 @@ public class PersonalService {
                 .wolibal(wolibal)
                 .build();
         personalRepository.save(personal);
+        wolibal.setPersonal(personal);
     }
 
     public Personal findPersonalById(Long personalId) {

@@ -17,7 +17,9 @@ public enum Lifestyle {
     CONSIDERATE("배려하는 삶"),
     LESS_WORKING("적게 일하는 삶"),
     RIGHT("바른 삶"),
-    HEALTHY("건강한 삶");
+    HEALTHY("건강한 삶"),
+    GROW("발전하는 삶"),
+    ACHIEVED("성취하는 삶");
 
     private final String value;
 

@@ -46,13 +46,13 @@ public class WolibalService {
                 .member(member)
                 .date(LocalDate.now(ZoneId.of("Asia/Seoul")))
                 .build();
+        wolibalRepository.save(wolibal);
         workService.initializeWork(wolibal);
         restService.initializeRest(wolibal);
         sleepService.initializeSleep(wolibal);
         personalService.initializePersonal(wolibal);
         healthService.initializeHealth(wolibal);
         wolibal.updateScore();
-        wolibalRepository.save(wolibal);
         return wolibal;
     }
 
