@@ -2,7 +2,7 @@ package com.hexcode.pro_clock_out.daily.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.hexcode.pro_clock_out.calendar.domain.Label;
+import com.hexcode.pro_clock_out.global.domain.Label;
 import com.hexcode.pro_clock_out.daily.domain.Goal;
 import com.hexcode.pro_clock_out.global.dto.ResponseDto;
 import lombok.Builder;

@@ -4,6 +4,7 @@ import com.hexcode.pro_clock_out.calendar.domain.Calendar;
 import com.hexcode.pro_clock_out.calendar.dto.*;
 import com.hexcode.pro_clock_out.calendar.exception.*;
 import com.hexcode.pro_clock_out.calendar.repository.CalendarRepository;
+import com.hexcode.pro_clock_out.global.service.GlobalService;
 import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.calendar.dto.AddCalendarResponse;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class CalendarService {
-    private final MemberService memberService;
+    private final GlobalService globalService;
     private final CalendarRepository calendarRepository;
     private final MemberRepository memberRepository;
 
@@ -40,7 +41,7 @@ public class CalendarService {
     }
 
     public AddCalendarResponse addCalendar(Long memberId, UpdateCalendarRequest request) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
         Calendar calendar = Calendar.builder()
                 .label(request.getLabel())
                 .title(request.getTitle())
@@ -79,7 +80,7 @@ public class CalendarService {
 //    }
 
     public List<CalendarEventResponse> getAllCalendarEvents(Long memberId) {
-        Member member = memberService.findMemberById(memberId);
+        Member member = globalService.findMemberById(memberId);
 
         return returncat(member.getId())
                 .stream()
