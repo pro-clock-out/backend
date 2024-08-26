@@ -2,13 +2,9 @@ package com.hexcode.pro_clock_out.wolibal.service;
 
 import com.hexcode.pro_clock_out.global.domain.Label;
 import com.hexcode.pro_clock_out.global.service.GlobalService;
-import com.hexcode.pro_clock_out.member.domain.Member;
-import com.hexcode.pro_clock_out.member.exception.WolibalNotFoundException;
 import com.hexcode.pro_clock_out.wolibal.domain.Rest;
 import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
-import com.hexcode.pro_clock_out.wolibal.domain.Work;
 import com.hexcode.pro_clock_out.wolibal.dto.UpdateRestRequest;
-import com.hexcode.pro_clock_out.wolibal.dto.UpdateWorkRequest;
 import com.hexcode.pro_clock_out.wolibal.exception.RestNotFoundException;
 import com.hexcode.pro_clock_out.wolibal.repository.RestRepository;
 import lombok.RequiredArgsConstructor;
@@ -59,8 +55,8 @@ public class RestService {
         rest.setScore(globalService.applySatisfaction(rest.getScore(), satisfaction, Label.REST));
     }
 
-    public Wolibal updateRestByData(Long workId, UpdateRestRequest dto) {
-        Rest rest = findRestById(workId);
+    public Wolibal updateRestByData(Long restId, UpdateRestRequest dto) {
+        Rest rest = findRestById(restId);
 
         rest.setWorkdayRest(dto.getWorkdayRest());
         rest.setDayoffRest(dto.getDayoffRest());

@@ -2,7 +2,6 @@ package com.hexcode.pro_clock_out.wolibal.service;
 
 import com.hexcode.pro_clock_out.global.domain.Label;
 import com.hexcode.pro_clock_out.global.service.GlobalService;
-import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.wolibal.domain.Sleep;
 import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
 import com.hexcode.pro_clock_out.wolibal.dto.UpdateSleepRequest;
@@ -58,8 +57,8 @@ public class SleepService {
         sleep.setScore(globalService.applySatisfaction(sleep.getScore(), satisfaction, Label.SLEEP));
     }
 
-    public Wolibal updateSleepByData(Long workId, UpdateSleepRequest dto) {
-        Sleep sleep = findSleepById(workId);
+    public Wolibal updateSleepByData(Long sleepId, UpdateSleepRequest dto) {
+        Sleep sleep = findSleepById(sleepId);
 
         sleep.setWorkdayBedtime(dto.getWorkdayBedtime());
         sleep.setWorkdayWakeup(dto.getWorkdayWakeup());

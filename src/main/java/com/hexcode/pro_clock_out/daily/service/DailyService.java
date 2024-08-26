@@ -17,7 +17,7 @@ import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.service.MemberService;
 import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
 import com.hexcode.pro_clock_out.wolibal.repository.WolibalRepository;
-import com.hexcode.pro_clock_out.wolibal.service.WolibalService;
+import com.hexcode.pro_clock_out.wolibal.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,6 +39,11 @@ public class DailyService {
 
     private final GlobalService globalService;
     private final WolibalService wolibalService;
+    private final WorkService workService;
+    private final RestService restService;
+    private final SleepService sleepService;
+    private final PersonalService personalService;
+    private final HealthService healthService;
 
 
     public Daily findDailyById(final Long dailyId) {
@@ -132,11 +137,11 @@ public class DailyService {
         Optional<Wolibal> existWolibal = wolibalRepository.findByDateAndMember(request.getDate(), member);
         if (existWolibal.isPresent()) {
             Wolibal wolibal = existWolibal.get();
-            work.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction(), member);
-            wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction(), member);
-            wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction(), member);
-            wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction(), member);
-            wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction(), member);
+            workService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
+            restService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
+            sleepService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
+            personalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
+            healthService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
         }
         return CreateDailyResponse.createWith(daily);
     }
@@ -168,11 +173,11 @@ public class DailyService {
         Optional<Wolibal> existWolibal = wolibalRepository.findByDateAndMember(request.getDate(), member);
         if (existWolibal.isPresent()) {
             Wolibal wolibal = existWolibal.get();
-            wolibalService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction(), member);
-            wolibalService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction(), member);
-            wolibalService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction(), member);
-            wolibalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction(), member);
-            wolibalService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction(), member);
+            workService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
+            restService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
+            sleepService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
+            personalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
+            healthService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
         }
 
         return UpdateDailyResponse.createWith(daily);
