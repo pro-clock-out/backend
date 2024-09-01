@@ -7,8 +7,14 @@ import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
 import com.hexcode.pro_clock_out.wolibal.service.WolibalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.openai.api.OpenAiApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -18,9 +24,13 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class MemberService {
+    private final RestTemplate restTemplate;
     private final GlobalService globalService;
     private final WolibalService wolibalService;
     private final MemberRepository memberRepository;
+
+    @Value("${openai.api-key}")
+    private String OPEN_AI_KEY;
 
     public void createMember(String email, String encodedPassword) {
         Member newMember = Member.builder()
@@ -35,6 +45,21 @@ public class MemberService {
     public Member findMemberByEmail(final String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(MemberNotFoundException::new);
+    }
+
+    public FindCheerMessage findCheerMessage(Long memberId) {
+        Member member = globalService.findMemberById(memberId);
+
+        ChatResponse call = ChatClient.builder(new OpenAiChatModel(new OpenAiApi(OPEN_AI_KEY)))
+                .defaultUser(String.format("%s의 이름을 넣어서, 그에게 힘이 될 수 있는 응원 메시지를 40자 이내로 생성하라", member.getNickname()))
+                .build()
+                .prompt()
+                .call()
+                .chatResponse();
+
+        return FindCheerMessage.builder()
+                .message(call.getResult().getOutput().getContent())
+                .build();
     }
 
     public FindMyDDayResponse findMyDDay(Long memberId) {

@@ -24,6 +24,14 @@ public class MemberController {
     private final MemberService memberService;
     private final S3Service s3Service;
 
+    @GetMapping("/cheer")
+    public ResponseEntity<ResponseDto> getCheer(Authentication authentication) {
+        log.info("Request to GET cheer message");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        FindCheerMessage response = memberService.findCheerMessage(memberId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @GetMapping("/members/me/dday")
     public ResponseEntity<ResponseDto> getDDay(Authentication authentication) {
         log.info("Request to GET my d-day");

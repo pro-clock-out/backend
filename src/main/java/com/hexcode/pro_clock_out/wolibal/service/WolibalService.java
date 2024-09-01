@@ -176,8 +176,6 @@ public class WolibalService {
     }
 
     private FindScoreRankAvgResponse createScoreRankAvgResponse(Long id, int score, Label label) {
-//        long higherCount = calculateHigherCount(label, score);
-//        int rank = calculateRank(higherCount);
         int rank = (int) calculateHigherCount(label, score);
         int avg = getAverage(label);
         return FindScoreRankAvgResponse.builder()
@@ -187,11 +185,6 @@ public class WolibalService {
                 .avg(avg)
                 .build();
     }
-
-//    private int calculateRank(long higherCount) {
-//        long allCount = wolibalRepository.count();
-//        return (int) ((higherCount * 100) / allCount);
-//    }
 
     private long calculateHigherCount(Label label, int score) {
         return switch (label) {
