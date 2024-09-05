@@ -56,17 +56,13 @@ public class RestService {
         rest.setScore(globalService.applySatisfaction(rest.getScore(), satisfaction, Label.REST));
     }
 
-    public Wolibal updateRestByData(Long restId, UpdateRestRequest dto) {
-        Rest rest = findRestById(restId);
-
+    public void updateRestByData(Rest rest, UpdateRestRequest dto) {
         rest.setWorkdayRest(dto.getWorkdayRest());
         rest.setDayoffRest(dto.getDayoffRest());
         rest.setSatisfaction(dto.getRestSatisfaction());
 
         rest.setScore(generateRestScore(rest));
         restRepository.save(rest);
-
-        return rest.getWolibal();
     }
 
     /**

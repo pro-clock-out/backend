@@ -58,9 +58,7 @@ public class SleepService {
         sleep.setScore(globalService.applySatisfaction(sleep.getScore(), satisfaction, Label.SLEEP));
     }
 
-    public Wolibal updateSleepByData(Long sleepId, UpdateSleepRequest dto) {
-        Sleep sleep = findSleepById(sleepId);
-
+    public void updateSleepByData(Sleep sleep, UpdateSleepRequest dto) {
         sleep.setWorkdayBedtime(dto.getWorkdayBedtime());
         sleep.setWorkdayWakeup(dto.getWorkdayWakeup());
         sleep.setDayoffBedtime(dto.getDayoffBedtime());
@@ -69,8 +67,6 @@ public class SleepService {
 
         sleep.setScore(generateSleepScore(sleep));
         sleepRepository.save(sleep);
-
-        return sleep.getWolibal();
     }
 
     /**

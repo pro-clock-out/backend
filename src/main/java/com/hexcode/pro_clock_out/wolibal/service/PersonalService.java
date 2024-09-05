@@ -56,17 +56,13 @@ public class PersonalService {
         personal.setScore(globalService.applySatisfaction(personal.getScore(), satisfaction, Label.PERSONAL));
     }
 
-    public Wolibal updatePersonalByData(Long personalId, UpdatePersonalRequest dto) {
-        Personal personal = findPersonalById(personalId);
-
+    public void updatePersonalByData(Personal personal, UpdatePersonalRequest dto) {
         personal.setTogetherTime(dto.getTogetherTime());
         personal.setHobbyTime(dto.getHobbyTime());
         personal.setSatisfaction(dto.getPersonalSatisfaction());
 
         personal.setScore(generatePersonalScore(personal));
         personalRepository.save(personal);
-
-        return personal.getWolibal();
     }
 
     /**
