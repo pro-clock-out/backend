@@ -60,9 +60,7 @@ public class WorkService {
         work.setScore(globalService.applySatisfaction(work.getScore(), satisfaction, Label.WORK));
     }
 
-    public Wolibal updateWorkByData(Long workId, UpdateWorkRequest dto) {
-        Work work = findWorkById(workId);
-
+    public void updateWorkByData(Work work, UpdateWorkRequest dto) {
         work.setDayWorkingHours(dto.getDayWorkingHours());
         work.setWeekWorkingDays(dto.getWeekWorkingDays());
         work.setWorkStress(dto.getWorkStress());
@@ -70,8 +68,6 @@ public class WorkService {
 
         work.setScore(generateWorkScore(work));
         workRepository.save(work);
-
-        return work.getWolibal();
     }
 
     /**

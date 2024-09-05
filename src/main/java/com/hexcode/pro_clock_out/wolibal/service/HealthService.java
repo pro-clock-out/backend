@@ -32,11 +32,6 @@ public class HealthService {
         wolibal.setHealth(health);
     }
 
-    public Health findHealthById(Long healthId) {
-        return healthRepository.findById(healthId)
-                .orElseThrow(() -> new HealthNotFoundException(healthId));
-    }
-
     public Health findHealthByWolibal(Wolibal wolibal) {
         return healthRepository.findByWolibal(wolibal)
                 .orElseThrow(() -> new HealthNotFoundException(wolibal));
@@ -63,9 +58,7 @@ public class HealthService {
         health.setScore(globalService.applySatisfaction(health.getScore(), satisfaction, Label.HEALTH));
     }
 
-    public Wolibal updateHealthByData(Long healthId, UpdateHealthRequest dto) {
-        Health health = findHealthById(healthId);
-
+    public void updateHealthByData(Health health, UpdateHealthRequest dto) {
         health.setCardioFrequency(dto.getCardioFrequency());
         health.setCardioTime(dto.getCardioTime());
         health.setStrengthFrequency(dto.getStrengthFrequency());
@@ -74,8 +67,6 @@ public class HealthService {
 
         health.setScore(generateHealthScore(health));
         healthRepository.save(health);
-
-        return health.getWolibal();
     }
 
     /**
