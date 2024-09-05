@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface HealthRepository extends JpaRepository<Health, Long> {
     Optional<Health> findByWolibal(Wolibal wolibal);
 
-    @Query("SELECT COUNT(w) FROM Health w WHERE w.score > :score")
+    @Query("SELECT COUNT(w) + 1 FROM Health w WHERE w.score > :score")
     long countByHealthHigherThan(@Param("score") int score);
 
     @Query("SELECT AVG(w.score) FROM Health w")

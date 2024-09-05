@@ -16,8 +16,7 @@ public interface WolibalRepository extends JpaRepository<Wolibal, Long> {
 
     Optional<Wolibal> findByDateAndMember(LocalDate date, Member member);
 
-
-    @Query("SELECT COUNT(w) FROM Wolibal w WHERE w.score > :score")
+    @Query("SELECT COUNT(w) + 1 FROM Wolibal w WHERE w.score > :score")
     long countByTotalHigherThan(@Param("score") int score);
 
     @Query("SELECT AVG(w.score) FROM Wolibal w")
