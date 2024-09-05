@@ -44,7 +44,7 @@ public class WolibalController {
     }
 
     // 업데이트
-    @PutMapping("/wolibals/work/")
+    @PutMapping("/wolibals/work")
     public ResponseEntity<ResponseDto> updateWork(Authentication authentication, @RequestBody UpdateWorkRequest request) {
         log.info("Request to PUT work wolibal");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
