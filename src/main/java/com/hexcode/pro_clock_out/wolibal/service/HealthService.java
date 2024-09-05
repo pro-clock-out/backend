@@ -63,6 +63,7 @@ public class HealthService {
         health.setCardioTime(dto.getCardioTime());
         health.setStrengthFrequency(dto.getStrengthFrequency());
         health.setStrengthTime(dto.getStrengthTime());
+        health.setDietQuality(dto.getDietQuality());
         health.setSatisfaction(dto.getHealthSatisfaction());
 
         health.setScore(generateHealthScore(health));
