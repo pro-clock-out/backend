@@ -19,7 +19,7 @@ public class Rest extends BaseTime {
 
     @Min(0) @Max(100)
     @Builder.Default
-    private Integer score = null;
+    private Integer score = 0;
 
     @Min(1) @Max(9)
     @Builder.Default
