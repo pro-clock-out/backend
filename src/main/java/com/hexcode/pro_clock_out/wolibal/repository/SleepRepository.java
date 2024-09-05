@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface SleepRepository extends JpaRepository<Sleep, Long> {
     Optional<Sleep> findByWolibal(Wolibal wolibal);
 
-    @Query("SELECT COUNT(w) FROM Sleep w WHERE w.score > :score")
+    @Query("SELECT COUNT(w) + 1 FROM Sleep w WHERE w.score > :score")
     long countBySleepHigherThan(@Param("score") int score);
 
     @Query("SELECT AVG(w.score) FROM Sleep w")

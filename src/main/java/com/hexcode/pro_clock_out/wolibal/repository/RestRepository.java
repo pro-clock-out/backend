@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface RestRepository extends JpaRepository<Rest, Long> {
     Optional<Rest> findByWolibal(Wolibal wolibal);
 
-    @Query("SELECT COUNT(w) FROM Rest w WHERE w.score > :score")
+    @Query("SELECT COUNT(w) + 1 FROM Rest w WHERE w.score > :score")
     long countByRestHigherThan(@Param("score") int score);
 
     @Query("SELECT AVG(w.score) FROM Rest w")

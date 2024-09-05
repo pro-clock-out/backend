@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface WorkRepository extends JpaRepository<Work, Long> {
     Optional<Work> findByWolibal(Wolibal wolibal);
 
-    @Query("SELECT COUNT(w) FROM Work w WHERE w.score > :score")
+    @Query("SELECT COUNT(w) + 1 FROM Work w WHERE w.score > :score")
     long countByWorkHigherThan(@Param("score") int score);
 
     @Query("SELECT AVG(w.score) FROM Work w")
