@@ -35,15 +35,9 @@ public class DailyController {
     @GetMapping("/daily/{dailyId}")
     public ResponseEntity<ResponseDto> getDailyFootprintDetails(Authentication authentication, @PathVariable("dailyId") Long dailyId) {
         log.info("Request to GET daily footprint details");
-        try {
-            Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-            FindDailyDetailResponse response = dailyService.findDailyDetail(dailyId, memberId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        catch (MalformedJwtException e) {
-            log.error("Invalid JWT format: ", e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        FindDailyDetailResponse response = dailyService.findDailyDetail(dailyId, memberId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 발자국 이미지 업로드
@@ -57,15 +51,9 @@ public class DailyController {
     @PostMapping("/daily")
     public ResponseEntity<ResponseDto> addDailyFootprint(Authentication authentication, @RequestBody CreateDailyRequest request) {
         log.info("Request to POST footprint");
-        try {
-            Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-            CreateDailyResponse response = dailyService.addDaily(memberId, request);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        catch (MalformedJwtException e) {
-            log.error("Invalid JWT format: ", e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        CreateDailyResponse response = dailyService.addDaily(memberId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 발자국 수정
