@@ -53,6 +53,7 @@ public class WolibalService {
         personalService.initializePersonal(wolibal);
         healthService.initializeHealth(wolibal);
         wolibal.updateScore();
+        wolibalRepository.save(wolibal);
         return wolibal;
     }
 
