@@ -24,7 +24,6 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class MemberService {
-    private final RestTemplate restTemplate;
     private final GlobalService globalService;
     private final WolibalService wolibalService;
     private final MemberRepository memberRepository;
