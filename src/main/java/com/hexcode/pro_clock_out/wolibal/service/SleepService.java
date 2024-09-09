@@ -69,6 +69,21 @@ public class SleepService {
         sleepRepository.save(sleep);
     }
 
+    public String describeSleepData(Wolibal wolibal) {
+        Sleep sleep = findSleepByWolibal(wolibal);
+        Double workdayBedtime = sleep.getWorkdayBedtime();
+        Double workdayWakeup = sleep.getWorkdayWakeup();
+        Double dayoffBedtime = sleep.getDayoffBedtime();
+        Double dayoffWakeup = sleep.getDayoffWakeup();
+        Integer satisfaction = sleep.getSatisfaction();
+
+        StringBuilder result = new StringBuilder();
+        if (workdayBedtime != null && workdayWakeup != null) { result.append(String.format("사용자는 근무일에 %.1f시에 취침하고, %.1f시에 기상한다.\n", workdayBedtime % 24, workdayWakeup % 24)); }
+        if (dayoffBedtime != null && dayoffWakeup != null) { result.append(String.format("사용자는 휴무일에 %.1f시에 취침하고, %.1f시에 기상한다.\n", dayoffBedtime % 24, dayoffWakeup % 24)); }
+        if (satisfaction != null) { result.append(String.format("사용자의 수면에 대한 워라밸 만족도는 %d점이다. 1일수록 매우 불만족이고, 9일수록 매우 만족이다.\n", satisfaction)); }
+        return result.toString().trim();
+    }
+
     /**
      * 수면 점수 계산 ///////////////////////////////////////////////////
      */

@@ -12,5 +12,5 @@ import java.util.List;
 @Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class SuggestSolutionResponse implements ResponseDto {
-    private String suggestionString;
+    private String solution;
 }

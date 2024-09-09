@@ -25,10 +25,9 @@ public class MemberController {
     private final S3Service s3Service;
 
     @GetMapping("/cheer")
-    public ResponseEntity<ResponseDto> getCheer(Authentication authentication) {
+    public ResponseEntity<ResponseDto> getCheer() {
         log.info("Request to GET cheer message");
-        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindCheerMessage response = memberService.findCheerMessage(memberId);
+        FindCheerMessage response = memberService.findCheerMessage();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -82,7 +81,7 @@ public class MemberController {
 
     @GetMapping("/members/me/solution")
     public ResponseEntity<ResponseDto> suggestSolution(Authentication authentication) {
-        log.info("Request to SUGGEST solution");
+        log.info("Request to GET solution");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         SuggestSolutionResponse response = memberService.findSuggestionMessage(memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
