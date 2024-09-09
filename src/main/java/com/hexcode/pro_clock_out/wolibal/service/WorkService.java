@@ -2,11 +2,8 @@ package com.hexcode.pro_clock_out.wolibal.service;
 
 import com.hexcode.pro_clock_out.global.domain.Label;
 import com.hexcode.pro_clock_out.global.service.GlobalService;
-import com.hexcode.pro_clock_out.member.domain.Member;
-import com.hexcode.pro_clock_out.member.exception.WolibalNotFoundException;
 import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
 import com.hexcode.pro_clock_out.wolibal.domain.Work;
-import com.hexcode.pro_clock_out.wolibal.dto.UpdateWolibalResponse;
 import com.hexcode.pro_clock_out.wolibal.dto.UpdateWorkRequest;
 import com.hexcode.pro_clock_out.wolibal.exception.WorkNotFoundException;
 import com.hexcode.pro_clock_out.wolibal.repository.WorkRepository;
@@ -68,6 +65,21 @@ public class WorkService {
 
         work.setScore(generateWorkScore(work));
         workRepository.save(work);
+    }
+
+    public String describeWorkData(Wolibal wolibal) {
+        Work work = findWorkByWolibal(wolibal);
+        Double dayWorkingHours = work.getDayWorkingHours();
+        Integer weekWorkingDays = work.getWeekWorkingDays();
+        Integer workStress = work.getWorkStress();
+        Integer satisfaction = work.getSatisfaction();
+
+        StringBuilder result = new StringBuilder();
+        if (dayWorkingHours != null) { result.append(String.format("사용자는 하루에 %.1f시간 일한다.\n", dayWorkingHours)); }
+        if (weekWorkingDays != null) { result.append(String.format("사용자는 일주일에 %d일 동안 일한다.\n", weekWorkingDays)); }
+        if (workStress != null) { result.append(String.format("사용자의 업무 스트레스 점수는 %d점이다. 1일수록 스트레스가 많고, 9일수록 스트레스가 적다.\n", workStress)); }
+        if (satisfaction != null) { result.append(String.format("사용자의 업무에 대한 워라밸 만족도는 %d점이다. 1일수록 매우 불만족이고, 9일수록 매우 만족이다.\n", satisfaction)); }
+        return result.toString();
     }
 
     /**

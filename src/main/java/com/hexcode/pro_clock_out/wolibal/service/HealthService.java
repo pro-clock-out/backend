@@ -3,10 +3,9 @@ package com.hexcode.pro_clock_out.wolibal.service;
 import com.hexcode.pro_clock_out.global.domain.Label;
 import com.hexcode.pro_clock_out.global.service.GlobalService;
 import com.hexcode.pro_clock_out.member.domain.Member;
+import com.hexcode.pro_clock_out.wolibal.domain.*;
 import com.hexcode.pro_clock_out.wolibal.domain.Health;
 import com.hexcode.pro_clock_out.wolibal.domain.Health;
-import com.hexcode.pro_clock_out.wolibal.domain.Health;
-import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
 import com.hexcode.pro_clock_out.wolibal.dto.UpdateHealthRequest;
 import com.hexcode.pro_clock_out.wolibal.exception.HealthNotFoundException;
 import com.hexcode.pro_clock_out.wolibal.exception.HealthNotFoundException;
@@ -68,6 +67,23 @@ public class HealthService {
 
         health.setScore(generateHealthScore(health));
         healthRepository.save(health);
+    }
+
+    public String describeHHealthData(Wolibal wolibal) {
+        Health health = findHealthByWolibal(wolibal);
+        Integer cardioFrequency = health.getCardioFrequency();
+        Double cardioTime = health.getCardioTime();
+        Integer strengthFrequency = health.getStrengthFrequency();
+        Double strengthTime = health.getStrengthTime();
+        Integer dietQuality = health.getDietQuality();
+        Integer satisfaction = health.getSatisfaction();
+
+        StringBuilder result = new StringBuilder();
+        if (cardioFrequency != null && cardioTime != null) { result.append(String.format("사용자는 유산소 운동을 일주일에 %d번, 1회에 %.1f시간 운동을한다.\n", cardioFrequency, cardioTime)); }
+        if (strengthFrequency != null && strengthTime != null) { result.append(String.format("사용자는 근력 운동을 일주일에 %d번, 1회에 %.1f시간 운동을한다.\n", strengthFrequency, strengthTime)); }
+        if (dietQuality != null) { result.append(String.format("사용자의 균형잡힌 식사 점수는 %d점이다. 1일수록 매우 불균형이고, 9일수록 매우 균형이다.\n", dietQuality)); }
+        if (satisfaction != null) { result.append(String.format("사용자의 휴식에 대한 워라밸 만족도는 %d점이다. 1일수록 매우 불만족이고, 9일수록 매우 만족이다.\n", satisfaction)); }
+        return result.toString();
     }
 
     /**

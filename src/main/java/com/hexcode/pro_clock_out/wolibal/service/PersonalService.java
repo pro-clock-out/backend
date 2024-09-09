@@ -3,6 +3,7 @@ package com.hexcode.pro_clock_out.wolibal.service;
 import com.hexcode.pro_clock_out.global.domain.Label;
 import com.hexcode.pro_clock_out.global.service.GlobalService;
 import com.hexcode.pro_clock_out.wolibal.domain.Personal;
+import com.hexcode.pro_clock_out.wolibal.domain.Personal;
 import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
 import com.hexcode.pro_clock_out.wolibal.dto.UpdatePersonalRequest;
 import com.hexcode.pro_clock_out.wolibal.exception.PersonalNotFoundException;
@@ -63,6 +64,19 @@ public class PersonalService {
 
         personal.setScore(generatePersonalScore(personal));
         personalRepository.save(personal);
+    }
+
+    public String describePersonalData(Wolibal wolibal) {
+        Personal personal = findPersonalByWolibal(wolibal);
+        Integer togetherTime = personal.getTogetherTime();
+        Integer hobbyTime = personal.getHobbyTime();
+        Integer satisfaction = personal.getSatisfaction();
+
+        StringBuilder result = new StringBuilder();
+        if (togetherTime != null) { result.append(String.format("사용자는 친구 및 가족과 보내는 시간을 %d점으로 책정했다. 1일수록 매우 적은 시간을 보내는 것이고, 9일수록 충분한 시간을 보내는 것이다.\n", togetherTime)); }
+        if (hobbyTime != null) { result.append(String.format("사용자는 평소에 취미 활동에 보내는 시간을 %d점으로 책정했다. 1일수록 매우 적은 시간을 보내는 것이고, 9일수록 충분한 시간을 보내는 것이다.\n", hobbyTime)); }
+        if (satisfaction != null) { result.append(String.format("사용자의 개인 생활에 대한 워라밸 만족도는 %d점이다. 1일수록 매우 불만족이고, 9일수록 매우 만족이다.\n", satisfaction)); }
+        return result.toString();
     }
 
     /**

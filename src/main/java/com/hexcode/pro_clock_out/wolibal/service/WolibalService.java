@@ -207,4 +207,14 @@ public class WolibalService {
             default -> throw new IllegalArgumentException("Invalid label name: " + label);
         };
     }
+
+    public String getWolibalDataText(Wolibal wolibal) {
+        String workDataText = workService.describeWorkData(wolibal);
+        String restDataText = restService.describeRestData(wolibal);
+        String sleepDataText = sleepService.describeSleepData(wolibal);
+        String personalDataText = personalService.describePersonalData(wolibal);
+        String healthDataText = healthService.describeHHealthData(wolibal);
+
+        return workDataText + restDataText + sleepDataText + personalDataText + healthDataText;
+    }
 }

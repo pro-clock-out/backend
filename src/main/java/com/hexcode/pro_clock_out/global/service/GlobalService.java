@@ -5,6 +5,11 @@ import com.hexcode.pro_clock_out.member.domain.Member;
 import com.hexcode.pro_clock_out.member.exception.MemberNotFoundException;
 import com.hexcode.pro_clock_out.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.openai.api.OpenAiApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +35,6 @@ public class GlobalService {
      */
     public Integer applySatisfaction(double basicScore, int satisfaction, Label label) {
         int score = (int) (basicScore * (1 + ((satisfaction - 5) / 200.0)));
-        String suggestionMessage = label + "에 대한 만족도가 낮습니다.";
-
         return Math.max(0, Math.min(100, score));
     }
 }

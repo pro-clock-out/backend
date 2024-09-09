@@ -4,6 +4,7 @@ import com.hexcode.pro_clock_out.global.domain.Label;
 import com.hexcode.pro_clock_out.global.service.GlobalService;
 import com.hexcode.pro_clock_out.wolibal.domain.Rest;
 import com.hexcode.pro_clock_out.wolibal.domain.Wolibal;
+import com.hexcode.pro_clock_out.wolibal.domain.Work;
 import com.hexcode.pro_clock_out.wolibal.dto.UpdateRestRequest;
 import com.hexcode.pro_clock_out.wolibal.exception.RestNotFoundException;
 import com.hexcode.pro_clock_out.wolibal.repository.RestRepository;
@@ -63,6 +64,19 @@ public class RestService {
 
         rest.setScore(generateRestScore(rest));
         restRepository.save(rest);
+    }
+
+    public String describeRestData(Wolibal wolibal) {
+        Rest rest = findRestByWolibal(wolibal);
+        Double workdayRest = rest.getWorkdayRest();
+        Double dayoffRest = rest.getDayoffRest();
+        Integer satisfaction = rest.getSatisfaction();
+
+        StringBuilder result = new StringBuilder();
+        if (workdayRest != null) { result.append(String.format("사용자는 근무일에 %.1f시간 휴식을 취한다.\n", workdayRest)); }
+        if (dayoffRest != null) { result.append(String.format("사용자는 휴무일에 %.1f시간 휴식을 취한다.\n", dayoffRest)); }
+        if (satisfaction != null) { result.append(String.format("사용자의 휴식에 대한 워라밸 만족도는 %d점이다. 1일수록 매우 불만족이고, 9일수록 매우 만족이다.\n", satisfaction)); }
+        return result.toString();
     }
 
     /**
