@@ -76,6 +76,10 @@ public class WolibalService {
         });
     }
 
+    public void createWolibal(Long memberId) {
+        Member member = globalService.findMemberById(memberId);
+    }
+
     public Wolibal findWolibalByDateAndMember(LocalDate date, Member member) {
         return wolibalRepository.findByDateAndMember(date, member)
                 .orElseThrow(() -> new WolibalNotFoundException(date, member.getId()));
