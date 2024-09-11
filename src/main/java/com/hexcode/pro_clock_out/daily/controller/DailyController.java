@@ -14,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -31,12 +33,21 @@ public class DailyController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // 발자국 상세 조회
-    @GetMapping("/daily/{dailyId}")
-    public ResponseEntity<ResponseDto> getDailyFootprintDetails(Authentication authentication, @PathVariable("dailyId") Long dailyId) {
+//    // 발자국 상세 조회
+//    @GetMapping("/daily/{dailyId}")
+//    public ResponseEntity<ResponseDto> getDailyFootprintDetails(Authentication authentication, @PathVariable("dailyId") Long dailyId) {
+//        log.info("Request to GET daily footprint details");
+//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+//        FindDailyDetailResponse response = dailyService.findDailyDetail(dailyId, memberId);
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+
+    // 발자국 상세 조회 긴급 수정
+    @GetMapping("/daily/{date}")
+    public ResponseEntity<ResponseDto> getDailyFootprintDetails(Authentication authentication, @PathVariable("date") LocalDate date) {
         log.info("Request to GET daily footprint details");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        FindDailyDetailResponse response = dailyService.findDailyDetail(dailyId, memberId);
+        FindDailyDetailResponse response = dailyService.findDailyDetail(date, memberId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -52,7 +52,7 @@ public class MemberService {
     public FindCheerMessage findCheerMessage() {
         ChatResponse call = ChatClient.builder(new OpenAiChatModel(new OpenAiApi(OPEN_AI_KEY)))
                 .defaultSystem("너는 반말을 사용하는 사람이다.")
-                .defaultUser("오늘 하루를 힘차게 보낼 수 있도록 조언 및 응원 메시지를 60자 이내로 생성하라")
+                .defaultUser("오늘 하루를 알차게 보낼 수 있도록 구체적인 조언 및 응원 메시지를 60자 이내로 생성하라")
                 .build()
                 .prompt()
                 .call()
