@@ -57,6 +57,23 @@ public class WolibalService {
         return wolibal;
     }
 
+    // 수동 워라밸 생성
+    public void initializeWolibalWithDate(Long memberId, CreateWolibalRequest request) {
+        Member member = globalService.findMemberById(memberId);
+        Wolibal wolibal = Wolibal.builder()
+                .member(member)
+                .date(request.getDate())
+                .build();
+        wolibalRepository.save(wolibal);
+        workService.initializeWork(wolibal);
+        restService.initializeRest(wolibal);
+        sleepService.initializeSleep(wolibal);
+        personalService.initializePersonal(wolibal);
+        healthService.initializeHealth(wolibal);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
+    }
+
     // 매일 정각에 워라밸 자동 생성
     public void createDailyWolibal() {
         List<Member> allMembers = globalService.findAllMembers();
@@ -76,8 +93,14 @@ public class WolibalService {
         });
     }
 
-    public void createWolibal(Long memberId) {
+    public void createWolibal(Long memberId, CreateWolibalRequest request) {
         Member member = globalService.findMemberById(memberId);
+        Wolibal wolibal = Wolibal.builder()
+                .date(request.getDate())
+                .isAuto(false)
+                .member(member)
+                .build();
+        wolibalRepository.save(wolibal);
     }
 
     public Wolibal findWolibalByDateAndMember(LocalDate date, Member member) {
@@ -220,5 +243,51 @@ public class WolibalService {
         String healthDataText = healthService.describeHHealthData(wolibal);
 
         return workDataText + restDataText + sleepDataText + personalDataText + healthDataText;
+    }
+
+    // 더미 테스트 삽입 서비스
+    public UpdateWolibalResponse updateWorkWithDate(Long memberId, LocalDate date, UpdateWorkRequest dto) {
+        Member member = globalService.findMemberById(memberId);
+        Wolibal wolibal = findWolibalByDateAndMember(date, member);
+        workService.updateWorkByData(wolibal.getWork(), dto);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
+        return UpdateWolibalResponse.createWith(wolibal);
+    }
+
+    public UpdateWolibalResponse updateRestWithDate(Long memberId, LocalDate date, UpdateRestRequest dto) {
+        Member member = globalService.findMemberById(memberId);
+        Wolibal wolibal = findWolibalByDateAndMember(date, member);
+        restService.updateRestByData(wolibal.getRest(), dto);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
+        return UpdateWolibalResponse.createWith(wolibal);
+    }
+
+    public UpdateWolibalResponse updateSleepWithDate(Long memberId, LocalDate date, UpdateSleepRequest dto) {
+        Member member = globalService.findMemberById(memberId);
+        Wolibal wolibal = findWolibalByDateAndMember(date, member);
+        sleepService.updateSleepByData(wolibal.getSleep(), dto);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
+        return UpdateWolibalResponse.createWith(wolibal);
+    }
+
+    public UpdateWolibalResponse updatePersonalWithDate(Long memberId, LocalDate date, UpdatePersonalRequest dto) {
+        Member member = globalService.findMemberById(memberId);
+        Wolibal wolibal = findWolibalByDateAndMember(date, member);
+        personalService.updatePersonalByData(wolibal.getPersonal(), dto);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
+        return UpdateWolibalResponse.createWith(wolibal);
+    }
+
+    public UpdateWolibalResponse updateHealthWithDate(Long memberId, LocalDate date, UpdateHealthRequest dto) {
+        Member member = globalService.findMemberById(memberId);
+        Wolibal wolibal = findWolibalByDateAndMember(date, member);
+        healthService.updateHealthByData(wolibal.getHealth(), dto);
+        wolibal.updateScore();
+        wolibalRepository.save(wolibal);
+        return UpdateWolibalResponse.createWith(wolibal);
     }
 }
