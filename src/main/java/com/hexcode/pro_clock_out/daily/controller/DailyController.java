@@ -67,12 +67,21 @@ public class DailyController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+//    // 발자국 수정
+//    @PutMapping("/daily/{dailyId}")
+//    public ResponseEntity<ResponseDto> updateDailyFootprint(Authentication authentication, @PathVariable("dailyId") Long dailyId, @RequestBody UpdateDailyRequest request) {
+//        log.info("Request to PUT footprint");
+//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+//        UpdateDailyResponse response = dailyService.updateDaily(dailyId, memberId, request);
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+
     // 발자국 수정
-    @PutMapping("/daily/{dailyId}")
-    public ResponseEntity<ResponseDto> updateDailyFootprint(Authentication authentication, @PathVariable("dailyId") Long dailyId, @RequestBody UpdateDailyRequest request) {
+    @PutMapping("/daily/{date}")
+    public ResponseEntity<ResponseDto> updateDailyFootprint(Authentication authentication, @PathVariable("date") LocalDate date, @RequestBody UpdateDailyRequest request) {
         log.info("Request to PUT footprint");
         Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-        UpdateDailyResponse response = dailyService.updateDaily(dailyId, memberId, request);
+        UpdateDailyResponse response = dailyService.updateDaily(date, memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
