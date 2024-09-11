@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -83,54 +85,54 @@ public class WolibalController {
         UpdateWolibalResponse response = wolibalService.updateHealth(memberId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-//
-//    // 테스트 더미
-//    @PostMapping("/wolibals")
-//    public ResponseEntity<ResponseDto> postWolibal(Authentication authentication, @RequestBody UpdateWorkRequest request) {
-//        log.info("Request to POST wolibal");
-//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-//        UpdateWolibalResponse response = wolibalService.createWolibal(memberId, request);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
-//
-//    @PostMapping("/wolibals/work")
-//    public ResponseEntity<ResponseDto> postWork(Authentication authentication, @RequestBody UpdateWorkRequest request) {
-//        log.info("Request to POST work wolibal");
-//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-//        UpdateWolibalResponse response = wolibalService.createWork(memberId, request);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
-//
-//    @PostMapping("/wolibals/rest")
-//    public ResponseEntity<ResponseDto> postRest(Authentication authentication, @RequestBody UpdateRestRequest request) {
-//        log.info("Request to POST rest wolibal");
-//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-//        UpdateWolibalResponse response = wolibalService.createRest(memberId, request);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
-//
-//    @PostMapping("/wolibals/sleep")
-//    public ResponseEntity<ResponseDto> postSleep(Authentication authentication, @RequestBody UpdateSleepRequest request) {
-//        log.info("Request to POST sleep wolibal");
-//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-//        UpdateWolibalResponse response = wolibalService.createSleep(memberId, request);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
-//
-//    @PostMapping("/wolibals/personal")
-//    public ResponseEntity<ResponseDto> postPersoanl(Authentication authentication, @RequestBody UpdatePersonalRequest request) {
-//        log.info("Request to POST persoanl wolibal");
-//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-//        UpdateWolibalResponse response = wolibalService.createPersonal(memberId, request);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
-//
-//    @PostMapping("/wolibals/health")
-//    public ResponseEntity<ResponseDto> postHealth(Authentication authentication, @RequestBody UpdateHealthRequest request) {
-//        log.info("Request to POST health wolibal");
-//        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
-//        UpdateWolibalResponse response = wolibalService.createHealth(memberId, request);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+
+    // 테스트 더미
+    @PostMapping("/wolibals")
+    public ResponseEntity<ResponseDto> postWolibalWithDate(Authentication authentication, @RequestBody CreateWolibalRequest request) {
+        log.info("Request to POST wolibal with date");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        wolibalService.initializeWolibalWithDate(memberId, request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/wolibals/work/{date}")
+    public ResponseEntity<ResponseDto> putWorkWithDate(Authentication authentication, @PathVariable LocalDate date, @RequestBody UpdateWorkRequest request) {
+        log.info("Request to PUT work wolibal with date");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateWolibalResponse response = wolibalService.updateWorkWithDate(memberId, date, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/wolibals/rest/{date}")
+    public ResponseEntity<ResponseDto> putRestWithDate(Authentication authentication, @PathVariable LocalDate date, @RequestBody UpdateRestRequest request) {
+        log.info("Request to PUT rest wolibal with date");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateWolibalResponse response = wolibalService.updateRestWithDate(memberId, date, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/wolibals/sleep/{date}")
+    public ResponseEntity<ResponseDto> putSleepWithDate(Authentication authentication, @PathVariable LocalDate date, @RequestBody UpdateSleepRequest request) {
+        log.info("Request to PUT sleep wolibal with date");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateWolibalResponse response = wolibalService.updateSleepWithDate(memberId, date, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/wolibals/personal/{date}")
+    public ResponseEntity<ResponseDto> putPersonalWithDate(Authentication authentication, @PathVariable LocalDate date, @RequestBody UpdatePersonalRequest request) {
+        log.info("Request to PUT persoanl wolibal with date");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateWolibalResponse response = wolibalService.updatePersonalWithDate(memberId, date, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/wolibals/health/{date}")
+    public ResponseEntity<ResponseDto> putHealthWithDate(Authentication authentication, @PathVariable LocalDate date, @RequestBody UpdateHealthRequest request) {
+        log.info("Request to PUT health wolibal with date");
+        Long memberId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        UpdateWolibalResponse response = wolibalService.updateHealthWithDate(memberId, date, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
 
