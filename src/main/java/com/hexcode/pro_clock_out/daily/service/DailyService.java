@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,6 +50,11 @@ public class DailyService {
     public Daily findDailyById(final Long dailyId) {
         return dailyRepository.findById(dailyId)
                 .orElseThrow(()-> new DailyNotFoundException(dailyId));
+    }
+
+    public Daily findDailyByDateAndMember(final LocalDate date, final Member member) {
+        return dailyRepository.findDailyByDateAndMember(date, member)
+                .orElseThrow(DailyNotFoundException::new);
     }
 
    public Goal findGoalById(final Long goalId) {
@@ -97,10 +103,18 @@ public class DailyService {
         return FindTotalDailyResponse.createWith(filteredDailyYear);
     }
 
-    // 발자국 상세 조회
-    public FindDailyDetailResponse findDailyDetail(Long dailyId, Long memberId) {
-        Daily daily = findDailyById(dailyId);
-        List<String> completedGoals = findGoalNamesByDailyId(dailyId);
+//    // 발자국 상세 조회
+//    public FindDailyDetailResponse findDailyDetail(Long dailyId, Long memberId) {
+//        Daily daily = findDailyById(dailyId);
+//        List<String> completedGoals = findGoalNamesByDailyId(dailyId);
+//        return FindDailyDetailResponse.createWith(daily, completedGoals);
+//    }
+
+    // 발자국 상세 조회 긴급 수정
+    public FindDailyDetailResponse findDailyDetail(LocalDate date, Long memberId) {
+        Member member = globalService.findMemberById(memberId);
+        Daily daily = findDailyByDateAndMember(date, member);
+        List<String> completedGoals = findGoalNamesByDailyId(daily.getId());
         return FindDailyDetailResponse.createWith(daily, completedGoals);
     }
 
