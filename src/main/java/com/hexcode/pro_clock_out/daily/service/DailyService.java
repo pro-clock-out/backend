@@ -160,17 +160,53 @@ public class DailyService {
         return CreateDailyResponse.createWith(daily);
     }
 
-    // 발자국 수정
-    public UpdateDailyResponse updateDaily(Long dailyId, Long memberId, UpdateDailyRequest request) {
-        Member member = globalService.findMemberById(memberId);
+//    // 발자국 수정
+//    public UpdateDailyResponse updateDaily(Long dailyId, Long memberId, UpdateDailyRequest request) {
+//        Member member = globalService.findMemberById(memberId);
+//
+//        Daily daily = findDailyById(dailyId);
+//        UpdateDailyData updateDailyData = UpdateDailyData.createWith(request);
+//        daily.updateDaily(updateDailyData);
+//        dailyRepository.save(daily);
+//
+//        if (request.getCompletedGoals() != null) {
+//            List<DailyGoal> dailyGoals = dailyGoalRepository.findByDailyId(dailyId);
+//            dailyGoalRepository.deleteAll(dailyGoals);
+//            for (String newGoalName : request.getCompletedGoals()) {
+//                Goal goal = goalRepository.findByContent(newGoalName)
+//                        .orElseThrow(GoalNotFoundException::new);
+//                DailyGoal dailyGoal = DailyGoal.builder()
+//                        .daily(daily)
+//                        .goal(goal)
+//                        .build();
+//                dailyGoalRepository.save(dailyGoal);
+//            }
+//        }
+//
+//        // 데일리 항목별 만족도에 따라 워라밸 점수 업데이트
+//        Optional<Wolibal> existWolibal = wolibalRepository.findByDateAndMember(request.getDate(), member);
+//        if (existWolibal.isPresent()) {
+//            Wolibal wolibal = existWolibal.get();
+//            workService.updateWorkBySatisfaction(wolibal, request.getWorkSatisfaction());
+//            restService.updateRestBySatisfaction(wolibal, request.getRestSatisfaction());
+//            sleepService.updateSleepBySatisfaction(wolibal, request.getSleepSatisfaction());
+//            personalService.updatePersonalBySatisfaction(wolibal, request.getPersonalSatisfaction());
+//            healthService.updateHealthBySatisfaction(wolibal, request.getHealthSatisfaction());
+//        }
+//
+//        return UpdateDailyResponse.createWith(daily);
+//    }
 
-        Daily daily = findDailyById(dailyId);
+    // 발자국 수정 긴급 수정
+    public UpdateDailyResponse updateDaily(LocalDate date, Long memberId, UpdateDailyRequest request) {
+        Member member = globalService.findMemberById(memberId);
+        Daily daily = findDailyByDateAndMember(date, member);
         UpdateDailyData updateDailyData = UpdateDailyData.createWith(request);
         daily.updateDaily(updateDailyData);
         dailyRepository.save(daily);
 
         if (request.getCompletedGoals() != null) {
-            List<DailyGoal> dailyGoals = dailyGoalRepository.findByDailyId(dailyId);
+            List<DailyGoal> dailyGoals = dailyGoalRepository.findByDailyId(daily.getId());
             dailyGoalRepository.deleteAll(dailyGoals);
             for (String newGoalName : request.getCompletedGoals()) {
                 Goal goal = goalRepository.findByContent(newGoalName)
